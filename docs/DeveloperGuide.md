@@ -287,32 +287,264 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is `ClientBookThree` and the **Actor** is the `user`, a freelance software developer, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: UC01 - Add a contact**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1.  User requests to add a contact, giving their name, phone number, email and address, and optionally some tags.
+2.  ClientBookThree adds the contact and shows the details of the added contact.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 1a. A required detail is missing.
+
+    * 1a1. ClientBookThree shows an error message with the expected format.
+    * 1a2. User enters the details again.
+
+      Steps 1a1-1a2 are repeated until all required details are given.<br>
+      Use case resumes from step 2.
+
+* 1b. A detail is invalid, e.g., the phone number contains letters.
+
+    * 1b1. ClientBookThree shows an error message stating what is allowed for that detail.
+    * 1b2. User enters the details again.
+
+      Steps 1b1-1b2 are repeated until all details are valid.<br>
+      Use case resumes from step 2.
+
+* 1c. A contact with the same name already exists.
+
+    * 1c1. ClientBookThree shows an error message saying the contact already exists, and does not add it.
+
+      Use case ends.
+
+**Use case: UC02 - List all contacts**
+
+**MSS**
+
+1.  User requests to list all contacts.
+2.  ClientBookThree shows every contact, numbered in the order they were added.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. There are no contacts.
+
+    * 2a1. ClientBookThree shows an empty list.
+
+      Use case ends.
+
+**Use case: UC03 - Delete a contact**
+
+**MSS**
+
+1.  User lists contacts (UC02) or finds contacts (UC05).
+2.  User requests to delete a specific contact in the shown list.
+3.  ClientBookThree deletes the contact and shows the details of the deleted contact.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The shown list is empty.
 
   Use case ends.
 
-* 3a. The given index is invalid.
+* 2a. The given index is invalid, e.g., it is not a positive number or is larger than the number of contacts shown.
 
-    * 3a1. AddressBook shows an error message.
+    * 2a1. ClientBookThree shows an error message.
 
       Use case resumes at step 2.
 
-*{More to be added}*
+**Use case: UC04 - Edit a contact**
+
+**MSS**
+
+1.  User lists contacts (UC02) or finds contacts (UC05).
+2.  User requests to change some details of a specific contact in the shown list, giving the new values.
+3.  ClientBookThree updates the contact and shows its new details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. No detail to change is given.
+
+    * 2b1. ClientBookThree shows an error message saying at least one detail must be given.
+
+      Use case resumes at step 2.
+
+* 2c. A new value is invalid.
+
+    * 2c1. ClientBookThree shows an error message stating what is allowed for that detail.
+
+      Use case resumes at step 2.
+
+* 2d. The new name is the same as that of another contact.
+
+    * 2d1. ClientBookThree shows an error message saying that contact already exists, and does not change anything.
+
+      Use case ends.
+
+**Use case: UC05 - Find contacts by name or company**
+
+**MSS**
+
+1.  User requests to find contacts, giving one or more keywords.
+2.  ClientBookThree shows the contacts whose name or company contains any of the keywords, ignoring case.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. No keyword is given.
+
+    * 1a1. ClientBookThree shows an error message with the expected format.
+
+      Use case resumes at step 1.
+
+* 2a. No contact matches any keyword.
+
+    * 2a1. ClientBookThree shows an empty list and says no contact was found.
+
+      Use case ends.
+
+**Use case: UC06 - Tag a contact with a project**
+
+**MSS**
+
+1.  User lists contacts (UC02) or finds contacts (UC05).
+2.  User requests to tag a specific contact in the shown list with one or more projects.
+3.  ClientBookThree adds the projects to the contact and shows its updated details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. A project name is invalid.
+
+    * 2b1. ClientBookThree shows an error message stating what a project name may contain, and does not tag the contact.
+
+      Use case resumes at step 2.
+
+* 2c. The contact is already tagged with every given project.
+
+    * 2c1. ClientBookThree tells the user that nothing has changed.
+
+      Use case ends.
+
+**Use case: UC07 - Remove a contact from a project**
+
+**MSS**
+
+1.  User lists contacts (UC02) or finds contacts (UC05).
+2.  User requests to remove a project from a specific contact in the shown list.
+3.  ClientBookThree removes the project from the contact and shows its updated details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. The contact is not tagged with that project.
+
+    * 2b1. ClientBookThree shows an error message listing the projects the contact is tagged with.
+
+      Use case resumes at step 2.
+
+**Use case: UC08 - View the contacts on a project**
+
+**MSS**
+
+1.  User requests to list the contacts tagged with a specific project.
+2.  ClientBookThree shows those contacts and how many there are.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The project name is invalid.
+
+    * 1a1. ClientBookThree shows an error message stating what a project name may contain.
+
+      Use case resumes at step 1.
+
+* 2a. No contact is tagged with that project.
+
+    * 2a1. ClientBookThree shows an empty list and says no contact is on that project.
+
+      Use case ends.
+
+**Use case: UC09 - Update a client's engagement status**
+
+**MSS**
+
+1.  User finds the client (UC05).
+2.  User requests to set the engagement status of that client to one of lead, active, on hold or done.
+3.  ClientBookThree updates the client's status and shows the client's updated details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. The given status is not one of the allowed statuses.
+
+    * 2b1. ClientBookThree shows an error message listing the allowed statuses.
+
+      Use case resumes at step 2.
+
+* 2c. The client already has that status.
+
+    * 2c1. ClientBookThree tells the user that nothing has changed.
+
+      Use case ends.
+
+**Use case: UC10 - Undo a mistaken change**
+
+**MSS**
+
+1.  User makes a change to the contacts by mistake, e.g., deletes the wrong contact (UC03).
+2.  User requests to undo the last change.
+3.  ClientBookThree reverses the last change and says which change was undone.
+
+    Steps 2-3 are repeated for as many changes as the user wants to undo.<br>
+    Use case ends.
+
+**Extensions**
+
+* 2a. There is no change left to undo.
+
+    * 2a1. ClientBookThree shows an error message saying there is nothing to undo.
+
+      Use case ends.
 
 ### Non-Functional Requirements
 
