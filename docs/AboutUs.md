@@ -28,14 +28,14 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Project management (deadlines and scheduling), Code quality
 
-### Johnny Doe
+### Tan Ying
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/arcs1ne.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](http://github.com/arcs1ne)]
 
 * Role: Developer
-* Responsibilities: Data
+* Responsibilities: Code contribution and testing
 
 ### Jean Doe
 
