@@ -12,11 +12,9 @@ ClientBookThree is a desktop app that helps freelance software developers who wo
 - Assign clients to projects
 - Group related clients together
 
-## Documentation 
+## Documentation
 - To begin using ClientBookThree, see the [User Guide](https://ay2627s1-cs2103-f09-2.github.io/tp/UserGuide.html)
 - To contribute, see the [Developer Guide](https://ay2627s1-cs2103-f09-2.github.io/tp/DeveloperGuide.html)
 
-## Acknowledgement 
+## Acknowledgement
 This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org).
-
-  
