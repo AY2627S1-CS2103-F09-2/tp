@@ -259,29 +259,59 @@ _{Explain here how the data archiving feature will be implemented}_
 
 ### Product scope
 
-**Target user profile**:
+**Target user profile**: Freelance software developer who works with multiple different customers and collaborate with many people.
+They prefer typing to mouse interactions and are reasonably comfortable using CLI apps.
 
-* has a need to manage a significant number of contacts
-* prefers desktop apps over other types of applications
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
-
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: Centralizes client management inside a desktop CLI to replace bulky customer relationship management apps, allowing them to modify client statuses, organize projects easily, and group related people/customer
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
+| User type | User story | Benefit | Priority |
+| --- | --- | --- | --- |
+| new user | create a new contact |  | `* * *` |
+| new user | delete a contact I no longer deal with | it keeps the address book clean | `* * *` |
+| new user | View all contacts on the app | I can see my contacts | `* * *` |
+| user ready to start for real | clear all the sample data in one command | I can begin from a clean state without deleting entries one by one | `* * *` |
+| new user | see a list of the commands available | I can learn what the app does without leaving it to read a manual | `* * *` |
+| new user | see an example of the correct format when I mistype a command | I can fix my mistake without guessing at the syntax | `* * *` |
+| freelance developer | add a client with a name, email and phone number | I stop keeping their details scattered across chats and emails | `* * *` |
+| freelance developer | add a contact who is not the client themselves, such as their finance officer | I can reach the right person for the right matter | `* * *` |
+| freelance developer | list every contact I have recorded | I can see everything in one place | `* * *` |
+| freelance developer | edit a contact's details | their record stays correct when they change number, email or job | `* * *` |
+| freelance developer | delete a contact I no longer deal with | my list does not fill up with people who are no longer relevant | `* * *` |
+| forgetful user | undo my last command | I can recover from a mistake without retyping what I lost | `* * *` |
+| freelance developer | tag a contact with a project | I can see who is involved in which piece of work | `* * *` |
+| freelance developer | tag one contact with more than one project | a client I work with on several jobs is still recorded only once | `* * *` |
+| freelance developer | list only the contacts on a given project | I can see everyone involved in the job I am working on right now | `* * *` |
+| freelance developer | remove a tag from a contact | the record follows along when someone leaves a project | `* * *` |
+| freelance developer | search for a contact by part of their name | I can find them without remembering the exact spelling | `* * *` |
+| returning user | have my data saved without asking | I never lose work by forgetting to save | `* * *` |
+| potential user exploring the app | see the app already populated with sample data | I can tell what it looks like in use before committing my own records | `* *` |
+| new user | see where my data file is kept | I know what to back up | `* *` |
+| freelance developer | record the company a contact belongs to | I can tell apart two people with similar names | `* *` |
+| freelance developer | be warned when I add someone whose email is already recorded | I do not end up with the same person twice | `* *` |
+| freelance developer | search by company | I can find everyone I know at a client organisation | `* *` |
+| freelance developer | set a status on a client such as lead, active, on hold or done | I know where each engagement stands | `* *` |
+| freelance developer | list clients by status | I can see which engagements need attention this week | `* *` |
+| freelance developer | change a client's status in a single command | keeping my pipeline current is quick enough that I actually do it | `* *` |
+| freelance developer | record the role a contact plays on a project, such as product owner or designer | I know who to approach about what | `* *` |
+| long-time user | sort my contacts by name | the list is in a predictable order when I scan it | `* *` |
+| long-time user | sort clients by status | the work that needs attention appears first | `* *` |
+| user who made several mistakes in a row | undo more than one command | I can walk back a wrong sequence, not just the last step | `* *` |
+| cautious user | have my data kept in a plain readable file | I can back it up, inspect it, or repair it by hand | `* *` |
+| freelancer moving between machines | copy my data file to another computer | I can keep working on my laptop as well as my desktop | `* *` |
+| freelance developer | keep a short note against a contact | I remember context such as their timezone or how they prefer to be contacted | `*` |
+| freelance developer | see how many contacts each project has | I can gauge how large each engagement is | `*` |
+| expert user | type short aliases for the commands I use most | I spend less time typing the same things | `*` |
+| expert user | act on several contacts in one command | I do not repeat the same command once per person | `*` |
+| expert user | recall and edit a command I typed earlier | I can repeat or amend it without typing it out again | `*` |
+| long-time user | archive the contacts of a finished project | my working list stays short without losing the records | `*` |
+| long-time user | look at archived contacts | I can still reach someone from a past job | `*` |
+| user with a long list | page through my contacts | the display stays readable when there are hundreds of them | `*` |
+| freelance developer | export one project's contacts | I can hand the list to a collaborator | `*` |
 
 *{More to be added}*
 
