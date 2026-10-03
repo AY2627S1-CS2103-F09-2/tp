@@ -579,15 +579,27 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+2.  Should be able to hold up to 1000 persons and 100 projects without noticeable sluggishness (up to 1 second of load times) in performance for typical usage.
+3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks in their typical workflow faster using commands than using the mouse.
+4.  A new user should be able to add, delete and list contacts using the documented command syntax without assistance after reading the quick-start instructions.
+5.  After a successful change, the updated data should remain available after the application is closed and reopened.
+6.  Contact and project data should be stored locally and not transmitted elsewhere to ensure privacy of user data.
+7.  The application should be able to function as usual without needing an internet connection.
+8.  A newer version of the application should be able to read data from an older version of the application.
+9.  The application window should fit within screens with minimally 1920x1080 resolution.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Mainstream OS**: Windows, Linux, Unix, or macOS.
+* **Private contact detail**: A contact detail that is not meant to be shared with others.
+* **Client**: A person or organization that engages the user to do work
+* **Contact / Person**: A person recorded in the app, such as a client’s main contact, finance contact, or collaborator.
+* **Collaborator**: A person who works with the user on a project but is not the client.
+* **Project**: A piece of work or engagement associated with a client and one or more people.
+* **Status**: The project's stage, using the allowed values `lead`, `active`, `on hold`, and `done`.
+* **Project tag**: Represents a contact's involvement in a project.
+* **Typical usage**: The dataset size and command mix used to evaluate the performance NFR.
+* **Quick-start instructions**: Brief summary of the user guide, contains important information to get started using CB3.
 
 --------------------------------------------------------------------------------------------------------------------
 
