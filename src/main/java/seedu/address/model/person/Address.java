@@ -17,6 +17,12 @@ public class Address {
      */
     public static final String VALIDATION_REGEX = "[^\\s].*";
 
+    /**
+     * The address of a contact whose address is not known, e.g. a remote client.
+     * Using this rather than {@code null} means no other code has to check for a missing address.
+     */
+    public static final Address EMPTY = new Address();
+
     public final String value;
 
     /**
@@ -28,6 +34,20 @@ public class Address {
         requireNonNull(address);
         checkArgument(isValidAddress(address), MESSAGE_CONSTRAINTS);
         value = address;
+    }
+
+    /**
+     * Constructs the empty address, which only {@link #EMPTY} uses.
+     */
+    private Address() {
+        value = "";
+    }
+
+    /**
+     * Returns true if this is the address of a contact whose address is not known.
+     */
+    public boolean isEmpty() {
+        return value.isEmpty();
     }
 
     /**
