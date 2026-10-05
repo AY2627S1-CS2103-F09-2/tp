@@ -10,9 +10,17 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Phone {
 
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Phone numbers should only contain digits, and should be at least 3 digits long";
-    public static final String VALIDATION_REGEX = "\\d{3,}";
+    public static final String MESSAGE_CONSTRAINTS = "Phone numbers should start with a digit, + or (, "
+            + "contain at least 3 digits, and may also contain spaces, letters (e.g. HP, ext) "
+            + "and the characters + - ( ) . /";
+
+    /*
+     * Phone numbers are written in many ways, e.g. +65 9123 4567, (65) 9123-4567 or 1234 5678 (HP),
+     * so spaces, letters for labels, and the usual separators are allowed alongside the digits.
+     * The lookahead requires at least 3 digits, and the first character must be a digit, + or (,
+     * so that blank or word-only input stays invalid.
+     */
+    public static final String VALIDATION_REGEX = "(?=(?:\\D*\\d){3})[\\d+(][\\p{L}\\d +()./-]*";
     public final String value;
 
     /**
