@@ -88,6 +88,14 @@ public class ClientBookParserTest {
     }
 
     @Test
+    public void parseCommand_commandWordsIgnoreCase() throws Exception {
+        Person person = new PersonBuilder().build();
+        assertTrue(parser.parseCommand("LIST") instanceof ListCommand);
+        assertEquals(new AddCommand(person), parser.parseCommand(PersonUtil.getAddCommand(person)
+                .replaceFirst("add", "Add")));
+    }
+
+    @Test
     public void parseCommand_unrecognisedInput_throwsParseException() {
         assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
             -> parser.parseCommand(""));
