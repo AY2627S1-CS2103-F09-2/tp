@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 
@@ -19,8 +20,10 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
+import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.PersonBuilder;
 
@@ -50,6 +53,16 @@ public class AddCommandTest {
         ModelStub modelStub = new ModelStubWithPerson(validPerson);
 
         assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
+    public void execute_nameDiffersInCaseAndSpacing_throwsCommandException() {
+        Model model = new ModelManager(new ClientBook(), new UserPrefs());
+        model.addPerson(ALICE);
+        for (String name : List.of("alice pauline", "Alice   Pauline", "  aLiCe   pAuLiNe  ")) {
+            Person duplicateAlice = new PersonBuilder().withName(name).build();
+            assertCommandFailure(new AddCommand(duplicateAlice), model, AddCommand.MESSAGE_DUPLICATE_PERSON);
+        }
     }
 
     @Test

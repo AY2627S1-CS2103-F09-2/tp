@@ -41,14 +41,32 @@ public class PersonTest {
         editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
         assertFalse(ALICE.isSamePerson(editedAlice));
 
-        // name differs in case, all other attributes same -> returns false
+        // name differs in case, all other attributes same -> returns true
         Person editedBob = new PersonBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        assertTrue(BOB.isSamePerson(editedBob));
 
-        // name has trailing spaces, all other attributes same -> returns false
+        // name has trailing spaces, all other attributes same -> returns true
         String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
         editedBob = new PersonBuilder(BOB).withName(nameWithTrailingSpaces).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        assertTrue(BOB.isSamePerson(editedBob));
+    }
+
+    @Test
+    public void isSamePerson_nameDiffersInCaseAndSpacing_returnsTrue() {
+        Person editedAlice = new PersonBuilder(BOB).withName("  aLiCe   pAuLiNe  ").build();
+        assertTrue(ALICE.isSamePerson(editedAlice));
+        assertTrue(editedAlice.isSamePerson(ALICE));
+
+        Person aliceWithRepeatedSpaces = new PersonBuilder(ALICE).withName("Alice   Pauline").build();
+        assertTrue(ALICE.isSamePerson(aliceWithRepeatedSpaces));
+    }
+
+    @Test
+    public void isSamePerson_nameDiffersBeyondCaseAndSpacing_returnsFalse() {
+        Person differentPerson = new PersonBuilder(ALICE).withName("AlicePauline").build();
+        assertFalse(ALICE.isSamePerson(differentPerson));
+        differentPerson = new PersonBuilder(ALICE).withName("Alice-Pauline").build();
+        assertFalse(ALICE.isSamePerson(differentPerson));
     }
 
     @Test
@@ -71,6 +89,10 @@ public class PersonTest {
 
         // different name -> returns false
         Person editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
+        assertFalse(ALICE.equals(editedAlice));
+
+        // same identity with different capitalization -> returns false
+        editedAlice = new PersonBuilder(ALICE).withName("alice pauline").build();
         assertFalse(ALICE.equals(editedAlice));
 
         // different phone -> returns false

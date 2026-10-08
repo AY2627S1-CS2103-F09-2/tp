@@ -78,6 +78,14 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseName_repeatedSpaces_returnsNormalizedName() throws Exception {
+        Name name = ParserUtil.parseName("  Rachel   Walker  ");
+        assertEquals("Rachel Walker", name.fullName);
+        assertThrows(ParseException.class, () -> ParserUtil.parseName("   "));
+        assertThrows(ParseException.class, () -> ParserUtil.parseName("Rachel\tWalker"));
+    }
+
+    @Test
     public void parsePhone_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parsePhone((String) null));
     }

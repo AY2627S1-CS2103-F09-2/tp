@@ -5,7 +5,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
  * Represents a Person's name in the client book.
- * Guarantees: immutable; is valid as declared in {@link #isValidName(String)}
+ * Guarantees: immutable; is valid as declared in {@link #isValidName(String)};
+ * has no leading or trailing whitespace and no repeated spaces.
  */
 public class Name {
 
@@ -24,20 +25,21 @@ public class Name {
 
     /**
      * Constructs a {@code Name}.
+     * Trims leading and trailing whitespace and collapses repeated spaces, preserving capitalization.
      *
      * @param name A valid name.
      */
     public Name(String name) {
         requireNonNull(name);
         checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
-        fullName = name;
+        fullName = name.trim().replaceAll(" +", " ");
     }
 
     /**
-     * Returns true if a given string is a valid name.
+     * Returns true if a given string is a valid name after trimming leading and trailing whitespace.
      */
     public static boolean isValidName(String test) {
-        return test.matches(VALIDATION_REGEX);
+        return test.trim().matches(VALIDATION_REGEX);
     }
 
 
