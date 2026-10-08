@@ -44,4 +44,17 @@ public class JsonSerializableClientBookTest {
                 dataFromFile::toModelType);
     }
 
+    @Test
+    public void toModelType_namesDifferInCaseAndSpacing_throwsIllegalValueException() throws Exception {
+        String json = """
+                {"persons": [
+                  {"name": "John Doe", "phone": "91234567", "email": "john@example.com", "tags": []},
+                  {"name": "  jOhN   dOe  ", "phone": "98765432", "email": "other@example.com", "tags": []}
+                ]}
+                """;
+        JsonSerializableClientBook data = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class);
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PERSON,
+                data::toModelType);
+    }
+
 }
