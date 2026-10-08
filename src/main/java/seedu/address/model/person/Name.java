@@ -9,14 +9,16 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Name {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Names should only contain alphanumeric characters and spaces, and should not be blank";
+    public static final String MESSAGE_CONSTRAINTS = "Names should start with a letter or digit, and may contain "
+            + "only letters (including accented letters), digits, spaces and the characters ' - . , /";
 
     /*
-     * The first character of the name must not be a whitespace,
-     * otherwise " " (a blank string) becomes a valid input.
+     * Real names contain more than English letters and digits, e.g. O'Brien, Jean-Luc, Raj s/o Kumar, or names
+     * with accented letters, so letters from any language, apostrophes (straight or curly), hyphens, periods,
+     * commas and slashes are allowed.
+     * The first character must be a letter or digit, otherwise " " (a blank string) becomes a valid input.
      */
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
+    public static final String VALIDATION_REGEX = "[\\p{L}\\p{N}][\\p{L}\\p{M}\\p{N} '\u2019.,/-]*";
 
     public final String fullName;
 
