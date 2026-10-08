@@ -8,6 +8,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalClientBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -35,5 +36,12 @@ public class ListCommandTest {
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+    }
+
+    @Test
+    public void execute_emptyList_showsHelpfulMessage() {
+        Model emptyModel = new ModelManager(new ClientBook(), new UserPrefs());
+        Model expectedEmptyModel = new ModelManager(new ClientBook(), new UserPrefs());
+        assertCommandSuccess(new ListCommand(), emptyModel, ListCommand.MESSAGE_EMPTY, expectedEmptyModel);
     }
 }
