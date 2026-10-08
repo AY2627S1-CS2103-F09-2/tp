@@ -37,6 +37,10 @@ public class AddCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "New person added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the client book.";
+    public static final String MESSAGE_DUPLICATE_EMAIL_WARNING =
+            "Warning: Email %1$s already belongs to another contact.";
+    public static final String MESSAGE_DUPLICATE_PHONE_WARNING =
+            "Warning: Phone %1$s already belongs to another contact.";
 
     private final Person toAdd;
 
@@ -56,8 +60,31 @@ public class AddCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
+        String warning = getContactDetailsWarning(model);
         model.addPerson(toAdd);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)) + warning);
+    }
+
+    /**
+     * Returns warnings for shared email and phone values across the entire client book.
+     * Must be called before adding {@code toAdd} so it does not match itself.
+     */
+    private String getContactDetailsWarning(Model model) {
+        boolean hasDuplicateEmail = false;
+        boolean hasDuplicatePhone = false;
+        for (Person person : model.getClientBook().getPersonList()) {
+            hasDuplicateEmail |= person.getEmail().equals(toAdd.getEmail());
+            hasDuplicatePhone |= person.getPhone().equals(toAdd.getPhone());
+        }
+
+        StringBuilder warning = new StringBuilder();
+        if (hasDuplicateEmail) {
+            warning.append("\n").append(String.format(MESSAGE_DUPLICATE_EMAIL_WARNING, toAdd.getEmail()));
+        }
+        if (hasDuplicatePhone) {
+            warning.append("\n").append(String.format(MESSAGE_DUPLICATE_PHONE_WARNING, toAdd.getPhone()));
+        }
+        return warning.toString();
     }
 
     @Override

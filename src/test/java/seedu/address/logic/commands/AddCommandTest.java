@@ -47,6 +47,68 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_distinctContactDetails_addSuccessfulWithoutWarning() throws Exception {
+        assertAddWithWarning(List.of(ALICE), new PersonBuilder().build(), "");
+    }
+
+    @Test
+    public void execute_sharedEmail_addSuccessfulWithEmailWarning() throws Exception {
+        Person person = new PersonBuilder().withEmail(ALICE.getEmail().value).build();
+        assertAddWithWarning(List.of(ALICE), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail()));
+    }
+
+    @Test
+    public void execute_sharedPhone_addSuccessfulWithPhoneWarning() throws Exception {
+        Person person = new PersonBuilder().withPhone(ALICE.getPhone().value).build();
+        assertAddWithWarning(List.of(ALICE), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+    }
+
+    @Test
+    public void execute_sharedEmailAndPhone_addSuccessfulWithBothWarnings() throws Exception {
+        Person person = new PersonBuilder(ALICE).withName("New Contact").build();
+        assertAddWithWarning(List.of(ALICE), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail())
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+    }
+
+    @Test
+    public void execute_emailAndPhoneBelongToDifferentContacts_addSuccessfulWithBothWarnings() throws Exception {
+        Person emailOwner = new PersonBuilder().withName("Email Owner").withPhone("11111111").build();
+        Person phoneOwner = new PersonBuilder().withName("Phone Owner").withEmail("other@example.com").build();
+        Person person = new PersonBuilder().build();
+        assertAddWithWarning(List.of(emailOwner, phoneOwner), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail())
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+    }
+
+    @Test
+    public void execute_multipleContactsShareDetails_warnsOncePerField() throws Exception {
+        Person otherOwner = new PersonBuilder(ALICE).withName("Other Owner").build();
+        Person person = new PersonBuilder(ALICE).withName("New Contact").build();
+        assertAddWithWarning(List.of(ALICE, otherOwner), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail())
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+    }
+
+    /**
+     * Verifies both feedback and insertion when existing contacts may share details with the new person.
+     */
+    private void assertAddWithWarning(List<Person> existingPersons, Person person, String warning) throws Exception {
+        ModelStubAcceptingPersonAdded modelStub = new ModelStubAcceptingPersonAdded();
+        modelStub.personsAdded.addAll(existingPersons);
+
+        CommandResult commandResult = new AddCommand(person).execute(modelStub);
+
+        assertEquals(new CommandResult(String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(person)) + warning),
+                commandResult);
+        List<Person> expectedPersons = new ArrayList<>(existingPersons);
+        expectedPersons.add(person);
+        assertEquals(expectedPersons, modelStub.personsAdded);
+    }
+
+    @Test
     public void execute_duplicatePerson_throwsCommandException() {
         Person validPerson = new PersonBuilder().build();
         AddCommand addCommand = new AddCommand(validPerson);
@@ -194,7 +256,11 @@ public class AddCommandTest {
 
         @Override
         public ReadOnlyClientBook getClientBook() {
-            return new ClientBook();
+            ClientBook clientBook = new ClientBook();
+            for (Person person : personsAdded) {
+                clientBook.addPerson(person);
+            }
+            return clientBook;
         }
     }
 
