@@ -51,6 +51,9 @@ public class PersonCard extends UiPart<Region> {
         name.setText(person.getName().fullName);
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
+        // An unknown address is left out of the card, rather than shown as an empty line.
+        address.setVisible(!person.getAddress().isEmpty());
+        address.setManaged(!person.getAddress().isEmpty());
         email.setText(person.getEmail().value);
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
