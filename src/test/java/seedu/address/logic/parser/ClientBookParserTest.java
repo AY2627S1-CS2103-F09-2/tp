@@ -21,6 +21,7 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
@@ -98,8 +99,31 @@ public class ClientBookParserTest {
 
     @Test
     public void parseCommand_invalidProjectCommand_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectCommandParser.MESSAGE_USAGE);
+        for (String input : List.of("project", "project unknown Portal")) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectCreateMissingName_throwsParseException() {
         String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectCreateCommand.MESSAGE_USAGE);
-        for (String input : List.of("project", "project create", "project create   ", "project unknown Portal")) {
+        for (String input : List.of("project create", "project create   ")) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectAdd() throws Exception {
+        ProjectAddCommand expectedCommand = new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"));
+        assertEquals(expectedCommand, parser.parseCommand("project add 1 Client Portal"));
+        assertEquals(expectedCommand, parser.parseCommand(" \tPrOjEcT AdD  1  Client   Portal  "));
+    }
+
+    @Test
+    public void parseCommand_invalidProjectAdd_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE);
+        for (String input : List.of("project add", "project add 1", "project add 0 Portal", "project add abc Portal")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
     }

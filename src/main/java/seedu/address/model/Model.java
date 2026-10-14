@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /**
@@ -71,6 +72,17 @@ public interface Model {
      * {@code project} must not already exist in the client book.
      */
     void addProject(Project project);
+
+    /**
+     * Returns true if the client already belongs to the project in {@code clientProject}.
+     */
+    boolean hasClientProject(ClientProject clientProject);
+
+    /**
+     * Adds a client-project membership.
+     * Both client and project must already exist, and the membership must not already exist.
+     */
+    void addClientProject(ClientProject clientProject);
 
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();

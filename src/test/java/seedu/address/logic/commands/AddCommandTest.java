@@ -25,6 +25,7 @@ import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.testutil.PersonBuilder;
 
@@ -205,6 +206,16 @@ public class AddCommandTest {
 
         @Override
         public void addProject(Project project) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean hasClientProject(ClientProject clientProject) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void addClientProject(ClientProject clientProject) {
             throw new AssertionError("This method should not be called.");
         }
 

@@ -99,6 +99,23 @@ Format: `project create NAME`
 
 Example: `project create Client Portal`
 
+### Attaching a client to a project: `project add`
+
+Attaches an existing client to an existing project.
+
+Format: `project add CLIENT_INDEX PROJECT`
+
+* The index refers to the number shown in the current client list and must be a positive integer.
+* The project must already exist. Use `project create NAME` to create it first.
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* Adding a client who already belongs to the project is rejected.
+* A client can belong to multiple projects, and a project can have multiple clients.
+
+Examples:
+
+* `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
+* `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -204,6 +221,7 @@ Action | Format, Examples
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
 **Clear** | `clear`
 **Create project** | `project create NAME`<br> e.g., `project create Client Portal`
+**Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`

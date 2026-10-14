@@ -21,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -29,6 +30,7 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.storage.JsonClientBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -101,6 +103,49 @@ public class LogicManagerTest {
     public void execute_projectCreateMissingName_throwsParseException() {
         assertParseException("project create   ",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectCreateCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void execute_projectAdd_savesMembershipWithExistingProjectName() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        Project project = new Project("Client Portal");
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(AMY, project));
+
+        assertCommandSuccess("project add 1   client   portal  ",
+                String.format(ProjectAddCommand.MESSAGE_SUCCESS, AMY.getName(), project), expectedModel);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        ReadOnlyClientBook savedClientBook = storage.readClientBook().orElseThrow();
+        assertEquals(model.getClientBook(), savedClientBook);
+        assertEquals("Client Portal", savedClientBook.getClientProjectList().get(0).getProject().getName());
+    }
+
+    @Test
+    public void execute_projectAddDuplicate_throwsCommandException() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        logic.execute("project add 1 Client Portal");
+        assertCommandException("project add 1   client   portal  ", ProjectAddCommand.MESSAGE_DUPLICATE_CLIENT_PROJECT);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        assertEquals(model.getClientBook(), storage.readClientBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_projectAddMissingProject_throwsCommandException() {
+        model.addPerson(AMY);
+        assertCommandException("project add 1 Client Portal",
+                String.format(ProjectAddCommand.MESSAGE_PROJECT_NOT_FOUND, "Client Portal"));
+    }
+
+    @Test
+    public void execute_projectAddInvalidIndex_throwsCommandException() {
+        model.addPerson(AMY);
+        model.addProject(new Project("Client Portal"));
+        assertCommandException("project add 2 Client Portal",
+                String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 1));
     }
 
     @Test

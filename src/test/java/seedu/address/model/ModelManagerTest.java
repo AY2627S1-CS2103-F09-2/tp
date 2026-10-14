@@ -14,8 +14,12 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.exceptions.PersonNotFoundException;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
+import seedu.address.model.project.exceptions.DuplicateClientProjectException;
 import seedu.address.model.project.exceptions.DuplicateProjectException;
+import seedu.address.model.project.exceptions.ProjectNotFoundException;
 import seedu.address.testutil.ClientBookBuilder;
 
 public class ModelManagerTest {
@@ -105,6 +109,76 @@ public class ModelManagerTest {
         Project duplicate = new Project("  client   portal  ");
         assertThrows(DuplicateProjectException.class, () -> modelManager.addProject(duplicate));
         assertEquals(List.of(new Project("Client Portal")), modelManager.getClientBook().getProjectList());
+    }
+
+    @Test
+    public void hasClientProject_nullMembership_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasClientProject(null));
+    }
+
+    @Test
+    public void hasClientProject_membershipNotInClientBook_returnsFalse() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addProject(project);
+        assertFalse(modelManager.hasClientProject(new ClientProject(ALICE, project)));
+    }
+
+    @Test
+    public void hasClientProject_membershipInClientBook_returnsTrue() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addProject(project);
+        modelManager.addClientProject(new ClientProject(ALICE, project));
+        assertTrue(modelManager.hasClientProject(new ClientProject(ALICE, new Project("  client   portal  "))));
+        assertFalse(modelManager.hasClientProject(new ClientProject(BENSON, project)));
+    }
+
+    @Test
+    public void addClientProject_nullMembership_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.addClientProject(null));
+    }
+
+    @Test
+    public void addClientProject_validMembership_addsMembership() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addProject(project);
+        ClientProject membership = new ClientProject(ALICE, project);
+        modelManager.addClientProject(membership);
+        assertEquals(List.of(membership), modelManager.getClientBook().getClientProjectList());
+    }
+
+    @Test
+    public void addClientProject_duplicateMembership_throwsDuplicateClientProjectException() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addProject(project);
+        ClientProject membership = new ClientProject(ALICE, project);
+        modelManager.addClientProject(membership);
+        ClientProject duplicate = new ClientProject(ALICE, new Project("  client   portal  "));
+
+        assertThrows(DuplicateClientProjectException.class, () -> modelManager.addClientProject(duplicate));
+        assertEquals(List.of(membership), modelManager.getClientBook().getClientProjectList());
+    }
+
+    @Test
+    public void addClientProject_missingClient_throwsPersonNotFoundException() {
+        Project project = new Project("Client Portal");
+        modelManager.addProject(project);
+        ClientProject membership = new ClientProject(ALICE, project);
+
+        assertThrows(PersonNotFoundException.class, () -> modelManager.addClientProject(membership));
+        assertTrue(modelManager.getClientBook().getClientProjectList().isEmpty());
+    }
+
+    @Test
+    public void addClientProject_missingProject_throwsProjectNotFoundException() {
+        modelManager.addPerson(ALICE);
+        ClientProject membership = new ClientProject(ALICE, new Project("Client Portal"));
+
+        assertThrows(ProjectNotFoundException.class, () -> modelManager.addClientProject(membership));
+        assertTrue(modelManager.getClientBook().getClientProjectList().isEmpty());
     }
 
     @Test

@@ -11,6 +11,7 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /**
@@ -105,6 +106,17 @@ public class ModelManager implements Model {
     @Override
     public void addProject(Project project) {
         clientBook.addProject(project);
+    }
+
+    @Override
+    public boolean hasClientProject(ClientProject clientProject) {
+        requireNonNull(clientProject);
+        return clientBook.hasClientProject(clientProject);
+    }
+
+    @Override
+    public void addClientProject(ClientProject clientProject) {
+        clientBook.addClientProject(clientProject);
     }
 
     //=========== Filtered Person List Accessors =============================================================
