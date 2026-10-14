@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.AMY;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
+import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -214,6 +216,65 @@ public class LogicManagerTest {
     public void execute_projectRemoveMissingName_throwsParseException() {
         assertParseException("project remove 1   ",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void execute_projectListAfterMembershipChanges_showsCurrentProjects() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        logic.execute("project create Website Redesign");
+        logic.execute("project add 1 Website Redesign");
+        logic.execute("project add 1 client portal");
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+
+        assertCommandSuccess("project list 1",
+                String.format(ProjectListCommand.MESSAGE_SUCCESS, AMY.getName(), "Website Redesign\nClient Portal"),
+                expectedModel);
+
+        logic.execute("project remove 1 Website Redesign");
+        expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        assertCommandSuccess("project list 1",
+                String.format(ProjectListCommand.MESSAGE_SUCCESS, AMY.getName(), "Client Portal"), expectedModel);
+
+        logic.execute("project remove 1 Client Portal");
+        expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        assertCommandSuccess("project list 1",
+                String.format(ProjectListCommand.MESSAGE_EMPTY, AMY.getName()), expectedModel);
+    }
+
+    @Test
+    public void execute_projectListNoProjects_showsEmptyMessage() throws Exception {
+        model.addPerson(AMY);
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        assertCommandSuccess("project list 1",
+                String.format(ProjectListCommand.MESSAGE_EMPTY, AMY.getName()), expectedModel);
+    }
+
+    @Test
+    public void execute_projectListAfterFind_usesDisplayedIndex() throws Exception {
+        model.addPerson(AMY);
+        model.addPerson(ALICE);
+        Project project = new Project("Client Portal");
+        model.addProject(project);
+        model.addClientProject(new ClientProject(ALICE, project));
+        logic.execute("find Alice");
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> person.isSamePerson(ALICE));
+
+        assertCommandSuccess("project list 1",
+                String.format(ProjectListCommand.MESSAGE_SUCCESS, ALICE.getName(), "Client Portal"), expectedModel);
+    }
+
+    @Test
+    public void execute_projectListInvalidIndex_throwsCommandException() {
+        model.addPerson(AMY);
+        assertCommandException("project list 2", String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 1));
+    }
+
+    @Test
+    public void execute_projectListExtraArguments_throwsParseException() {
+        assertParseException("project list 1 Client Portal",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE));
     }
 
     @Test

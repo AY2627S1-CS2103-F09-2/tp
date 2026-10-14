@@ -23,6 +23,7 @@ import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
+import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
@@ -143,6 +144,21 @@ public class ClientBookParserTest {
         List<String> inputs = List.of("project remove", "project remove 1", "project remove 0 Portal",
                 "project remove abc Portal");
         for (String input : inputs) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectList() throws Exception {
+        ProjectListCommand expectedCommand = new ProjectListCommand(INDEX_FIRST_PERSON);
+        assertEquals(expectedCommand, parser.parseCommand("project list 1"));
+        assertEquals(expectedCommand, parser.parseCommand(" \tPrOjEcT LiSt  1  "));
+    }
+
+    @Test
+    public void parseCommand_invalidProjectList_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE);
+        for (String input : List.of("project list", "project list 0", "project list abc", "project list 1 Portal")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
     }
