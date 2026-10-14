@@ -1,6 +1,7 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
@@ -27,6 +29,7 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.Project;
 import seedu.address.storage.JsonClientBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -68,6 +71,36 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_EMPTY, model);
+    }
+
+    @Test
+    public void execute_projectCreate_savesProject() throws Exception {
+        Project project = new Project("Client Portal");
+        Model expectedModel = new ModelManager();
+        expectedModel.addProject(project);
+
+        assertCommandSuccess("project create   Client   Portal  ",
+                String.format(ProjectCreateCommand.MESSAGE_SUCCESS, project), expectedModel);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        ReadOnlyClientBook savedClientBook = storage.readClientBook().orElseThrow();
+        assertEquals(model.getClientBook(), savedClientBook);
+        assertEquals("Client Portal", savedClientBook.getProjectList().get(0).getName());
+    }
+
+    @Test
+    public void execute_projectCreateDuplicate_throwsCommandException() throws Exception {
+        logic.execute("project create Client Portal");
+        assertCommandException("project create   client   portal  ", ProjectCreateCommand.MESSAGE_DUPLICATE_PROJECT);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        assertEquals(model.getClientBook(), storage.readClientBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_projectCreateMissingName_throwsParseException() {
+        assertParseException("project create   ",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectCreateCommand.MESSAGE_USAGE));
     }
 
     @Test

@@ -87,6 +87,18 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
+### Creating a project: `project create`
+
+Creates a project in the client book.
+
+Format: `project create NAME`
+
+* The name must not be blank and can contain spaces. Quotes are not required.
+* Leading and trailing whitespace is trimmed, and repeated spaces are collapsed.
+* Project names must be unique, ignoring case and normalized spaces. For example, after creating `Client Portal`, creating `client   portal` is rejected.
+
+Example: `project create Client Portal`
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -191,6 +203,7 @@ Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
 **Clear** | `clear`
+**Create project** | `project create NAME`<br> e.g., `project create Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`

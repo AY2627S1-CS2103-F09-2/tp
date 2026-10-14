@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.project.Project;
+import seedu.address.model.project.exceptions.DuplicateProjectException;
 import seedu.address.testutil.ClientBookBuilder;
 
 public class ModelManagerTest {
@@ -66,6 +68,43 @@ public class ModelManagerTest {
     public void hasPerson_personInClientBook_returnsTrue() {
         modelManager.addPerson(ALICE);
         assertTrue(modelManager.hasPerson(ALICE));
+    }
+
+    @Test
+    public void hasProject_nullProject_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasProject(null));
+    }
+
+    @Test
+    public void hasProject_projectNotInClientBook_returnsFalse() {
+        assertFalse(modelManager.hasProject(new Project("Client Portal")));
+    }
+
+    @Test
+    public void hasProject_projectInClientBook_returnsTrue() {
+        modelManager.addProject(new Project("Client Portal"));
+        assertTrue(modelManager.hasProject(new Project("Client Portal")));
+        assertTrue(modelManager.hasProject(new Project("  client   portal  ")));
+    }
+
+    @Test
+    public void addProject_nullProject_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.addProject(null));
+    }
+
+    @Test
+    public void addProject_validProject_addsProject() {
+        Project project = new Project("Client Portal");
+        modelManager.addProject(project);
+        assertEquals(List.of(project), modelManager.getClientBook().getProjectList());
+    }
+
+    @Test
+    public void addProject_duplicateProject_throwsDuplicateProjectException() {
+        modelManager.addProject(new Project("Client Portal"));
+        Project duplicate = new Project("  client   portal  ");
+        assertThrows(DuplicateProjectException.class, () -> modelManager.addProject(duplicate));
+        assertEquals(List.of(new Project("Client Portal")), modelManager.getClientBook().getProjectList());
     }
 
     @Test

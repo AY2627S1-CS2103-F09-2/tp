@@ -16,6 +16,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.project.Project;
 import seedu.address.model.tag.Tag;
 
 public class ParserUtilTest {
@@ -83,6 +84,31 @@ public class ParserUtilTest {
         assertEquals("Rachel Walker", name.fullName);
         assertThrows(ParseException.class, () -> ParserUtil.parseName("   "));
         assertThrows(ParseException.class, () -> ParserUtil.parseName("Rachel\tWalker"));
+    }
+
+    @Test
+    public void parseProject_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseProject(null));
+    }
+
+    @Test
+    public void parseProject_blankName_throwsParseException() {
+        for (String name : List.of("", "   ", WHITESPACE)) {
+            assertThrows(ParseException.class, Project.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseProject(name));
+        }
+    }
+
+    @Test
+    public void parseProject_validName_returnsProject() throws Exception {
+        Project project = ParserUtil.parseProject("Client Portal");
+        assertEquals(new Project("Client Portal"), project);
+        assertEquals("Client Portal", project.getName());
+    }
+
+    @Test
+    public void parseProject_extraWhitespace_returnsNormalizedProject() throws Exception {
+        Project project = ParserUtil.parseProject(WHITESPACE + "Client   Portal" + WHITESPACE);
+        assertEquals("Client Portal", project.getName());
     }
 
     @Test
