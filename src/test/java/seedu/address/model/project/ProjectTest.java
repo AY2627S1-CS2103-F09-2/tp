@@ -30,4 +30,17 @@ public class ProjectTest {
         assertTrue(new Project("Hackathon").isSameProject(new Project("HACKATHON")));
         assertFalse(new Project("Hackathon").equals(new Project("Client Portal")));
     }
+
+    @Test
+    public void accessorsAndObjectMethods_success() {
+        Project project = new Project("Hackathon");
+
+        assertEquals("Hackathon", project.getProjectName());
+        assertFalse(project.isSameProject(null));
+        assertEquals(project, project);
+        assertFalse(project.equals("Hackathon"));
+        assertEquals("Hackathon".toLowerCase().hashCode(), project.hashCode());
+        assertEquals("Hackathon", project.toString());
+        assertFalse(Project.isValidProjectName(null));
+    }
 }

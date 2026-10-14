@@ -2,6 +2,7 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TypicalPersons.ALICE;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.ClientBook;
+import seedu.address.model.project.ClientProject;
+import seedu.address.model.project.Project;
+import seedu.address.testutil.PersonBuilder;
 import seedu.address.testutil.TypicalPersons;
 
 public class JsonSerializableClientBookTest {
@@ -54,6 +58,49 @@ public class JsonSerializableClientBookTest {
                 """;
         JsonSerializableClientBook data = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class);
         assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PERSON,
+                data::toModelType);
+    }
+
+    @Test
+    public void toModelType_duplicateProjects_throwsIllegalValueException() throws Exception {
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon")),
+                        new JsonAdaptedProject(new Project("hackathon"))),
+                java.util.List.of());
+
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PROJECT,
+                data::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidOrDuplicateClientProjects_throwsIllegalValueException() throws Exception {
+        JsonSerializableClientBook invalidData = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject("Unknown", "Hackathon")));
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_INVALID_CLIENT_PROJECT,
+                invalidData::toModelType);
+
+        JsonSerializableClientBook duplicateData = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject(new ClientProject(ALICE, new Project("Hackathon"))),
+                        new JsonAdaptedClientProject(new ClientProject(
+                                new PersonBuilder(ALICE).withPhone("91234567").build(),
+                                new Project("hackathon")))));
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_CLIENT_PROJECT,
+                duplicateData::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullProjectNames_throwsIllegalValueException() throws Exception {
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject(null, null)));
+
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_INVALID_CLIENT_PROJECT,
                 data::toModelType);
     }
 
