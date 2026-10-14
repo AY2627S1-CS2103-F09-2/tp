@@ -84,6 +84,12 @@ public interface Model {
      */
     void addClientProject(ClientProject clientProject);
 
+    /**
+     * Removes the given client-project membership while retaining the client and project.
+     * The membership must already exist.
+     */
+    void removeClientProject(ClientProject clientProject);
+
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 

@@ -17,6 +17,7 @@ import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
+import seedu.address.model.project.exceptions.ClientProjectNotFoundException;
 import seedu.address.model.project.exceptions.DuplicateClientProjectException;
 import seedu.address.model.project.exceptions.DuplicateProjectException;
 import seedu.address.model.project.exceptions.ProjectNotFoundException;
@@ -179,6 +180,64 @@ public class ModelManagerTest {
 
         assertThrows(ProjectNotFoundException.class, () -> modelManager.addClientProject(membership));
         assertTrue(modelManager.getClientBook().getClientProjectList().isEmpty());
+    }
+
+    @Test
+    public void removeClientProject_nullMembership_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.removeClientProject(null));
+    }
+
+    @Test
+    public void removeClientProject_missingMembership_throwsClientProjectNotFoundException() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(BENSON);
+        modelManager.addProject(project);
+        ClientProject existingMembership = new ClientProject(ALICE, project);
+        modelManager.addClientProject(existingMembership);
+        ClientProject missingMembership = new ClientProject(BENSON, project);
+
+        assertThrows(ClientProjectNotFoundException.class, () -> modelManager.removeClientProject(missingMembership));
+        assertEquals(List.of(existingMembership), modelManager.getClientBook().getClientProjectList());
+        assertEquals(List.of(project), modelManager.getClientBook().getProjectList());
+        assertEquals(List.of(ALICE, BENSON), modelManager.getClientBook().getPersonList());
+    }
+
+    @Test
+    public void removeClientProject_lastMembership_retainsClientAndProject() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addProject(project);
+        modelManager.addClientProject(new ClientProject(ALICE, project));
+
+        modelManager.removeClientProject(new ClientProject(ALICE, new Project("  client   portal  ")));
+
+        assertTrue(modelManager.getClientBook().getClientProjectList().isEmpty());
+        assertEquals(List.of(project), modelManager.getClientBook().getProjectList());
+        assertEquals(List.of(ALICE), modelManager.getClientBook().getPersonList());
+    }
+
+    @Test
+    public void removeClientProject_existingMembership_retainsOtherMemberships() {
+        Project project = new Project("Client Portal");
+        Project otherProject = new Project("Website Redesign");
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(BENSON);
+        modelManager.addProject(project);
+        modelManager.addProject(otherProject);
+        ClientProject targetMembership = new ClientProject(ALICE, project);
+        ClientProject otherClientMembership = new ClientProject(BENSON, project);
+        ClientProject otherProjectMembership = new ClientProject(ALICE, otherProject);
+        modelManager.addClientProject(targetMembership);
+        modelManager.addClientProject(otherClientMembership);
+        modelManager.addClientProject(otherProjectMembership);
+
+        modelManager.removeClientProject(targetMembership);
+
+        assertEquals(List.of(otherClientMembership, otherProjectMembership),
+                modelManager.getClientBook().getClientProjectList());
+        assertEquals(List.of(project, otherProject), modelManager.getClientBook().getProjectList());
+        assertEquals(List.of(ALICE, BENSON), modelManager.getClientBook().getPersonList());
     }
 
     @Test

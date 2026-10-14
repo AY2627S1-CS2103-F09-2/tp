@@ -119,6 +119,11 @@ public class ModelManager implements Model {
         clientBook.addClientProject(clientProject);
     }
 
+    @Override
+    public void removeClientProject(ClientProject clientProject) {
+        clientBook.removeClientProject(clientProject);
+    }
+
     //=========== Filtered Person List Accessors =============================================================
 
     /**

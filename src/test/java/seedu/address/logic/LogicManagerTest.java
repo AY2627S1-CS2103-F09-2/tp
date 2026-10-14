@@ -13,6 +13,7 @@ import static seedu.address.testutil.TypicalPersons.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,10 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
+import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
@@ -146,6 +149,71 @@ public class LogicManagerTest {
         model.addProject(new Project("Client Portal"));
         assertCommandException("project add 2 Client Portal",
                 String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 1));
+    }
+
+    @Test
+    public void execute_projectRemove_savesDetachmentAndRetainsClientAndProject() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        logic.execute("project add 1 Client Portal");
+        ClientBook expectedClientBook = new ClientBook(model.getClientBook());
+        expectedClientBook.setClientProjects(List.of());
+        Model expectedModel = new ModelManager(expectedClientBook, new UserPrefs());
+
+        assertCommandSuccess("project remove 1   client   portal  ",
+                String.format(ProjectRemoveCommand.MESSAGE_SUCCESS, AMY.getName(), "Client Portal"), expectedModel);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        ReadOnlyClientBook savedClientBook = storage.readClientBook().orElseThrow();
+        assertEquals(expectedClientBook, savedClientBook);
+        assertEquals(List.of(AMY), savedClientBook.getPersonList());
+        assertEquals("Client Portal", savedClientBook.getProjectList().get(0).getName());
+        assertEquals(List.of(), savedClientBook.getClientProjectList());
+    }
+
+    @Test
+    public void execute_projectRemoveNonMember_throwsCommandException() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        assertCommandException("project remove 1 Client Portal", ProjectRemoveCommand.MESSAGE_CLIENT_NOT_IN_PROJECT);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        assertEquals(model.getClientBook(), storage.readClientBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_projectRemoveRepeated_throwsCommandException() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("project create Client Portal");
+        logic.execute("project add 1 Client Portal");
+        logic.execute("project remove 1 Client Portal");
+        assertCommandException("project remove 1 client portal", ProjectRemoveCommand.MESSAGE_CLIENT_NOT_IN_PROJECT);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        assertEquals(model.getClientBook(), storage.readClientBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_projectRemoveMissingProject_throwsCommandException() {
+        model.addPerson(AMY);
+        assertCommandException("project remove 1 Client Portal",
+                String.format(ProjectRemoveCommand.MESSAGE_PROJECT_NOT_FOUND, "Client Portal"));
+    }
+
+    @Test
+    public void execute_projectRemoveInvalidIndex_throwsCommandException() {
+        model.addPerson(AMY);
+        Project project = new Project("Client Portal");
+        model.addProject(project);
+        model.addClientProject(new ClientProject(AMY, project));
+        assertCommandException("project remove 2 Client Portal",
+                String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 1));
+    }
+
+    @Test
+    public void execute_projectRemoveMissingName_throwsParseException() {
+        assertParseException("project remove 1   ",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
     }
 
     @Test

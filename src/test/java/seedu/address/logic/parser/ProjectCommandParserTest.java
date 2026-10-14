@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
+import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.model.project.Project;
 
 public class ProjectCommandParserTest {
@@ -86,6 +87,22 @@ public class ProjectCommandParserTest {
         for (String args : List.of("add", "add 1", "add 1   ", "add 0 Client Portal", "add abc Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_removeSubcommand_returnsProjectRemoveCommand() {
+        ProjectRemoveCommand expectedCommand =
+                new ProjectRemoveCommand(INDEX_FIRST_PERSON, new Project("Client Portal"));
+        assertParseSuccess(parser, "remove 1 Client Portal", expectedCommand);
+        assertParseSuccess(parser, " \t ReMoVe \t 1 \t Client   Portal \t ", expectedCommand);
+    }
+
+    @Test
+    public void parse_invalidRemoveArguments_throwsParseException() {
+        for (String args : List.of("remove", "remove 1", "remove 1   ", "remove 0 Portal", "remove abc Portal")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
         }
     }
 }

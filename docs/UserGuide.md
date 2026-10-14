@@ -116,6 +116,23 @@ Examples:
 * `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
 * `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
 
+### Detaching a client from a project: `project remove`
+
+Detaches an existing client from an existing project.
+
+Format: `project remove CLIENT_INDEX PROJECT`
+
+* The index refers to the number shown in the current client list and must be a positive integer.
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* The project must exist, and the client must belong to it. Otherwise, the command is rejected.
+* The client and project remain in the client book, even when the project has no members afterwards.
+* Other clients' memberships and the client's memberships in other projects are preserved.
+
+Examples:
+
+* `project remove 1 Client Portal` detaches the first displayed client from `Client Portal`.
+* `find Betsy` followed by `project remove 1 Client Portal` detaches the first client in the search results.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -222,6 +239,7 @@ Action | Format, Examples
 **Clear** | `clear`
 **Create project** | `project create NAME`<br> e.g., `project create Client Portal`
 **Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
+**Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
