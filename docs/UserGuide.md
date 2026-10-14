@@ -87,6 +87,68 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
+### Creating a project: `project create`
+
+Creates a project in the client book.
+
+Format: `project create NAME`
+
+* The name must not be blank and can contain spaces. Quotes are not required.
+* Leading and trailing whitespace is trimmed, and repeated spaces are collapsed.
+* Project names must be unique, ignoring case and normalized spaces. For example, after creating `Client Portal`, creating `client   portal` is rejected.
+
+Example: `project create Client Portal`
+
+### Attaching a client to a project: `project add`
+
+Attaches an existing client to an existing project.
+
+Format: `project add CLIENT_INDEX PROJECT`
+
+* The index refers to the number shown in the current client list and must be a positive integer.
+* The project must already exist. Use `project create NAME` to create it first.
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* Adding a client who already belongs to the project is rejected.
+* A client can belong to multiple projects, and a project can have multiple clients.
+
+Examples:
+
+* `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
+* `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
+
+### Detaching a client from a project: `project remove`
+
+Detaches an existing client from an existing project.
+
+Format: `project remove CLIENT_INDEX PROJECT`
+
+* The index refers to the number shown in the current client list and must be a positive integer.
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* The project must exist, and the client must belong to it. Otherwise, the command is rejected.
+* The client and project remain in the client book, even when the project has no members afterwards.
+* Other clients' memberships and the client's memberships in other projects are preserved.
+
+Examples:
+
+* `project remove 1 Client Portal` detaches the first displayed client from `Client Portal`.
+* `find Betsy` followed by `project remove 1 Client Portal` detaches the first client in the search results.
+
+### Listing a client's projects: `project list`
+
+Shows the projects assigned to an existing client.
+
+Format: `project list CLIENT_INDEX`
+
+* The index refers to the number shown in the current client list and must be a positive integer.
+* Shows each project name on a separate line, in the order the client joined the projects.
+* Shows a message when the client has no projects.
+* Keeps the current client filter and project memberships unchanged.
+
+Examples:
+
+* `project list 1` shows the first displayed client's projects.
+* `find Betsy` followed by `project list 1` shows the projects of the first client in the search results.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -191,6 +253,10 @@ Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
 **Clear** | `clear`
+**Create project** | `project create NAME`<br> e.g., `project create Client Portal`
+**Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
+**Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
+**List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`

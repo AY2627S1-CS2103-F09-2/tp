@@ -11,6 +11,8 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
+import seedu.address.model.project.Project;
 
 /**
  * Represents the in-memory model of the client book data.
@@ -91,6 +93,35 @@ public class ModelManager implements Model {
         requireAllNonNull(target, editedPerson);
 
         clientBook.setPerson(target, editedPerson);
+    }
+
+    //=========== Projects ==================================================================================
+
+    @Override
+    public boolean hasProject(Project project) {
+        requireNonNull(project);
+        return clientBook.hasProject(project);
+    }
+
+    @Override
+    public void addProject(Project project) {
+        clientBook.addProject(project);
+    }
+
+    @Override
+    public boolean hasClientProject(ClientProject clientProject) {
+        requireNonNull(clientProject);
+        return clientBook.hasClientProject(clientProject);
+    }
+
+    @Override
+    public void addClientProject(ClientProject clientProject) {
+        clientBook.addClientProject(clientProject);
+    }
+
+    @Override
+    public void removeClientProject(ClientProject clientProject) {
+        clientBook.removeClientProject(clientProject);
     }
 
     //=========== Filtered Person List Accessors =============================================================
