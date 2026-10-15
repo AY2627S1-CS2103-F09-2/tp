@@ -124,6 +124,12 @@ public class ModelManager implements Model {
         clientBook.removeClientProject(clientProject);
     }
 
+    @Override
+    public void deleteProject(Project project) {
+        requireNonNull(project);
+        clientBook.removeProject(project);
+    }
+
     //=========== Filtered Person List Accessors =============================================================
 
     /**

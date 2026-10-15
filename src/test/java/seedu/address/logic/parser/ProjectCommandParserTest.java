@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
+import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.model.project.Project;
@@ -43,7 +44,7 @@ public class ProjectCommandParserTest {
 
     @Test
     public void parse_unknownSubcommand_throwsParseException() {
-        for (String args : List.of("unknown Client Portal", "Client Portal", "createClient Portal", "delete Portal")) {
+        for (String args : List.of("unknown Client Portal", "Client Portal", "createClient Portal", "deletePortal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectCommandParser.MESSAGE_USAGE));
         }
@@ -104,6 +105,21 @@ public class ProjectCommandParserTest {
         for (String args : List.of("remove", "remove 1", "remove 1   ", "remove 0 Portal", "remove abc Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_deleteSubcommand_returnsProjectDeleteCommand() {
+        ProjectDeleteCommand expectedCommand = new ProjectDeleteCommand(new Project("Client Portal"));
+        assertParseSuccess(parser, "delete Client Portal", expectedCommand);
+        assertParseSuccess(parser, " \t DeLeTe \t Client   Portal \t ", expectedCommand);
+    }
+
+    @Test
+    public void parse_missingProjectNameForDelete_throwsParseException() {
+        for (String args : List.of("delete", "delete   ", " delete \t ")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectDeleteCommand.MESSAGE_USAGE));
         }
     }
 

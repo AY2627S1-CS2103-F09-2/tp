@@ -90,6 +90,12 @@ public interface Model {
      */
     void removeClientProject(ClientProject clientProject);
 
+    /**
+     * Deletes the given project and every client-project membership under it, keeping the clients.
+     * The project must exist in the client book.
+     */
+    void deleteProject(Project project);
+
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 

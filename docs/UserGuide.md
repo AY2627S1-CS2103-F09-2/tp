@@ -149,6 +149,23 @@ Examples:
 * `project list 1` shows the first displayed client's projects.
 * `find Betsy` followed by `project list 1` shows the projects of the first client in the search results.
 
+### Deleting a project: `project delete`
+
+Deletes a project and removes it from every client in it.
+
+Format: `project delete PROJECT`
+
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* The project must exist. Otherwise, the command is rejected.
+* Every client in the project is removed from it, but the clients themselves stay in the client book, along with their other projects.
+* The result shows how many clients the project was removed from.
+* Deleting a project cannot be undone. To get it back, create it again with `project create` and add its clients with `project add`.
+
+Examples:
+
+* `project delete Client Portal` deletes `Client Portal` and removes it from every client in it.
+* `project delete client   portal` does the same, since matching ignores case and extra spaces.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -257,6 +274,7 @@ Action | Format, Examples
 **Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
 **Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
+**Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`

@@ -241,6 +241,36 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void deleteProject_nullProject_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.deleteProject(null));
+    }
+
+    @Test
+    public void deleteProject_missingProject_throwsProjectNotFoundException() {
+        assertThrows(ProjectNotFoundException.class, () -> modelManager.deleteProject(new Project("Client Portal")));
+    }
+
+    @Test
+    public void deleteProject_existingProject_removesItsMembershipsAndKeepsClients() {
+        Project project = new Project("Client Portal");
+        Project otherProject = new Project("Website Redesign");
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(BENSON);
+        modelManager.addProject(project);
+        modelManager.addProject(otherProject);
+        modelManager.addClientProject(new ClientProject(ALICE, project));
+        modelManager.addClientProject(new ClientProject(BENSON, project));
+        ClientProject otherMembership = new ClientProject(ALICE, otherProject);
+        modelManager.addClientProject(otherMembership);
+
+        modelManager.deleteProject(new Project("  client   portal  "));
+
+        assertEquals(List.of(otherProject), modelManager.getClientBook().getProjectList());
+        assertEquals(List.of(otherMembership), modelManager.getClientBook().getClientProjectList());
+        assertEquals(List.of(ALICE, BENSON), modelManager.getClientBook().getPersonList());
+    }
+
+    @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
     }
