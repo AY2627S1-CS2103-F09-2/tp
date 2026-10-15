@@ -2,13 +2,16 @@ package seedu.address.ui;
 
 import java.util.logging.Logger;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 
 /**
  * Panel containing the list of persons.
@@ -17,16 +20,22 @@ public class PersonListPanel extends UiPart<Region> {
     private static final String FXML = "PersonListPanel.fxml";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
+    private final ReadOnlyClientBook clientBook;
+
     @FXML
     private ListView<Person> personListView;
 
     /**
      * Creates a {@code PersonListPanel} with the given {@code ObservableList}.
      */
-    public PersonListPanel(ObservableList<Person> personList) {
+    public PersonListPanel(ObservableList<Person> personList, ReadOnlyClientBook clientBook) {
         super(FXML);
+        this.clientBook = clientBook;
         personListView.setItems(personList);
         personListView.setCellFactory(listView -> new PersonListViewCell());
+        // Joining or leaving a project changes no client, so the cards are redrawn to show the new projects.
+        ListChangeListener<ClientProject> redrawCards = change -> personListView.refresh();
+        clientBook.getClientProjectList().addListener(redrawCards);
     }
 
     /**
@@ -41,7 +50,8 @@ public class PersonListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new PersonCard(person, getIndex() + 1).getRoot());
+                setGraphic(new PersonCard(person, getIndex() + 1, clientBook.getProjectsForPerson(person))
+                        .getRoot());
             }
         }
     }
