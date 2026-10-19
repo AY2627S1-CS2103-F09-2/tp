@@ -166,6 +166,23 @@ Examples:
 * `project delete Client Portal` deletes `Client Portal` and removes it from every client in it.
 * `project delete client   portal` does the same, since matching ignores case and extra spaces.
 
+### Keeping a note on a contact: `note`
+
+Keeps a short note against a contact, such as their timezone or how they prefer to be contacted.
+
+Format: `note INDEX [TEXT]`
+
+* Replaces any note the contact already has.
+* Leave out `TEXT` to remove the note.
+* The index refers to the number shown in the current contact list and must be a positive integer.
+* Everything after the index is the note, so it may contain any characters. Spaces at the start and end are removed.
+* The note is shown on the contact card. `edit` keeps it unchanged.
+
+Examples:
+
+* `note 1 Based in London, prefers email` keeps that note against the first contact.
+* `note 1` removes the first contact's note.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -279,4 +296,5 @@ Action | Format, Examples
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
+**Note** | `note INDEX [TEXT]`<br> e.g., `note 1 Based in London, prefers email`
 **Help** | `help`

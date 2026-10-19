@@ -113,9 +113,19 @@ public class PersonTest {
     }
 
     @Test
+    public void withNote_newNote_keepsOtherDetails() {
+        Person withNote = ALICE.withNote(new Note("Prefers email"));
+        assertEquals(new Note("Prefers email"), withNote.getNote());
+        assertEquals(new PersonBuilder(ALICE).withNote("Prefers email").build(), withNote);
+        assertTrue(withNote.isSamePerson(ALICE));
+        assertFalse(withNote.equals(ALICE));
+    }
+
+    @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags() + "}";
+                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", note=" + ALICE.getNote()
+                + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

@@ -15,6 +15,8 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Note;
+import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 
 public class JsonAdaptedPersonTest {
@@ -43,6 +45,26 @@ public class JsonAdaptedPersonTest {
         JsonAdaptedPerson person = new JsonAdaptedPerson("  Benson   Meier  ", VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS);
         assertEquals(BENSON, person.toModelType());
+    }
+
+    @Test
+    public void toModelType_withNote_returnsPersonWithNote() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                "Based in London", VALID_TAGS);
+        assertEquals(new Note("Based in London"), person.toModelType().getNote());
+    }
+
+    @Test
+    public void toModelType_missingNote_returnsPersonWithoutNote() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                null, VALID_TAGS);
+        assertEquals(Note.EMPTY, person.toModelType().getNote());
+    }
+
+    @Test
+    public void toModelType_savedPersonWithNote_roundTrips() throws Exception {
+        Person withNote = BENSON.withNote(new Note("Prefers calls after 6pm"));
+        assertEquals(withNote, new JsonAdaptedPerson(withNote).toModelType());
     }
 
     @Test

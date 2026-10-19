@@ -21,12 +21,14 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.NoteCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.project.Project;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -84,6 +86,13 @@ public class ClientBookParserTest {
     public void parseCommand_help() throws Exception {
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);
+    }
+
+    @Test
+    public void parseCommand_note() throws Exception {
+        assertEquals(new NoteCommand(INDEX_FIRST_PERSON, new Note("Prefers email")),
+                parser.parseCommand(NoteCommand.COMMAND_WORD + " 1 Prefers email"));
+        assertEquals(new NoteCommand(INDEX_FIRST_PERSON, Note.EMPTY), parser.parseCommand("NOTE 1"));
     }
 
     @Test
