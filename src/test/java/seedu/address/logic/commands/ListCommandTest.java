@@ -76,6 +76,8 @@ public class ListCommandTest {
 
     @Test
     public void equals() {
+        ListCommand listActive = new ListCommand(Status.ACTIVE);
+        assertTrue(listActive.equals(listActive));
         assertTrue(new ListCommand().equals(new ListCommand()));
         assertTrue(new ListCommand(Status.DONE).equals(new ListCommand(Status.DONE)));
         assertFalse(new ListCommand().equals(new ListCommand(Status.DONE)));
