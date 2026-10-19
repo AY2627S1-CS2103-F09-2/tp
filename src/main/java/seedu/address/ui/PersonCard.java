@@ -36,6 +36,8 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label id;
     @FXML
+    private Label company;
+    @FXML
     private Label phone;
     @FXML
     private Label address;
@@ -55,6 +57,10 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
+        company.setText(person.getCompany().value);
+        // A contact with no company gets no company line, rather than an empty one.
+        company.setVisible(!person.getCompany().isEmpty());
+        company.setManaged(!person.getCompany().isEmpty());
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
         // An unknown address is left out of the card, rather than shown as an empty line.

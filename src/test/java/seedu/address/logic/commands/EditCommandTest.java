@@ -50,6 +50,34 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_company_setsAndRemovesCompany() {
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person withCompany = new PersonBuilder(firstPerson).withCompany("Acme Pte Ltd").build();
+        EditCommand setCompany = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withCompany("Acme Pte Ltd").build());
+
+        Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
+        expectedModel.setPerson(firstPerson, withCompany);
+        assertCommandSuccess(setCompany, model,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(withCompany)), expectedModel);
+
+        // editing another field keeps the company
+        Person renamed = new PersonBuilder(withCompany).withName(VALID_NAME_BOB).build();
+        EditCommand rename = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
+        expectedModel.setPerson(withCompany, renamed);
+        assertCommandSuccess(rename, model,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(renamed)), expectedModel);
+
+        // "c/" alone removes it
+        EditCommand removeCompany = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withoutCompany().build());
+        expectedModel.setPerson(renamed, new PersonBuilder(firstPerson).withName(VALID_NAME_BOB).build());
+        assertCommandSuccess(removeCompany, model, String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
+                Messages.format(new PersonBuilder(firstPerson).withName(VALID_NAME_BOB).build())), expectedModel);
+    }
+
+    @Test
     public void execute_someFieldsSpecifiedUnfilteredList_success() {
         Index indexLastPerson = Index.fromOneBased(model.getFilteredPersonList().size());
         Person lastPerson = model.getFilteredPersonList().get(indexLastPerson.getZeroBased());

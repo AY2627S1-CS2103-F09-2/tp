@@ -46,6 +46,9 @@ public class Messages {
         if (!person.getAddress().isEmpty()) {
             builder.append("; Address: ").append(person.getAddress());
         }
+        if (!person.getCompany().isEmpty()) {
+            builder.append("; Company: ").append(person.getCompany());
+        }
         builder.append("; Tags: ");
         person.getTags().forEach(builder::append);
         return builder.toString();

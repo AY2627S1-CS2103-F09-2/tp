@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonAdaptedPersonTest {
     private static final String INVALID_NAME = "R@chel";
@@ -43,6 +45,27 @@ public class JsonAdaptedPersonTest {
         JsonAdaptedPerson person = new JsonAdaptedPerson("  Benson   Meier  ", VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS);
         assertEquals(BENSON, person.toModelType());
+    }
+
+    @Test
+    public void toModelType_withCompany_roundTrips() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(new PersonBuilder(BENSON).withCompany("Acme").build());
+        assertEquals(new Company("Acme"), person.toModelType().getCompany());
+    }
+
+    @Test
+    public void toModelType_missingOrEmptyCompany_returnsPersonWithoutCompany() throws Exception {
+        assertEquals(Company.EMPTY, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                null, VALID_TAGS).toModelType().getCompany());
+        assertEquals(Company.EMPTY, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                "", VALID_TAGS).toModelType().getCompany());
+    }
+
+    @Test
+    public void toModelType_invalidCompany_throwsIllegalValueException() {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                " Acme", VALID_TAGS);
+        assertThrows(IllegalValueException.class, Company.MESSAGE_CONSTRAINTS, person::toModelType);
     }
 
     @Test
