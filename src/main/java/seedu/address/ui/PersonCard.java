@@ -42,6 +42,8 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label email;
     @FXML
+    private Label status;
+    @FXML
     private Label projects;
     @FXML
     private FlowPane tags;
@@ -61,6 +63,10 @@ public class PersonCard extends UiPart<Region> {
         address.setVisible(!person.getAddress().isEmpty());
         address.setManaged(!person.getAddress().isEmpty());
         email.setText(person.getEmail().value);
+        status.setText("Status: " + person.getStatus());
+        // A contact without a status gets no status line, rather than "Status: none".
+        status.setVisible(!person.getStatus().isNone());
+        status.setManaged(!person.getStatus().isNone());
         projects.setText(formatProjects(clientProjects));
         // A client on no project gets no projects line, rather than an empty one.
         projects.setVisible(!clientProjects.isEmpty());

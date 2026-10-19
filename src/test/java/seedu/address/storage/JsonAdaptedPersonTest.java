@@ -16,6 +16,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 
 public class JsonAdaptedPersonTest {
     private static final String INVALID_NAME = "R@chel";
@@ -43,6 +44,34 @@ public class JsonAdaptedPersonTest {
         JsonAdaptedPerson person = new JsonAdaptedPerson("  Benson   Meier  ", VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS);
         assertEquals(BENSON, person.toModelType());
+    }
+
+    @Test
+    public void toModelType_withStatus_returnsPersonWithStatus() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                "On Hold", VALID_TAGS);
+        assertEquals(Status.ON_HOLD, person.toModelType().getStatus());
+    }
+
+    @Test
+    public void toModelType_missingOrBlankStatus_returnsPersonWithoutStatus() throws Exception {
+        assertEquals(Status.NONE, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                null, VALID_TAGS).toModelType().getStatus());
+        assertEquals(Status.NONE, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                " ", VALID_TAGS).toModelType().getStatus());
+    }
+
+    @Test
+    public void toModelType_invalidStatus_throwsIllegalValueException() {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                "pending", VALID_TAGS);
+        assertThrows(IllegalValueException.class, Status.MESSAGE_CONSTRAINTS, person::toModelType);
+    }
+
+    @Test
+    public void toModelType_savedPersonWithStatus_roundTrips() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(BENSON.withStatus(Status.LEAD));
+        assertEquals(BENSON.withStatus(Status.LEAD), person.toModelType());
     }
 
     @Test

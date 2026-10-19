@@ -23,17 +23,26 @@ public class Person {
 
     // Data fields
     private final Address address;
+    private final Status status;
     private final Set<Tag> tags = new HashSet<>();
+
+    /**
+     * Creates a contact without a status. Every field must be present and not null.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
+        this(name, phone, email, address, Status.NONE, tags);
+    }
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Status status, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, status, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.status = status;
         this.tags.addAll(tags);
     }
 
@@ -51,6 +60,17 @@ public class Person {
 
     public Address getAddress() {
         return address;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    /**
+     * Returns a copy of this contact with the given status, keeping every other detail.
+     */
+    public Person withStatus(Status newStatus) {
+        return new Person(name, phone, email, address, newStatus, tags);
     }
 
     /**
@@ -94,13 +114,14 @@ public class Person {
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
+                && status == otherPerson.status
                 && tags.equals(otherPerson.tags);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, phone, email, address, status, tags);
     }
 
     @Override
@@ -110,6 +131,7 @@ public class Person {
                 .add("phone", phone)
                 .add("email", email)
                 .add("address", address)
+                .add("status", status)
                 .add("tags", tags)
                 .toString();
     }
