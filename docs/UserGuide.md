@@ -183,11 +183,38 @@ Examples:
 * `note 1 Based in London, prefers email` keeps that note against the first contact.
 * `note 1` removes the first contact's note.
 
-### Listing all persons: `list`
+### Listing contacts: `list`
 
-Shows a list of all persons in the address book.
+Shows all contacts, or only the contacts with a given engagement status.
 
-Format: `list`
+Format: `list [s/STATUS]`
+
+* `list` shows every contact.
+* `list s/STATUS` shows only the contacts with that status: `lead`, `active`, `on hold`, `done`, or `none` for contacts without a status.
+* The status ignores case, and `on-hold` or `onhold` also mean `on hold`.
+
+Examples:
+
+* `list` shows every contact.
+* `list s/active` shows the clients whose engagement is active.
+
+### Setting a client's status: `status`
+
+Records where a client's engagement stands.
+
+Format: `status INDEX STATUS`
+
+* `STATUS` is one of `lead`, `active`, `on hold` or `done`. Use `none` to clear a contact's status.
+* The index refers to the number shown in the current contact list and must be a positive integer.
+* The status ignores case, and `on-hold` or `onhold` also mean `on hold`.
+* The status is shown on the contact card. Contacts without a status, such as a client's finance officer, show no status line.
+* `edit` keeps a contact's status unchanged.
+
+Examples:
+
+* `status 1 active` marks the first contact's engagement as active.
+* `status 2 on hold` puts the second contact's engagement on hold.
+* `status 2 none` clears the second contact's status.
 
 ### Editing a person: `edit`
 
@@ -295,6 +322,7 @@ Action | Format, Examples
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List** | `list`
+**List** | `list [s/STATUS]`<br> e.g., `list`, `list s/active`
 **Note** | `note INDEX [TEXT]`<br> e.g., `note 1 Based in London, prefers email`
+**Set status** | `status INDEX STATUS`<br> e.g., `status 1 active`
 **Help** | `help`

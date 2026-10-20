@@ -16,6 +16,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -29,14 +30,15 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String address;
+    private final String status;
     private final String note;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} without a note.
+     * Constructs a {@code JsonAdaptedPerson} without a status or a note.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, null, tags);
+        this(name, phone, email, address, null, null, tags);
     }
 
     /**
@@ -45,11 +47,13 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("note") String note, @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("status") String status, @JsonProperty("note") String note,
+            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.status = status;
         this.note = note;
         if (tags != null) {
             this.tags.addAll(tags);
@@ -64,6 +68,7 @@ class JsonAdaptedPerson {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
+        status = source.getStatus().toString();
         note = source.getNote().value;
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
@@ -115,11 +120,20 @@ class JsonAdaptedPerson {
             modelAddress = new Address(address);
         }
 
+        // Files saved before statuses existed have no status field, so a missing status means none.
+        final Status modelStatus;
+        if (status == null || status.isBlank()) {
+            modelStatus = Status.NONE;
+        } else {
+            modelStatus = Status.fromText(status)
+                    .orElseThrow(() -> new IllegalValueException(Status.MESSAGE_CONSTRAINTS));
+        }
+
         // Files saved before notes existed have no note field, so a missing note means none.
         final Note modelNote = note == null ? Note.EMPTY : new Note(note);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelNote, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelStatus, modelNote, modelTags);
     }
 
 }
