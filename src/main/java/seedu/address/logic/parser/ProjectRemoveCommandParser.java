@@ -3,6 +3,8 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
+import java.util.List;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -27,9 +29,9 @@ public class ProjectRemoveCommandParser implements Parser<ProjectRemoveCommand> 
         }
 
         try {
-            Index index = ParserUtil.parseIndex(arguments[0]);
+            List<Index> indexes = ParserUtil.parseIndexes(arguments[0]);
             Project project = ParserUtil.parseProject(arguments[1]);
-            return new ProjectRemoveCommand(index, project);
+            return new ProjectRemoveCommand(indexes, project);
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE), pe);

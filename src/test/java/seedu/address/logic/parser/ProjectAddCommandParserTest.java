@@ -28,6 +28,11 @@ public class ProjectAddCommandParserTest {
         assertParseSuccess(parser, "1 Portal", new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Portal")));
         assertParseSuccess(parser, "1 Client Portal",
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal")));
+        assertParseSuccess(parser, "1,2 Client Portal",
+                new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, Index.fromOneBased(2)),
+                        new Project("Client Portal")));
+        assertParseSuccess(parser, "1 2026 Portal",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("2026 Portal")));
         assertParseSuccess(parser, Integer.MAX_VALUE + " Client Portal",
                 new ProjectAddCommand(Index.fromOneBased(Integer.MAX_VALUE), new Project("Client Portal")));
     }
