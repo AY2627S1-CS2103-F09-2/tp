@@ -10,6 +10,7 @@ import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.AMY;
+import static seedu.address.testutil.TypicalPersons.BENSON;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -78,6 +79,55 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_EMPTY, model);
+    }
+
+    @Test
+    public void execute_findPartialNameKeywords_listsMatchingPersons() throws Exception {
+        model.addPerson(ALICE);
+        model.addPerson(AMY);
+        model.addPerson(BENSON);
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> List.of(ALICE, AMY).contains(person));
+
+        assertCommandSuccess("find \t aLI  \t aM missing  ",
+                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 2), expectedModel);
+        assertEquals(List.of(ALICE, AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_findResetView_restoresAllPersons() throws Exception {
+        model.addPerson(ALICE);
+        model.addPerson(AMY);
+        model.addPerson(BENSON);
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        String expectedMessage = String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 3);
+
+        logic.execute("find ali");
+        assertEquals(List.of(ALICE), logic.getFilteredPersonList());
+
+        assertCommandSuccess("find reset view", expectedMessage, expectedModel);
+        assertEquals(List.of(ALICE, AMY, BENSON), logic.getFilteredPersonList());
+
+        // Resetting an unfiltered view is safe and accepts mixed case and extra whitespace
+        assertCommandSuccess("FiNd \t ReSeT   ViEw  ", expectedMessage, expectedModel);
+
+        // Reset also restores the view after a search with no matches
+        logic.execute("find missing");
+        assertEquals(List.of(), logic.getFilteredPersonList());
+        assertCommandSuccess("find reset view", expectedMessage, expectedModel);
+        assertEquals(List.of(ALICE, AMY, BENSON), logic.getFilteredPersonList());
+
+        // Searching again after resetting applies the new filter
+        logic.execute("find am");
+        assertEquals(List.of(AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_findResetViewOnEmptyClientBook_listsNoPersons() throws Exception {
+        Model expectedModel = new ModelManager();
+        assertCommandSuccess("find reset view",
+                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 0), expectedModel);
+        assertEquals(List.of(), logic.getFilteredPersonList());
     }
 
     @Test
