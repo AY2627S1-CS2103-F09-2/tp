@@ -117,6 +117,13 @@ public class PersonTest {
     }
 
     @Test
+    public void constructor_withoutAddress_usesEmptyAddress() {
+        Person remoteClient = new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getTags());
+        assertEquals(Address.EMPTY, remoteClient.getAddress());
+        assertEquals(new PersonBuilder(ALICE).withoutAddress().build(), remoteClient);
+    }
+
+    @Test
     public void withNote_newNote_keepsOtherDetails() {
         Person withNote = ALICE.withNote(new Note("Prefers email"));
         assertEquals(new Note("Prefers email"), withNote.getNote());

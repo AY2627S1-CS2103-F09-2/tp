@@ -29,6 +29,14 @@ public class Person {
     private final Set<Tag> tags = new HashSet<>();
 
     /**
+     * Creates a contact with no known address, e.g. a remote client, and no company, status or note.
+     * Every field must be present and not null.
+     */
+    public Person(Name name, Phone phone, Email email, Set<Tag> tags) {
+        this(name, phone, email, Address.EMPTY, tags);
+    }
+
+    /**
      * Creates a contact with no known company, no status and no note.
      * Every field must be present and not null.
      */
