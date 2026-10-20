@@ -225,6 +225,11 @@ public class AddCommandTest {
         }
 
         @Override
+        public void setClientProjectRole(ClientProject clientProject, String role) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public void deleteProject(Project project) {
             throw new AssertionError("This method should not be called.");
         }

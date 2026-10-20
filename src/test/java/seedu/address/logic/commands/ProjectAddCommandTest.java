@@ -145,6 +145,16 @@ public class ProjectAddCommandTest {
     }
 
     @Test
+    public void execute_role_storesRoleOnMembership() {
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(ALICE, PROJECT, "developer"));
+
+        assertCommandSuccess(new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, "developer"), model,
+                String.format(ProjectAddCommand.MESSAGE_SUCCESS, ALICE.getName(), PROJECT), expectedModel);
+        assertEquals("developer", model.getClientBook().getClientProjectList().get(0).getRole());
+    }
+
+    @Test
     public void equals() {
         ProjectAddCommand command = new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT);
 

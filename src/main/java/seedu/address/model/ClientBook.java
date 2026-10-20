@@ -168,15 +168,28 @@ public class ClientBook implements ReadOnlyClientBook {
         clientProjects.remove(clientProject);
     }
 
+    /** Updates role for an existing client-project membership. */
+    public void setClientProjectRole(ClientProject clientProject, String role) {
+        clientProjects.setRole(clientProject, role);
+    }
+
     /**
      * Returns projects assigned to a client in insertion order.
      */
     public List<Project> getProjectsForPerson(Person person) {
         requireNonNull(person);
-        List<Project> result = new ArrayList<>();
+        return Collections.unmodifiableList(getClientProjectsForPerson(person).stream()
+                .map(ClientProject::getProject)
+                .collect(java.util.stream.Collectors.toList()));
+    }
+
+    /** Returns client-project memberships for a client in insertion order. */
+    public List<ClientProject> getClientProjectsForPerson(Person person) {
+        requireNonNull(person);
+        List<ClientProject> result = new ArrayList<>();
         for (ClientProject clientProject : clientProjects) {
             if (clientProject.getClient().isSamePerson(person)) {
-                result.add(clientProject.getProject());
+                result.add(clientProject);
             }
         }
         return Collections.unmodifiableList(result);

@@ -125,6 +125,11 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void setClientProjectRole(ClientProject clientProject, String role) {
+        clientBook.setClientProjectRole(clientProject, role);
+    }
+
+    @Override
     public void deleteProject(Project project) {
         requireNonNull(project);
         clientBook.removeProject(project);

@@ -90,6 +90,11 @@ public interface Model {
      */
     void removeClientProject(ClientProject clientProject);
 
+    /** Updates role for an existing client-project membership. */
+    default void setClientProjectRole(ClientProject clientProject, String role) {
+        throw new UnsupportedOperationException("Role updates are not supported by this model.");
+    }
+
     /**
      * Deletes the given project and every client-project membership under it, keeping the clients.
      * The project must exist in the client book.

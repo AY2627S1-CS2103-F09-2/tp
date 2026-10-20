@@ -36,7 +36,7 @@ public class ProjectListCommandTest {
         model = new ModelManager(getTypicalClientBook(), new UserPrefs());
         model.addProject(OTHER_PROJECT);
         model.addProject(PROJECT);
-        model.addClientProject(new ClientProject(ALICE, PROJECT));
+        model.addClientProject(new ClientProject(ALICE, PROJECT, "developer"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ProjectListCommandTest {
     public void execute_singleProject_listsOnlyAssignedProject() {
         Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
         assertCommandSuccess(new ProjectListCommand(INDEX_FIRST_PERSON), model,
-                "Projects for client Alice Pauline:\nClient Portal", expectedModel);
+                "Projects for client Alice Pauline:\nClient Portal (developer)", expectedModel);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ProjectListCommandTest {
         Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
 
         assertCommandSuccess(new ProjectListCommand(INDEX_FIRST_PERSON), model,
-                "Projects for client Alice Pauline:\nClient Portal\nWebsite Redesign", expectedModel);
+                "Projects for client Alice Pauline:\nClient Portal (developer)\nWebsite Redesign", expectedModel);
     }
 
     @Test

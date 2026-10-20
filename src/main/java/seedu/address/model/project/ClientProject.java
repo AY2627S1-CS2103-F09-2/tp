@@ -14,8 +14,12 @@ import seedu.address.model.person.Person;
  */
 public class ClientProject {
 
+    public static final String DEFAULT_ROLE = "";
+    public static final String MESSAGE_ROLE_CONSTRAINTS = "Role must not be blank.";
+
     private final Person client;
     private final Project project;
+    private final String role;
 
     /**
      * Constructs a {@code ClientProject}.
@@ -24,10 +28,23 @@ public class ClientProject {
      * @param project project assigned to client.
      */
     public ClientProject(Person client, Project project) {
+        this(client, project, DEFAULT_ROLE);
+    }
+
+    /**
+     * Constructs a {@code ClientProject} with a role.
+     *
+     * @param client client assigned to project.
+     * @param project project assigned to client.
+     * @param role role held by client in project; empty means no role was specified.
+     */
+    public ClientProject(Person client, Project project, String role) {
         requireNonNull(client);
         requireNonNull(project);
+        requireNonNull(role);
         this.client = client;
         this.project = project;
+        this.role = role.trim().replaceAll("\\s+", " ");
     }
 
     public Person getClient() {
@@ -36,6 +53,15 @@ public class ClientProject {
 
     public Project getProject() {
         return project;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    /** Returns true if a role is non-blank. */
+    public static boolean isValidRole(String role) {
+        return role != null && !role.trim().isEmpty();
     }
 
     /**
@@ -51,7 +77,12 @@ public class ClientProject {
      * Returns a membership with same project and updated client object.
      */
     public ClientProject withClient(Person updatedClient) {
-        return new ClientProject(updatedClient, project);
+        return new ClientProject(updatedClient, project, role);
+    }
+
+    /** Returns a membership with the same client and project and an updated role. */
+    public ClientProject withRole(String updatedRole) {
+        return new ClientProject(client, project, updatedRole);
     }
 
     @Override
@@ -64,12 +95,13 @@ public class ClientProject {
             return false;
         }
 
-        return isSameClientProject(otherClientProject);
+        return isSameClientProject(otherClientProject)
+                && role.equals(otherClientProject.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(client.getName().fullName.toLowerCase(Locale.ROOT), project);
+        return Objects.hash(client.getName().fullName.toLowerCase(Locale.ROOT), project, role);
     }
 
     @Override
@@ -77,6 +109,7 @@ public class ClientProject {
         return new ToStringBuilder(this)
                 .add("client", client)
                 .add("project", project)
+                .add("role", role)
                 .toString();
     }
 }

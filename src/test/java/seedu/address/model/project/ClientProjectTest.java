@@ -33,6 +33,18 @@ public class ClientProjectTest {
     }
 
     @Test
+    public void withRole_replacesRoleOnly() {
+        Project project = new Project("Hackathon");
+        ClientProject membership = new ClientProject(ALICE, project, "developer");
+        ClientProject updated = membership.withRole("UI");
+
+        assertEquals(ALICE, updated.getClient());
+        assertEquals(project, updated.getProject());
+        assertEquals("UI", updated.getRole());
+        assertTrue(membership.isSameClientProject(updated));
+    }
+
+    @Test
     public void objectMethods_handleDifferentObjects() {
         ClientProject membership = new ClientProject(ALICE, new Project("Hackathon"));
 

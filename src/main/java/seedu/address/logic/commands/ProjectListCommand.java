@@ -11,7 +11,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
-import seedu.address.model.project.Project;
+import seedu.address.model.project.ClientProject;
 
 /**
  * Lists the projects assigned to a client identified by their displayed index.
@@ -49,13 +49,21 @@ public class ProjectListCommand extends Command {
         }
 
         Person client = lastShownList.get(targetIndex.getZeroBased());
-        List<Project> projects = model.getClientBook().getProjectsForPerson(client);
-        if (projects.isEmpty()) {
+        List<ClientProject> memberships = model.getClientBook().getClientProjectsForPerson(client);
+        if (memberships.isEmpty()) {
             return new CommandResult(String.format(MESSAGE_EMPTY, client.getName()));
         }
 
-        String projectNames = projects.stream().map(Project::getName).collect(Collectors.joining("\n"));
+        String projectNames = memberships.stream()
+                .map(ProjectListCommand::formatMembership)
+                .collect(Collectors.joining("\n"));
         return new CommandResult(String.format(MESSAGE_SUCCESS, client.getName(), projectNames));
+    }
+
+    private static String formatMembership(ClientProject membership) {
+        String projectName = membership.getProject().getName();
+        return membership.getRole().isEmpty()
+                ? projectName : projectName + " (" + membership.getRole() + ")";
     }
 
     @Override

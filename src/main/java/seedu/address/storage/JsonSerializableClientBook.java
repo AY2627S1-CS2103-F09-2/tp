@@ -93,7 +93,9 @@ class JsonSerializableClientBook {
                 throw new IllegalValueException(MESSAGE_INVALID_CLIENT_PROJECT);
             }
 
-            ClientProject clientProject = new ClientProject(client, project);
+            ClientProject clientProject = new ClientProject(client, project,
+                    jsonAdaptedClientProject.getRole() == null
+                            ? ClientProject.DEFAULT_ROLE : jsonAdaptedClientProject.getRole());
             if (clientBook.hasClientProject(clientProject)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_CLIENT_PROJECT);
             }

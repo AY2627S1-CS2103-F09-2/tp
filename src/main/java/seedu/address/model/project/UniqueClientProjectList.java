@@ -51,6 +51,19 @@ public class UniqueClientProjectList implements Iterable<ClientProject> {
         }
     }
 
+    /** Replaces role for an existing client-project membership. */
+    public void setRole(ClientProject target, String role) {
+        requireAllNonNull(target, role);
+        if (!contains(target)) {
+            throw new ClientProjectNotFoundException();
+        }
+        List<ClientProject> replacementMemberships = internalList.stream()
+                .map(membership -> membership.isSameClientProject(target)
+                        ? membership.withRole(role) : membership)
+                .collect(Collectors.toList());
+        internalList.setAll(replacementMemberships);
+    }
+
     /**
      * Removes all memberships for a client.
      */
