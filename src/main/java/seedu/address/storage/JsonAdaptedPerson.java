@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Note;
@@ -30,15 +31,16 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String address;
+    private final String company;
     private final String status;
     private final String note;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} without a status or a note.
+     * Constructs a {@code JsonAdaptedPerson} with the given person details, and no company, status or note.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, null, null, tags);
+        this(name, phone, email, address, null, null, null, tags);
     }
 
     /**
@@ -47,12 +49,14 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("status") String status, @JsonProperty("note") String note,
+            @JsonProperty("company") String company, @JsonProperty("status") String status,
+            @JsonProperty("note") String note,
             @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.company = company;
         this.status = status;
         this.note = note;
         if (tags != null) {
@@ -68,6 +72,7 @@ class JsonAdaptedPerson {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
+        company = source.getCompany().value;
         status = source.getStatus().toString();
         note = source.getNote().value;
         tags.addAll(source.getTags().stream()
@@ -120,6 +125,16 @@ class JsonAdaptedPerson {
             modelAddress = new Address(address);
         }
 
+        // Data files from before v1.4 have no company field, so a missing company is read as an empty one.
+        final Company modelCompany;
+        if (company == null || company.isEmpty()) {
+            modelCompany = Company.EMPTY;
+        } else if (!Company.isValidCompany(company)) {
+            throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
+        } else {
+            modelCompany = new Company(company);
+        }
+
         // Files saved before statuses existed have no status field, so a missing status means none.
         final Status modelStatus;
         if (status == null || status.isBlank()) {
@@ -133,7 +148,8 @@ class JsonAdaptedPerson {
         final Note modelNote = note == null ? Note.EMPTY : new Note(note);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelStatus, modelNote, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelCompany, modelStatus, modelNote,
+                modelTags);
     }
 
 }

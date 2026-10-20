@@ -110,6 +110,17 @@ public class PersonTest {
         // different tags -> returns false
         editedAlice = new PersonBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
+
+        // different company -> returns false
+        editedAlice = new PersonBuilder(ALICE).withCompany("Acme").build();
+        assertFalse(ALICE.equals(editedAlice));
+    }
+
+    @Test
+    public void constructor_withoutAddress_usesEmptyAddress() {
+        Person remoteClient = new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getTags());
+        assertEquals(Address.EMPTY, remoteClient.getAddress());
+        assertEquals(new PersonBuilder(ALICE).withoutAddress().build(), remoteClient);
     }
 
     @Test
@@ -133,8 +144,8 @@ public class PersonTest {
     @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", status=" + ALICE.getStatus()
-                + ", note=" + ALICE.getNote()
+                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", company=" + ALICE.getCompany()
+                + ", status=" + ALICE.getStatus() + ", note=" + ALICE.getNote()
                 + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
