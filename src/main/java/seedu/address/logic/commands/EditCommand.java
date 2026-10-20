@@ -101,8 +101,9 @@ public class EditCommand extends Command {
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
-        // edit does not change the status; the status command does that
+        // edit does not change the status or the note; the status and note commands do that
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, personToEdit.getStatus(),
+                personToEdit.getNote(),
                 updatedTags);
     }
 
