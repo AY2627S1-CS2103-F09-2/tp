@@ -117,9 +117,19 @@ public class PersonTest {
     }
 
     @Test
+    public void withStatus_newStatus_keepsOtherDetails() {
+        Person active = ALICE.withStatus(Status.ACTIVE);
+        assertEquals(Status.ACTIVE, active.getStatus());
+        assertEquals(new PersonBuilder(ALICE).withStatus(Status.ACTIVE).build(), active);
+        assertTrue(active.isSamePerson(ALICE));
+        assertFalse(active.equals(ALICE));
+    }
+
+    @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", company=" + ALICE.getCompany()
+                + ", status=" + ALICE.getStatus()
                 + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }

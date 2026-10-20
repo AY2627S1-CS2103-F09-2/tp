@@ -24,26 +24,29 @@ public class Person {
     // Data fields
     private final Address address;
     private final Company company;
+    private final Status status;
     private final Set<Tag> tags = new HashSet<>();
 
     /**
-     * Creates a contact whose company is not known.
+     * Creates a contact with no known company and no status.
      * Every field must be present and not null.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, Company.EMPTY, tags);
+        this(name, phone, email, address, Company.EMPTY, Status.NONE, tags);
     }
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Company company, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, company, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Company company, Status status,
+            Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, company, status, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.company = company;
+        this.status = status;
         this.tags.addAll(tags);
     }
 
@@ -65,6 +68,17 @@ public class Person {
 
     public Company getCompany() {
         return company;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    /**
+     * Returns a copy of this contact with the given status, keeping every other detail.
+     */
+    public Person withStatus(Status newStatus) {
+        return new Person(name, phone, email, address, company, newStatus, tags);
     }
 
     /**
@@ -109,13 +123,14 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && company.equals(otherPerson.company)
+                && status == otherPerson.status
                 && tags.equals(otherPerson.tags);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, company, tags);
+        return Objects.hash(name, phone, email, address, company, status, tags);
     }
 
     @Override
@@ -126,6 +141,7 @@ public class Person {
                 .add("email", email)
                 .add("address", address)
                 .add("company", company)
+                .add("status", status)
                 .add("tags", tags)
                 .toString();
     }

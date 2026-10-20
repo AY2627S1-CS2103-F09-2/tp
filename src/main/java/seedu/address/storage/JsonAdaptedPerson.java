@@ -16,6 +16,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -30,13 +31,14 @@ class JsonAdaptedPerson {
     private final String email;
     private final String address;
     private final String company;
+    private final String status;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} with the given person details and no company.
+     * Constructs a {@code JsonAdaptedPerson} with the given person details, no company and no status.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, null, tags);
+        this(name, phone, email, address, null, null, tags);
     }
 
     /**
@@ -45,12 +47,14 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("company") String company, @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("company") String company, @JsonProperty("status") String status,
+            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.company = company;
+        this.status = status;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -65,6 +69,7 @@ class JsonAdaptedPerson {
         email = source.getEmail().value;
         address = source.getAddress().value;
         company = source.getCompany().value;
+        status = source.getStatus().toString();
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -125,8 +130,17 @@ class JsonAdaptedPerson {
             modelCompany = new Company(company);
         }
 
+        // Files saved before statuses existed have no status field, so a missing status means none.
+        final Status modelStatus;
+        if (status == null || status.isBlank()) {
+            modelStatus = Status.NONE;
+        } else {
+            modelStatus = Status.fromText(status)
+                    .orElseThrow(() -> new IllegalValueException(Status.MESSAGE_CONSTRAINTS));
+        }
+
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelCompany, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelCompany, modelStatus, modelTags);
     }
 
 }

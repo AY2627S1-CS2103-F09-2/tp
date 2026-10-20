@@ -14,6 +14,7 @@ import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 import seedu.address.model.project.Project;
 import seedu.address.model.tag.Tag;
 
@@ -124,6 +125,17 @@ public class ParserUtil {
             throw new ParseException(Email.MESSAGE_CONSTRAINTS);
         }
         return new Email(trimmedEmail);
+    }
+
+    /**
+     * Parses a {@code String status} into a {@code Status}.
+     * Case is ignored, and hyphens, underscores and repeated spaces count as one space.
+     *
+     * @throws ParseException if the given {@code status} is not a status.
+     */
+    public static Status parseStatus(String status) throws ParseException {
+        requireNonNull(status);
+        return Status.fromText(status).orElseThrow(() -> new ParseException(Status.MESSAGE_CONSTRAINTS));
     }
 
     /**

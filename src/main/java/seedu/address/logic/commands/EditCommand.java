@@ -105,7 +105,9 @@ public class EditCommand extends Command {
         Company updatedCompany = editPersonDescriptor.getCompany().orElse(personToEdit.getCompany());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
-        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedCompany, updatedTags);
+        // edit does not change the status; the status command does that
+        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedCompany,
+                personToEdit.getStatus(), updatedTags);
     }
 
     @Override
