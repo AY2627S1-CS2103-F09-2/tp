@@ -25,9 +25,11 @@ import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.StatusCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Status;
 import seedu.address.model.project.Project;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
@@ -90,6 +92,14 @@ public class ClientBookParserTest {
     public void parseCommand_list() throws Exception {
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
+        assertEquals(new ListCommand(Status.ACTIVE), parser.parseCommand(ListCommand.COMMAND_WORD + " s/active"));
+    }
+
+    @Test
+    public void parseCommand_status() throws Exception {
+        assertEquals(new StatusCommand(INDEX_FIRST_PERSON, Status.ON_HOLD),
+                parser.parseCommand(StatusCommand.COMMAND_WORD + " 1 on hold"));
+        assertEquals(new StatusCommand(INDEX_FIRST_PERSON, Status.DONE), parser.parseCommand("STATUS 1 done"));
     }
 
     @Test
