@@ -16,6 +16,8 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Note;
+import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Status;
 import seedu.address.testutil.PersonBuilder;
@@ -57,37 +59,57 @@ public class JsonAdaptedPersonTest {
     @Test
     public void toModelType_missingOrEmptyCompany_returnsPersonWithoutCompany() throws Exception {
         assertEquals(Company.EMPTY, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                null, null, VALID_TAGS).toModelType().getCompany());
+                null, null, null, VALID_TAGS).toModelType().getCompany());
         assertEquals(Company.EMPTY, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                "", null, VALID_TAGS).toModelType().getCompany());
+                "", null, null, VALID_TAGS).toModelType().getCompany());
     }
 
     @Test
     public void toModelType_invalidCompany_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                " Acme", null, VALID_TAGS);
+                " Acme", null, null, VALID_TAGS);
         assertThrows(IllegalValueException.class, Company.MESSAGE_CONSTRAINTS, person::toModelType);
+    }
+
+    @Test
+    public void toModelType_withNote_returnsPersonWithNote() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                null, null, "Based in London", VALID_TAGS);
+        assertEquals(new Note("Based in London"), person.toModelType().getNote());
+    }
+
+    @Test
+    public void toModelType_missingNote_returnsPersonWithoutNote() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                null, null, null, VALID_TAGS);
+        assertEquals(Note.EMPTY, person.toModelType().getNote());
+    }
+
+    @Test
+    public void toModelType_savedPersonWithNote_roundTrips() throws Exception {
+        Person withNote = BENSON.withNote(new Note("Prefers calls after 6pm"));
+        assertEquals(withNote, new JsonAdaptedPerson(withNote).toModelType());
     }
 
     @Test
     public void toModelType_withStatus_returnsPersonWithStatus() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                null, "On Hold", VALID_TAGS);
+                null, "On Hold", null, VALID_TAGS);
         assertEquals(Status.ON_HOLD, person.toModelType().getStatus());
     }
 
     @Test
     public void toModelType_missingOrBlankStatus_returnsPersonWithoutStatus() throws Exception {
         assertEquals(Status.NONE, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                null, null, VALID_TAGS).toModelType().getStatus());
+                null, null, null, VALID_TAGS).toModelType().getStatus());
         assertEquals(Status.NONE, new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                null, " ", VALID_TAGS).toModelType().getStatus());
+                null, " ", null, VALID_TAGS).toModelType().getStatus());
     }
 
     @Test
     public void toModelType_invalidStatus_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                null, "pending", VALID_TAGS);
+                null, "pending", null, VALID_TAGS);
         assertThrows(IllegalValueException.class, Status.MESSAGE_CONSTRAINTS, person::toModelType);
     }
 

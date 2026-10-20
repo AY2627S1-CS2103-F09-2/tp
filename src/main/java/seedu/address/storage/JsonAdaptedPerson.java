@@ -14,6 +14,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Status;
@@ -32,13 +33,14 @@ class JsonAdaptedPerson {
     private final String address;
     private final String company;
     private final String status;
+    private final String note;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} with the given person details, no company and no status.
+     * Constructs a {@code JsonAdaptedPerson} with the given person details, and no company, status or note.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, null, null, tags);
+        this(name, phone, email, address, null, null, null, tags);
     }
 
     /**
@@ -48,6 +50,7 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("company") String company, @JsonProperty("status") String status,
+            @JsonProperty("note") String note,
             @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
@@ -55,6 +58,7 @@ class JsonAdaptedPerson {
         this.address = address;
         this.company = company;
         this.status = status;
+        this.note = note;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -70,6 +74,7 @@ class JsonAdaptedPerson {
         address = source.getAddress().value;
         company = source.getCompany().value;
         status = source.getStatus().toString();
+        note = source.getNote().value;
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -139,8 +144,12 @@ class JsonAdaptedPerson {
                     .orElseThrow(() -> new IllegalValueException(Status.MESSAGE_CONSTRAINTS));
         }
 
+        // Files saved before notes existed have no note field, so a missing note means none.
+        final Note modelNote = note == null ? Note.EMPTY : new Note(note);
+
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelCompany, modelStatus, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelCompany, modelStatus, modelNote,
+                modelTags);
     }
 
 }

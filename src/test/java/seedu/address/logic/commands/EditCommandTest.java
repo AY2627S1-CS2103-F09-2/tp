@@ -24,6 +24,7 @@ import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Status;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -76,6 +77,23 @@ public class EditCommandTest {
         expectedModel.setPerson(renamed, new PersonBuilder(firstPerson).withName(VALID_NAME_BOB).build());
         assertCommandSuccess(removeCompany, model, String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
                 Messages.format(new PersonBuilder(firstPerson).withName(VALID_NAME_BOB).build())), expectedModel);
+    }
+
+    @Test
+    public void execute_contactWithNote_keepsNote() {
+        Person target = model.getFilteredPersonList().get(0);
+        model.setPerson(target, target.withNote(new Note("Prefers email")));
+        Person withNote = model.getFilteredPersonList().get(0);
+        Person editedPerson = new PersonBuilder(withNote).withName(VALID_NAME_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
+
+        Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
+        expectedModel.setPerson(withNote, editedPerson);
+
+        assertCommandSuccess(editCommand, model,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+        assertEquals(new Note("Prefers email"), model.getFilteredPersonList().get(0).getNote());
     }
 
     @Test
