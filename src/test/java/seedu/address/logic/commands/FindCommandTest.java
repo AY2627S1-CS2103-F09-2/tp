@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.CARL;
 import static seedu.address.testutil.TypicalPersons.ELLE;
 import static seedu.address.testutil.TypicalPersons.FIONA;
@@ -19,6 +20,9 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.NameOrCompanyContainsKeywordsPredicate;
+import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) for {@code FindCommand}.
@@ -92,6 +96,20 @@ public class FindCommandTest {
         expectedModel.updateFilteredPersonList(person -> List.of(CARL, ELLE, FIONA).contains(person));
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(List.of(CARL, ELLE, FIONA), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_companyKeyword_personAtCompanyFound() {
+        Person bensonAtAcme = new PersonBuilder(BENSON).withCompany("Acme Pte Ltd").build();
+        model.setPerson(BENSON, bensonAtAcme);
+        expectedModel.setPerson(BENSON, bensonAtAcme);
+
+        // "acme" is in Benson's company; "alic" is part of Alice's name
+        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 2);
+        FindCommand command = new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("ACME", "alic")));
+        expectedModel.updateFilteredPersonList(person -> List.of(ALICE, bensonAtAcme).contains(person));
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(List.of(ALICE, bensonAtAcme), model.getFilteredPersonList());
     }
 
     @Test

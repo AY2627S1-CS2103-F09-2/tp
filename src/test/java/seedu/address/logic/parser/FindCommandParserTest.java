@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.FindCommand;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.NameOrCompanyContainsKeywordsPredicate;
 
 public class FindCommandParserTest {
 
@@ -25,7 +25,7 @@ public class FindCommandParserTest {
     public void parse_validArgs_returnsFindCommand() {
         // no leading and trailing whitespaces
         FindCommand expectedFindCommand =
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice", "Bob")));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("Alice", "Bob")));
         assertParseSuccess(parser, "Alice Bob", expectedFindCommand);
 
         // multiple whitespaces between keywords
@@ -42,15 +42,15 @@ public class FindCommandParserTest {
     @Test
     public void parse_otherResetKeywords_returnsNameSearch() {
         assertParseSuccess(parser, "reset",
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("reset"))));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("reset"))));
         assertParseSuccess(parser, "view",
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("view"))));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("view"))));
         assertParseSuccess(parser, "view reset",
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("view", "reset"))));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("view", "reset"))));
         assertParseSuccess(parser, "reset view Alice",
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("reset", "view", "Alice"))));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("reset", "view", "Alice"))));
         assertParseSuccess(parser, "reset views",
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("reset", "views"))));
+                new FindCommand(new NameOrCompanyContainsKeywordsPredicate(List.of("reset", "views"))));
     }
 
 }
