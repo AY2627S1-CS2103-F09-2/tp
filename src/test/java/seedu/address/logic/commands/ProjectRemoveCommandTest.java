@@ -44,10 +44,10 @@ public class ProjectRemoveCommandTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ProjectRemoveCommand(null, PROJECT));
         assertThrows(NullPointerException.class, () -> new ProjectRemoveCommand(INDEX_FIRST_PERSON, null));
-        assertThrows(NullPointerException.class,
-                () -> new ProjectRemoveCommand((List<Index>) null, PROJECT));
-        assertThrows(NullPointerException.class,
-                () -> new ProjectRemoveCommand(List.of((Index) null), PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectRemoveCommand((List<Index>) null, PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectRemoveCommand(List.of((Index) null), PROJECT));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class ProjectRemoveCommandTest {
     }
 
     @Test
-    public void execute_multipleClients_allMissing_reportsSkippedClients() {
+    public void execute_multipleClients_allSkipped() {
         String expectedMessage = String.format(ProjectRemoveCommand.MESSAGE_SKIPPED,
                 "Benson Meier, Carl Kurz");
 

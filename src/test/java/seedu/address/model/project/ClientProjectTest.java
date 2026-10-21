@@ -30,8 +30,8 @@ public class ClientProjectTest {
         assertFalse(ClientProject.isValidRole(" \t "));
         assertEquals("senior developer",
                 new ClientProject(ALICE, new Project("Hackathon"), " senior   developer ").getRole());
-        assertThrows(NullPointerException.class,
-                () -> new ClientProject(ALICE, new Project("Hackathon"), null));
+        assertThrows(NullPointerException.class, () ->
+                new ClientProject(ALICE, new Project("Hackathon"), null));
     }
 
     @Test

@@ -43,12 +43,12 @@ public class ProjectAddCommandTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ProjectAddCommand(null, PROJECT));
         assertThrows(NullPointerException.class, () -> new ProjectAddCommand(INDEX_FIRST_PERSON, null));
-        assertThrows(NullPointerException.class,
-                () -> new ProjectAddCommand((List<Index>) null, PROJECT));
-        assertThrows(NullPointerException.class,
-                () -> new ProjectAddCommand(List.of((Index) null), PROJECT));
-        assertThrows(NullPointerException.class,
-                () -> new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, (String) null));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand((List<Index>) null, PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand(List.of((Index) null), PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, (String) null));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class ProjectAddCommandTest {
     }
 
     @Test
-    public void execute_multipleClients_allExisting_reportsSkippedClients() {
+    public void execute_multipleClients_allSkipped() {
         model.addClientProject(new ClientProject(ALICE, PROJECT));
         model.addClientProject(new ClientProject(BENSON, PROJECT));
         String expectedMessage = String.format(ProjectAddCommand.MESSAGE_SKIPPED,

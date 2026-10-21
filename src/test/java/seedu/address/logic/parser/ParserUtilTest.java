@@ -140,8 +140,8 @@ public class ParserUtilTest {
     @Test
     public void parseRole_nullOrBlank_throws() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseRole(null));
-        assertThrows(ParseException.class, ClientProject.MESSAGE_ROLE_CONSTRAINTS,
-                () -> ParserUtil.parseRole(" \t "));
+        assertThrows(ParseException.class, ClientProject.MESSAGE_ROLE_CONSTRAINTS, () ->
+                ParserUtil.parseRole(" \t "));
     }
 
     @Test
