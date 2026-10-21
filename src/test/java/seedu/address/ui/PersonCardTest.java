@@ -30,4 +30,10 @@ public class PersonCardTest {
                         new ClientProject(TypicalPersons.ALICE, new Project("Client Portal"), "developer"),
                         new ClientProject(TypicalPersons.ALICE, new Project("Website Redesign"), "UI"))));
     }
+
+    @Test
+    public void formatProjects_membershipWithoutRole_showsOnlyProjectName() {
+        assertEquals("Projects: Client Portal", PersonCard.formatProjects(List.of(
+                new ClientProject(TypicalPersons.ALICE, new Project("Client Portal")))));
+    }
 }

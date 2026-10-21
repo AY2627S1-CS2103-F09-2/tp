@@ -87,4 +87,29 @@ public class UniqueClientProjectListTest {
         assertThrows(DuplicateClientProjectException.class, () ->
                 memberships.setClientProjects(List.of(membership, membership)));
     }
+
+    @Test
+    public void setRole_existingMembership_updatesOnlyMatchingMembership() {
+        Project hackathon = new Project("Hackathon");
+        Project portal = new Project("Portal");
+        ClientProject aliceMembership = new ClientProject(ALICE, hackathon, "developer");
+        ClientProject bensonMembership = new ClientProject(BENSON, hackathon, "tester");
+        ClientProject otherProjectMembership = new ClientProject(ALICE, portal, "owner");
+        UniqueClientProjectList memberships = new UniqueClientProjectList();
+        memberships.setClientProjects(List.of(aliceMembership, bensonMembership, otherProjectMembership));
+
+        memberships.setRole(new ClientProject(ALICE, new Project("hackathon")), " senior   developer ");
+
+        assertEquals("senior developer", List.copyOf(memberships.asUnmodifiableObservableList()).get(0).getRole());
+        assertEquals("tester", List.copyOf(memberships.asUnmodifiableObservableList()).get(1).getRole());
+        assertEquals("owner", List.copyOf(memberships.asUnmodifiableObservableList()).get(2).getRole());
+    }
+
+    @Test
+    public void setRole_missingMembership_throws() {
+        UniqueClientProjectList memberships = new UniqueClientProjectList();
+
+        assertThrows(ClientProjectNotFoundException.class, () ->
+                memberships.setRole(new ClientProject(ALICE, new Project("Hackathon")), "developer"));
+    }
 }

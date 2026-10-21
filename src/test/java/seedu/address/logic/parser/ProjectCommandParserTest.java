@@ -15,6 +15,7 @@ import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.ProjectRoleCommand;
 import seedu.address.model.project.Project;
 
 public class ProjectCommandParserTest {
@@ -135,6 +136,23 @@ public class ProjectCommandParserTest {
         for (String args : List.of("list", "list   ", "list 0", "list abc", "list 1 Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_roleSubcommand_returnsProjectRoleCommand() {
+        ProjectRoleCommand expectedCommand = new ProjectRoleCommand(
+                INDEX_FIRST_PERSON, new Project("Client Portal"), "developer");
+        assertParseSuccess(parser, "role 1 Client Portal r/developer", expectedCommand);
+        assertParseSuccess(parser, " \t RoLe \t 1 \t Client   Portal r/UI ",
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "UI"));
+    }
+
+    @Test
+    public void parse_invalidRoleArguments_throwsParseException() {
+        for (String args : List.of("role", "role 1 Client Portal", "role 0 Client Portal r/UI")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));
         }
     }
 }

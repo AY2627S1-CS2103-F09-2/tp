@@ -44,6 +44,10 @@ public class ProjectRemoveCommandTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ProjectRemoveCommand(null, PROJECT));
         assertThrows(NullPointerException.class, () -> new ProjectRemoveCommand(INDEX_FIRST_PERSON, null));
+        assertThrows(NullPointerException.class,
+                () -> new ProjectRemoveCommand((List<Index>) null, PROJECT));
+        assertThrows(NullPointerException.class,
+                () -> new ProjectRemoveCommand(List.of((Index) null), PROJECT));
     }
 
     @Test
@@ -146,6 +150,38 @@ public class ProjectRemoveCommandTest {
     }
 
     @Test
+    public void execute_multipleClients_removesAllExisting() {
+        model.addClientProject(new ClientProject(BENSON, PROJECT));
+        String expectedMessage = String.format(ProjectRemoveCommand.MESSAGE_SUCCESS_MULTIPLE,
+                PROJECT, "Alice Pauline, Benson Meier");
+
+        assertCommandSuccess(new ProjectRemoveCommand(
+                        List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                expectedMessage, expectedModelWithMemberships());
+    }
+
+    @Test
+    public void execute_multipleClients_skipsMissingAndRemovesExisting() {
+        String expectedMessage = String.format(ProjectRemoveCommand.MESSAGE_SUCCESS_MULTIPLE,
+                PROJECT, "Alice Pauline") + "\n"
+                + String.format(ProjectRemoveCommand.MESSAGE_SKIPPED, "Benson Meier");
+
+        assertCommandSuccess(new ProjectRemoveCommand(
+                        List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                expectedMessage, expectedModelWithMemberships());
+    }
+
+    @Test
+    public void execute_multipleClients_allMissing_reportsSkippedClients() {
+        String expectedMessage = String.format(ProjectRemoveCommand.MESSAGE_SKIPPED,
+                "Benson Meier, Carl Kurz");
+
+        assertCommandSuccess(new ProjectRemoveCommand(
+                        List.of(INDEX_SECOND_PERSON, Index.fromOneBased(3)), PROJECT), model,
+                expectedMessage, expectedModelWithMemberships(new ClientProject(ALICE, PROJECT)));
+    }
+
+    @Test
     public void equals() {
         ProjectRemoveCommand command = new ProjectRemoveCommand(INDEX_FIRST_PERSON, PROJECT);
 
@@ -154,6 +190,8 @@ public class ProjectRemoveCommandTest {
         assertTrue(command.equals(new ProjectRemoveCommand(INDEX_FIRST_PERSON, new Project("  client   portal  "))));
         assertFalse(command.equals(new ProjectRemoveCommand(INDEX_SECOND_PERSON, PROJECT)));
         assertFalse(command.equals(new ProjectRemoveCommand(INDEX_FIRST_PERSON, new Project("Website Redesign"))));
+        assertFalse(command.equals(new ProjectRemoveCommand(
+                List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT)));
         assertFalse(command.equals(new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT)));
         assertFalse(command.equals(null));
     }
@@ -164,6 +202,8 @@ public class ProjectRemoveCommandTest {
         String expected = ProjectRemoveCommand.class.getCanonicalName() + "{targetIndex=" + INDEX_FIRST_PERSON
                 + ", project=" + PROJECT + "}";
         assertEquals(expected, command.toString());
+        assertTrue(new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT)
+                .toString().contains("targetIndexes="));
     }
 
     /**

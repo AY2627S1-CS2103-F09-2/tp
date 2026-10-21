@@ -1,6 +1,8 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -61,10 +63,29 @@ public class ProjectRoleCommandTest {
     }
 
     @Test
+    public void execute_missingProject_throwsCommandException() {
+        Project missingProject = new Project("Website Redesign");
+
+        assertCommandFailure(new ProjectRoleCommand(INDEX_FIRST_PERSON, missingProject, "UI"), model,
+                String.format(ProjectRoleCommand.MESSAGE_PROJECT_NOT_FOUND, missingProject));
+    }
+
+    @Test
     public void execute_invalidIndex_throwsCommandException() {
         assertCommandFailure(new ProjectRoleCommand(
                         seedu.address.commons.core.index.Index.fromOneBased(100), PROJECT, "UI"), model,
                 String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX,
                         model.getFilteredPersonList().size()));
+    }
+
+    @Test
+    public void equalsAndToString_includeRole() {
+        ProjectRoleCommand command = new ProjectRoleCommand(INDEX_FIRST_PERSON, PROJECT, "developer");
+
+        assertTrue(command.equals(command));
+        assertTrue(command.equals(new ProjectRoleCommand(INDEX_FIRST_PERSON, PROJECT, "developer")));
+        assertFalse(command.equals(new ProjectRoleCommand(INDEX_FIRST_PERSON, PROJECT, "UI")));
+        assertFalse(command.equals(null));
+        assertTrue(command.toString().contains("role=developer"));
     }
 }
