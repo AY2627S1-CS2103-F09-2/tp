@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.List;
 
@@ -27,9 +26,6 @@ public class FindCommandParser implements Parser<FindCommand> {
         }
 
         String[] nameKeywords = trimmedArgs.split("\\s+");
-        if (String.join(" ", nameKeywords).equalsIgnoreCase(FindCommand.RESET_VIEW_ARGUMENTS)) {
-            return new FindCommand(PREDICATE_SHOW_ALL_PERSONS);
-        }
 
         return new FindCommand(new NameContainsKeywordsPredicate(List.of(nameKeywords)));
     }
