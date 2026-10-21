@@ -153,6 +153,24 @@ Examples:
 * `project list 1` shows the first displayed client's projects.
 * `find Betsy` followed by `project list 1` shows the projects of the first client in the search results.
 
+### Viewing a project's clients: `project view`
+
+Filters the contact list to show only the clients belonging to an existing project.
+
+Format: `project view PROJECT`
+
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* The project must exist. Otherwise, the command is rejected and the current list is kept.
+* Replaces any previous contact filter and shows the project's clients in their original contact list order.
+* Shows the number of clients found, or an empty list and a message when the project has no clients.
+* The displayed list updates when project memberships change. Client data and memberships are preserved by viewing.
+* Use `list` to show all contacts again.
+
+Examples:
+
+* `project view Client Portal` shows only the clients in `Client Portal`.
+* `project view client   portal` does the same, since matching ignores case and extra spaces.
+
 ### Deleting a project: `project delete`
 
 Deletes a project and removes it from every client in it.
@@ -325,6 +343,7 @@ Action | Format, Examples
 **Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
 **Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
+**View project clients** | `project view PROJECT`<br> e.g., `project view Client Portal`
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`

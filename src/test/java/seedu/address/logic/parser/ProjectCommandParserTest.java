@@ -15,6 +15,7 @@ import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.model.project.Project;
 
 public class ProjectCommandParserTest {
@@ -135,6 +136,28 @@ public class ProjectCommandParserTest {
         for (String args : List.of("list", "list   ", "list 0", "list abc", "list 1 Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_viewSubcommand_returnsProjectViewCommand() {
+        assertParseSuccess(parser, "view Portal", new ProjectViewCommand(new Project("Portal")));
+        ProjectViewCommand expectedCommand = new ProjectViewCommand(new Project("Client Portal"));
+        assertParseSuccess(parser, "view Client Portal", expectedCommand);
+        assertParseSuccess(parser, " \t ViEw \t Client   Portal \t ", expectedCommand);
+    }
+
+    @Test
+    public void parse_viewNameContainingCommandWordsAndPrefixes_returnsProjectViewCommand() {
+        assertParseSuccess(parser, "view add client n/Website - Phase 1",
+                new ProjectViewCommand(new Project("add client n/Website - Phase 1")));
+    }
+
+    @Test
+    public void parse_missingProjectNameForView_throwsParseException() {
+        for (String args : List.of("view", "view   ", " view \t\r\n ")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectViewCommand.MESSAGE_USAGE));
         }
     }
 }
