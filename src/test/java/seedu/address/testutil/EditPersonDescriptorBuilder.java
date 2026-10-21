@@ -74,6 +74,14 @@ public class EditPersonDescriptorBuilder {
     }
 
     /**
+     * Sets the {@code EditPersonDescriptor} that we are building to remove the address.
+     */
+    public EditPersonDescriptorBuilder withoutAddress() {
+        descriptor.setAddress(Address.EMPTY);
+        return this;
+    }
+
+    /**
      * Sets the {@code Company} of the {@code EditPersonDescriptor} that we are building.
      */
     public EditPersonDescriptorBuilder withCompany(String company) {

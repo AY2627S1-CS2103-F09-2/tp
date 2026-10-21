@@ -18,6 +18,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.tag.Tag;
 
@@ -60,7 +61,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             editPersonDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
         }
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-            editPersonDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
+            editPersonDescriptor.setAddress(parseAddressForEdit(argMultimap.getValue(PREFIX_ADDRESS).get()));
         }
         if (argMultimap.getValue(PREFIX_COMPANY).isPresent()) {
             editPersonDescriptor.setCompany(parseCompanyForEdit(argMultimap.getValue(PREFIX_COMPANY).get()));
@@ -72,6 +73,17 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         return new EditCommand(index, editPersonDescriptor);
+    }
+
+    /**
+     * Parses {@code address} into an {@code Address}, where an empty {@code address} (from "a/" alone)
+     * means the contact's address should be removed.
+     */
+    private Address parseAddressForEdit(String address) throws ParseException {
+        if (address.isBlank()) {
+            return Address.EMPTY;
+        }
+        return ParserUtil.parseAddress(address);
     }
 
     /**
