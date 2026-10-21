@@ -171,6 +171,31 @@ Examples:
 * `project view Client Portal` shows only the clients in `Client Portal`.
 * `project view client   portal` does the same, since matching ignores case and extra spaces.
 
+### Listing all projects: `project all`
+
+Shows every project with its number of clients.
+
+Format: `project all`
+
+* Takes no arguments.
+* Shows one project per line, in the order the projects were created, including projects with no clients.
+* Counts all clients assigned to each project, regardless of the current contact filter.
+* A client who belongs to multiple projects is counted in each of those projects.
+* Shows a message when no projects exist.
+* Keeps the current contact filter, client data, and project memberships unchanged.
+* A project can be named `all`: `project all` lists every project, while `project view all` shows that project's clients.
+
+Example: `project all`
+
+Example output:
+
+```text
+Projects:
+Client Portal: 2 clients
+Website Redesign: 1 client
+Internal Tools: 0 clients
+```
+
 ### Deleting a project: `project delete`
 
 Deletes a project and removes it from every client in it.
@@ -344,6 +369,7 @@ Action | Format, Examples
 **Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
 **View project clients** | `project view PROJECT`<br> e.g., `project view Client Portal`
+**List all projects** | `project all`
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`

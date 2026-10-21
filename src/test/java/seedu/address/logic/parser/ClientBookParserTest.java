@@ -23,6 +23,7 @@ import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.NoteCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
+import seedu.address.logic.commands.ProjectAllCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
@@ -166,6 +167,25 @@ public class ClientBookParserTest {
         for (String input : inputs) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
+    }
+
+    @Test
+    public void parseCommand_projectAll() throws Exception {
+        assertEquals(new ProjectAllCommand(), parser.parseCommand("project all"));
+        assertEquals(new ProjectAllCommand(), parser.parseCommand(" \tPrOjEcT AlL  "));
+    }
+
+    @Test
+    public void parseCommand_projectAllWithArguments_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAllCommand.MESSAGE_USAGE);
+        for (String input : List.of("project all all", "project all Client Portal", "project all 1")) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectViewNamedAll() throws Exception {
+        assertEquals(new ProjectViewCommand(new Project("all")), parser.parseCommand("project view all"));
     }
 
     @Test
