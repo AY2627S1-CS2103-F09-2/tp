@@ -30,6 +30,8 @@ public class ProjectAddCommandParserTest {
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal")));
         assertParseSuccess(parser, "1 Client Portal r/developer",
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "developer"));
+        assertParseSuccess(parser, "1 Client Portal r/UI designer",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "UI designer"));
         assertParseSuccess(parser, "1,2 Client Portal",
                 new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, Index.fromOneBased(2)),
                         new Project("Client Portal")));

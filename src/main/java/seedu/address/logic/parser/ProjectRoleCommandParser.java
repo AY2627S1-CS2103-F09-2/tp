@@ -14,7 +14,7 @@ import seedu.address.model.project.Project;
 /** Parses arguments for changing a client's project role. */
 public class ProjectRoleCommandParser implements Parser<ProjectRoleCommand> {
 
-    private static final Pattern ROLE_SUFFIX = Pattern.compile("(?s)^(.+?)\\s+r/(\\S+)$");
+    private static final Pattern ROLE_SUFFIX = Pattern.compile("(?s)^(.+?)\\s+r/(.*)$");
 
     @Override
     public ProjectRoleCommand parse(String args) throws ParseException {

@@ -18,7 +18,7 @@ import seedu.address.model.project.Project;
  */
 public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
 
-    private static final Pattern ROLE_SUFFIX = Pattern.compile("(?s)^(.+?)\\s+r/(\\S*)$");
+    private static final Pattern ROLE_SUFFIX = Pattern.compile("(?s)^(.+?)\\s+r/(.*)$");
 
     /**
      * Parses the client index and treats the entire remainder as the project name.

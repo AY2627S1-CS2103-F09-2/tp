@@ -28,6 +28,8 @@ public class ProjectRoleCommandParserTest {
                 new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "developer"));
         assertParseSuccess(parser, "1 Client   Portal r/UI",
                 new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "UI"));
+        assertParseSuccess(parser, "1 Client Portal r/Lead   developer",
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "Lead developer"));
     }
 
     @Test
