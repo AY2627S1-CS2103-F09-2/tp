@@ -1,0 +1,42 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+title Project view: successful execution
+
+' Scope: interactions between components for an existing project.
+' The Model interaction summarizes ProjectViewCommand's lookup, filtering and counting.
+' The UI already observes the Model's filtered client list.
+
+actor User as user USER_COLOR
+participant ":UI" as ui UI_COLOR
+participant ":Logic" as logic LOGIC_COLOR
+participant ":Model" as model MODEL_COLOR
+participant ":Storage" as storage STORAGE_COLOR
+
+user -[USER_COLOR]> ui : "project view Client Portal"
+activate ui UI_COLOR
+
+ui -[UI_COLOR]> logic : execute(...)
+activate logic LOGIC_COLOR
+
+logic -[LOGIC_COLOR]> model : Find project and filter its clients
+activate model MODEL_COLOR
+note over logic, model
+  Match the full project name, ignoring case and extra spaces.
+  Replace the current filter with the project's clients.
+end note
+model --[MODEL_COLOR]> logic : Matching client count
+deactivate model
+
+logic -[LOGIC_COLOR]> storage : saveClientBook(...)
+activate storage STORAGE_COLOR
+storage --[STORAGE_COLOR]> logic
+deactivate storage
+
+logic --[LOGIC_COLOR]> ui : CommandResult
+deactivate logic
+
+ui --[UI_COLOR]> user : Show project clients and feedback
+deactivate ui
+@enduml
