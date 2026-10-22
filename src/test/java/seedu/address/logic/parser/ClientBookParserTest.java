@@ -23,9 +23,11 @@ import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.NoteCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
+import seedu.address.logic.commands.ProjectAllCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.logic.commands.StatusCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameOrCompanyContainsKeywordsPredicate;
@@ -163,6 +165,40 @@ public class ClientBookParserTest {
         List<String> inputs = List.of("project remove", "project remove 1", "project remove 0 Portal",
                 "project remove abc Portal");
         for (String input : inputs) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectAll() throws Exception {
+        assertEquals(new ProjectAllCommand(), parser.parseCommand("project all"));
+        assertEquals(new ProjectAllCommand(), parser.parseCommand(" \tPrOjEcT AlL  "));
+    }
+
+    @Test
+    public void parseCommand_projectAllWithArguments_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAllCommand.MESSAGE_USAGE);
+        for (String input : List.of("project all all", "project all Client Portal", "project all 1")) {
+            assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
+    public void parseCommand_projectViewNamedAll() throws Exception {
+        assertEquals(new ProjectViewCommand(new Project("all")), parser.parseCommand("project view all"));
+    }
+
+    @Test
+    public void parseCommand_projectView() throws Exception {
+        ProjectViewCommand expectedCommand = new ProjectViewCommand(new Project("Client Portal"));
+        assertEquals(expectedCommand, parser.parseCommand("project view Client Portal"));
+        assertEquals(expectedCommand, parser.parseCommand(" \tPrOjEcT ViEw  Client   Portal  "));
+    }
+
+    @Test
+    public void parseCommand_projectViewMissingName_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectViewCommand.MESSAGE_USAGE);
+        for (String input : List.of("project view", "project view   ")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
     }

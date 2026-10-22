@@ -7,10 +7,12 @@ import java.util.Locale;
 
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.ProjectAddCommand;
+import seedu.address.logic.commands.ProjectAllCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -20,7 +22,9 @@ public class ProjectCommandParser implements Parser<Command> {
 
     public static final String MESSAGE_USAGE = ProjectCreateCommand.MESSAGE_USAGE + "\n"
             + ProjectAddCommand.MESSAGE_USAGE + "\n" + ProjectRemoveCommand.MESSAGE_USAGE + "\n"
-            + ProjectListCommand.MESSAGE_USAGE + "\n" + ProjectDeleteCommand.MESSAGE_USAGE;
+            + ProjectListCommand.MESSAGE_USAGE + "\n" + ProjectViewCommand.MESSAGE_USAGE + "\n"
+            + ProjectAllCommand.MESSAGE_USAGE + "\n"
+            + ProjectDeleteCommand.MESSAGE_USAGE;
 
     /**
      * Parses a project subcommand followed by its arguments.
@@ -47,6 +51,20 @@ public class ProjectCommandParser implements Parser<Command> {
                             String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectDeleteCommand.MESSAGE_USAGE));
                 }
                 yield new ProjectDeleteCommand(ParserUtil.parseProject(subcommandArgs));
+            }
+            case ProjectViewCommand.SUBCOMMAND_WORD -> {
+                if (subcommandArgs.isEmpty()) {
+                    throw new ParseException(
+                            String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectViewCommand.MESSAGE_USAGE));
+                }
+                yield new ProjectViewCommand(ParserUtil.parseProject(subcommandArgs));
+            }
+            case ProjectAllCommand.SUBCOMMAND_WORD -> {
+                if (!subcommandArgs.isEmpty()) {
+                    throw new ParseException(
+                            String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAllCommand.MESSAGE_USAGE));
+                }
+                yield new ProjectAllCommand();
             }
             case ProjectAddCommand.SUBCOMMAND_WORD -> new ProjectAddCommandParser().parse(subcommandArgs);
             case ProjectRemoveCommand.SUBCOMMAND_WORD -> new ProjectRemoveCommandParser().parse(subcommandArgs);

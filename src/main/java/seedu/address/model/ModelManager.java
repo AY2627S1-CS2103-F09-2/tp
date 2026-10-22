@@ -6,6 +6,7 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
@@ -23,6 +24,7 @@ public class ModelManager implements Model {
     private final ClientBook clientBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private Predicate<Person> personFilter = PREDICATE_SHOW_ALL_PERSONS;
 
     /**
      * Initializes a ModelManager with the given clientBook and userPrefs.
@@ -35,6 +37,9 @@ public class ModelManager implements Model {
         this.clientBook = new ClientBook(clientBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.clientBook.getPersonList());
+        // Project memberships can change without a corresponding change to the person list.
+        this.clientBook.getClientProjectList().addListener((ListChangeListener<ClientProject>) change ->
+                updateFilteredPersonList(personFilter));
     }
 
     public ModelManager() {
@@ -144,7 +149,9 @@ public class ModelManager implements Model {
     @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
-        filteredPersons.setPredicate(predicate);
+        personFilter = predicate;
+        // A fresh predicate makes JavaFX re-evaluate the filter even when only memberships changed.
+        filteredPersons.setPredicate(predicate::test);
     }
 
     @Override
