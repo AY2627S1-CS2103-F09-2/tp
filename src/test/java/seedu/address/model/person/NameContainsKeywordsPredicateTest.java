@@ -57,6 +57,39 @@ public class NameContainsKeywordsPredicateTest {
     }
 
     @Test
+    public void test_nameContainsPartialKeywords_returnsTrue() {
+        // Prefix
+        NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("ali"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice").build()));
+
+        // Middle of a name, ignoring case
+        predicate = new NameContainsKeywordsPredicate(List.of("LiC"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // Suffix
+        predicate = new NameContainsKeywordsPredicate(List.of("ice"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice").build()));
+
+        // Part of a later word in the name
+        predicate = new NameContainsKeywordsPredicate(List.of("oB"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // Accented letters, ignoring case
+        predicate = new NameContainsKeywordsPredicate(List.of("OS\u00c9"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Jos\u00e9").build()));
+    }
+
+    @Test
+    public void test_onlyOnePartialKeywordMatches_returnsTrue() {
+        NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("missing", "LiC"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // The matching keyword can appear anywhere in the keyword list
+        predicate = new NameContainsKeywordsPredicate(List.of("LiC", "missing"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+    }
+
+    @Test
     public void test_nameDoesNotContainKeywords_returnsFalse() {
         // Zero keywords
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of());
@@ -64,6 +97,14 @@ public class NameContainsKeywordsPredicateTest {
 
         // Non-matching keyword
         predicate = new NameContainsKeywordsPredicate(List.of("Carol"));
+        assertFalse(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // Keyword is longer than the name
+        predicate = new NameContainsKeywordsPredicate(List.of("Alicia"));
+        assertFalse(predicate.test(new PersonBuilder().withName("Ali").build()));
+
+        // Keywords are literal text, not regular expressions
+        predicate = new NameContainsKeywordsPredicate(List.of(".", "A.*"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
 
         // Keywords match phone, email and address, but do not match name

@@ -250,10 +250,11 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
+* Partial names match anywhere in a name; for example, `ali` matches `Alice` and `lic` also matches `Alice`.
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
+* `find ali` returns `Alice` and `Alice Pauline`
 * `find John` returns `john` and `John Doe`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
