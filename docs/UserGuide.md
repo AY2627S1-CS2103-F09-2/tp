@@ -168,6 +168,48 @@ Format: `project role CLIENT_INDEX PROJECT r/ROLE`
 * Role is stored per client-project membership, so one client can have different roles across projects.
 
 Example: `project role 1 Client Portal r/UI`
+### Viewing a project's clients: `project view`
+
+Filters the contact list to show only the clients belonging to an existing project.
+
+Format: `project view PROJECT`
+
+* Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
+* The project must exist. Otherwise, the command is rejected and the current list is kept.
+* Replaces any previous contact filter and shows the project's clients in their original contact list order.
+* Shows the number of clients found, or an empty list and a message when the project has no clients.
+* The displayed list updates when project memberships change. Client data and memberships are preserved by viewing.
+* Use `list` to show all contacts again.
+
+Examples:
+
+* `project view Client Portal` shows only the clients in `Client Portal`.
+* `project view client   portal` does the same, since matching ignores case and extra spaces.
+
+### Listing all projects: `project all`
+
+Shows every project with its number of clients.
+
+Format: `project all`
+
+* Takes no arguments.
+* Shows one project per line, in the order the projects were created, including projects with no clients.
+* Counts all clients assigned to each project, regardless of the current contact filter.
+* A client who belongs to multiple projects is counted in each of those projects.
+* Shows a message when no projects exist.
+* Keeps the current contact filter, client data, and project memberships unchanged.
+* A project can be named `all`: `project all` lists every project, while `project view all` shows that project's clients.
+
+Example: `project all`
+
+Example output:
+
+```text
+Projects:
+Client Portal: 2 clients
+Website Redesign: 1 client
+Internal Tools: 0 clients
+```
 
 ### Deleting a project: `project delete`
 
@@ -255,19 +297,21 @@ Examples:
 *  `edit 3 c/Globex Corp` Changes the company of the 3rd person to `Globex Corp`.
 *  `edit 3 c/` Removes the company of the 3rd person.
 
-### Locating persons by name: `find`
+### Locating persons by name or company: `find`
 
-Finds persons whose names contain any of the given keywords.
+Finds persons whose names or companies contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
+* The search looks at names and companies only, not phone numbers, emails, addresses, tags or notes.
+* Partial words match anywhere in a name or company; for example, `ali` matches `Alice`, and `acme` matches a person at `Acme Pte Ltd`.
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
+* `find ali` returns `Alice` and `Alice Pauline`
+* `find acme` returns everyone whose company contains `acme`, e.g. `Acme Pte Ltd`
 * `find John` returns `john` and `John Doe`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
@@ -342,10 +386,12 @@ Action | Format, Examples
 **Detach client from project** | `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`<br> e.g., `project remove 1,2 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
 **Change project role** | `project role CLIENT_INDEX PROJECT r/ROLE`<br> e.g., `project role 1 Client Portal r/UI`
+**View project clients** | `project view PROJECT`<br> e.g., `project view Client Portal`
+**List all projects** | `project all`
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
-**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`, `find acme`
 **List** | `list [s/STATUS]`<br> e.g., `list`, `list s/active`
 **Note** | `note INDEX [TEXT]`<br> e.g., `note 1 Based in London, prefers email`
 **Set status** | `status INDEX STATUS`<br> e.g., `status 1 active`

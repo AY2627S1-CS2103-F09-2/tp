@@ -10,6 +10,7 @@ import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.AMY;
+import static seedu.address.testutil.TypicalPersons.BENSON;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -78,6 +79,19 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_EMPTY, model);
+    }
+
+    @Test
+    public void execute_findPartialNameKeywords_listsMatchingPersons() throws Exception {
+        model.addPerson(ALICE);
+        model.addPerson(AMY);
+        model.addPerson(BENSON);
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> List.of(ALICE, AMY).contains(person));
+
+        assertCommandSuccess("find \t aLI  \t aM missing  ",
+                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, 2), expectedModel);
+        assertEquals(List.of(ALICE, AMY), logic.getFilteredPersonList());
     }
 
     @Test

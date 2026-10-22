@@ -179,6 +179,21 @@ public class ProjectRemoveCommandTest {
         assertCommandSuccess(new ProjectRemoveCommand(
                         List.of(INDEX_SECOND_PERSON, Index.fromOneBased(3)), PROJECT), model,
                 expectedMessage, expectedModelWithMemberships(new ClientProject(ALICE, PROJECT)));
+    public void execute_multipleClients_success() {
+        model.addClientProject(new ClientProject(BENSON, PROJECT));
+        Model expectedModel = expectedModelWithMemberships();
+
+        assertCommandSuccess(new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients removed from project Client Portal: Alice Pauline, Benson Meier", expectedModel);
+    }
+
+    @Test
+    public void execute_multipleClients_skipsMissingMemberships() {
+        Model expectedModel = expectedModelWithMemberships();
+
+        assertCommandSuccess(new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients removed from project Client Portal: Alice Pauline\n"
+                        + "Skipped clients not in project: Benson Meier", expectedModel);
     }
 
     @Test

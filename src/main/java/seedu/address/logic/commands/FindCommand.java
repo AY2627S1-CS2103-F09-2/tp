@@ -5,24 +5,26 @@ import static java.util.Objects.requireNonNull;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.NameOrCompanyContainsKeywordsPredicate;
 
 /**
- * Finds and lists all persons in the client book whose name contains any of the argument keywords.
- * Keyword matching is case insensitive.
+ * Finds and lists all persons in the client book whose name or company contains any of the argument
+ * keywords.
+ * Keyword matching is case insensitive and allows partial matches.
  */
 public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose names contain any of "
-            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose names or companies "
+            + "contain any of the specified keywords (case-insensitive, partial matches allowed) "
+            + "and displays them as a list with index numbers.\n"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+            + "Example: " + COMMAND_WORD + " ali bob acme";
 
-    private final NameContainsKeywordsPredicate predicate;
+    private final NameOrCompanyContainsKeywordsPredicate predicate;
 
-    public FindCommand(NameContainsKeywordsPredicate predicate) {
+    public FindCommand(NameOrCompanyContainsKeywordsPredicate predicate) {
         this.predicate = predicate;
     }
 

@@ -139,6 +139,27 @@ public class ProjectAddCommandTest {
     }
 
     @Test
+    public void execute_multipleClients_success() {
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(ALICE, PROJECT));
+        expectedModel.addClientProject(new ClientProject(BENSON, PROJECT));
+
+        assertCommandSuccess(new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients added to project Client Portal: Alice Pauline, Benson Meier", expectedModel);
+    }
+
+    @Test
+    public void execute_multipleClients_skipsExistingMemberships() {
+        model.addClientProject(new ClientProject(ALICE, PROJECT));
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(BENSON, PROJECT));
+
+        assertCommandSuccess(new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients added to project Client Portal: Benson Meier\n"
+                        + "Skipped clients already in project: Alice Pauline", expectedModel);
+    }
+
+    @Test
     public void execute_clientAlreadyHasAnotherProject_success() {
         Project otherProject = new Project("Website Redesign");
         model.addProject(otherProject);

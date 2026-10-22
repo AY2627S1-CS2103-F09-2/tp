@@ -11,11 +11,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ProjectAddCommand;
+import seedu.address.logic.commands.ProjectAllCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.commands.ProjectRoleCommand;
+import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.model.project.Project;
 
 public class ProjectCommandParserTest {
@@ -153,6 +155,48 @@ public class ProjectCommandParserTest {
         for (String args : List.of("role", "role 1 Client Portal", "role 0 Client Portal r/UI")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));
+    public void parse_viewSubcommand_returnsProjectViewCommand() {
+        assertParseSuccess(parser, "view Portal", new ProjectViewCommand(new Project("Portal")));
+        ProjectViewCommand expectedCommand = new ProjectViewCommand(new Project("Client Portal"));
+        assertParseSuccess(parser, "view Client Portal", expectedCommand);
+        assertParseSuccess(parser, " \t ViEw \t Client   Portal \t ", expectedCommand);
+    }
+
+    @Test
+    public void parse_viewNameContainingCommandWordsAndPrefixes_returnsProjectViewCommand() {
+        assertParseSuccess(parser, "view add client n/Website - Phase 1",
+                new ProjectViewCommand(new Project("add client n/Website - Phase 1")));
+    }
+
+    @Test
+    public void parse_allSubcommand_returnsProjectAllCommand() {
+        assertParseSuccess(parser, "all", new ProjectAllCommand());
+        assertParseSuccess(parser, " \t AlL \t\r\n ", new ProjectAllCommand());
+    }
+
+    @Test
+    public void parse_allSubcommandWithArguments_throwsParseException() {
+        for (String args : List.of("all Client Portal", "all all", "all 1", "all s/active")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAllCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_projectNamedAll_returnsCommandForNamedProject() {
+        Project project = new Project("all");
+        assertParseSuccess(parser, "create all", new ProjectCreateCommand(project));
+        assertParseSuccess(parser, "view all", new ProjectViewCommand(project));
+        assertParseSuccess(parser, "add 1 all", new ProjectAddCommand(INDEX_FIRST_PERSON, project));
+        assertParseSuccess(parser, "remove 1 all", new ProjectRemoveCommand(INDEX_FIRST_PERSON, project));
+        assertParseSuccess(parser, "delete all", new ProjectDeleteCommand(project));
+    }
+
+    @Test
+    public void parse_missingProjectNameForView_throwsParseException() {
+        for (String args : List.of("view", "view   ", " view \t\r\n ")) {
+            assertParseFailure(parser, args,
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectViewCommand.MESSAGE_USAGE));
         }
     }
 }
