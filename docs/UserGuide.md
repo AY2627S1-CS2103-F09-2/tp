@@ -3,7 +3,7 @@ layout: page
 title: User Guide
 ---
 
-AddressBook Level 3 (AB3) is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AB3 can help you manage contacts faster than traditional GUI applications.
+ClientBookThree is a **desktop app for freelance software developers to keep track of their clients and the projects they work on together**, optimized for use through a Command Line Interface (CLI) while still having a Graphical User Interface (GUI). If you type quickly, ClientBookThree lets you record clients, see where each one stands, and see who is on which project faster than a typical GUI app.
 
 * Table of Contents
 {:toc}
@@ -15,22 +15,30 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 1. Ensure that Java `25` or later is installed on your computer.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
+1. Download the latest `clientbook.jar` from [our releases page](https://github.com/AY2627S1-CS2103-F09-2/tp/releases).
 
-1. Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
+1. Copy the file to the folder you want to use as the _home folder_ for ClientBookThree. Your data is saved in a `data` folder inside it.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
-   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar clientbook.jar`.<br>
+   A window similar to the one below should appear in a few seconds. It starts with some sample contacts for you to try commands on.<br>
+   <img src="images/quickStart.png" width="600" alt="ClientBookThree on first launch, showing sample contacts" />
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
    * `list` : Lists all contacts.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+   * `add n/Mei Ling p/+65 9123 4567 e/meiling@acme.com c/Acme Pte Ltd` : Adds a client named `Mei Ling` who works at `Acme Pte Ltd`.
+
+   * `status 1 active` : Marks the 1st contact in the list as an active client.
+
+   * `project create Client Portal` : Creates a project named `Client Portal`.
+
+   * `project add 1,2 Client Portal r/developer` : Adds the first two contacts to `Client Portal` as developers.
 
    * `delete 3` : Deletes the 3rd contact shown in the current list.
+
+   * `find acme` : Finds contacts whose name or company contains `acme`. Use `list` to show everyone again.
 
    * `clear` : Deletes all contacts.
 
@@ -75,7 +83,7 @@ Format: `help`
 
 ### Adding a person: `add`
 
-Adds a person to the address book.
+Adds a person to the client book.
 
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
@@ -280,7 +288,7 @@ Examples:
 
 ### Editing a person: `edit`
 
-Edits an existing person in the address book.
+Edits an existing person in the client book.
 
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
@@ -320,7 +328,7 @@ Examples:
 
 ### Deleting a person: `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified person from the client book.
 
 Format: `delete INDEX`
 
@@ -329,12 +337,12 @@ Format: `delete INDEX`
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the address book.
+* `list` followed by `delete 2` deletes the 2nd person in the client book.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Clears all entries from the client book.
 
 Format: `clear`
 
@@ -346,15 +354,15 @@ Format: `exit`
 
 ### Saving the data
 
-AddressBook automatically saves data after every command. You do not need to save manually.
+ClientBookThree automatically saves data after every command. You do not need to save manually.
 
 ### Editing the data file
 
-AddressBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+ClientBookThree data is saved automatically as a JSON file `[JAR file location]/data/clientbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+If your changes make the data file invalid, ClientBookThree starts with an empty client book at the next run. The invalid file remains on disk until you run a command (ClientBookThree saves after every command). Still, we recommend backing up the file before editing it.<br>
+Furthermore, certain edits can cause ClientBookThree to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
 ### Archiving data files `[coming in v2.0]`
@@ -366,7 +374,7 @@ _Details coming soon ..._
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AddressBook home folder.
+**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous ClientBookThree home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
