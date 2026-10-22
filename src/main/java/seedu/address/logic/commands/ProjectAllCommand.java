@@ -3,8 +3,10 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.Model;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
@@ -25,10 +27,13 @@ public class ProjectAllCommand extends Command {
     public static final String MESSAGE_EMPTY = "No projects to list.";
     public static final String MESSAGE_PROJECT_SUMMARY = "%1$s: %2$d %3$s";
 
+    private static final Logger logger = LogsCenter.getLogger(ProjectAllCommand.class);
+
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
         List<Project> projects = model.getClientBook().getProjectList();
+        logger.fine("Listing " + projects.size() + " projects");
         if (projects.isEmpty()) {
             return new CommandResult(MESSAGE_EMPTY);
         }
@@ -39,6 +44,8 @@ public class ProjectAllCommand extends Command {
                     long count = memberships.stream()
                             .filter(membership -> membership.getProject().isSameProject(project))
                             .count();
+                    assert count <= model.getClientBook().getPersonList().size()
+                            : "A project's client count must not exceed the total number of contacts";
                     return String.format(MESSAGE_PROJECT_SUMMARY, project, count,
                             count == 1 ? "client" : "clients");
                 })
