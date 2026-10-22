@@ -243,20 +243,17 @@ Examples:
 
 Finds persons whose names or companies contain any of the given keywords.
 
-Format: `find KEYWORD [MORE_KEYWORDS]` or `find reset view`
+Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search looks at names and companies only, not phone numbers, emails, addresses, tags or notes.
 * Partial words match anywhere in a name or company; for example, `ali` matches `Alice`, and `acme` matches a person at `Acme Pte Ltd`.
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
-* Use `find reset view` (or `list`) to clear the search and show all persons again. The reset phrase ignores case and extra whitespace.
-* Only the exact phrase `reset view` is reserved for resetting the view. Inputs such as `find reset` and `find reset view Alice` still search names and companies.
 
 Examples:
 * `find ali` returns `Alice` and `Alice Pauline`
 * `find acme` returns everyone whose company contains `acme`, e.g. `Acme Pte Ltd`
-* `find reset view` shows all persons again after a search
 * `find John` returns `john` and `John Doe`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
@@ -333,7 +330,7 @@ Action | Format, Examples
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
-**Find** | `find KEYWORD [MORE_KEYWORDS]` or `find reset view`<br> e.g., `find James Jake`, `find acme`
+**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`, `find acme`
 **List** | `list [s/STATUS]`<br> e.g., `list`, `list s/active`
 **Note** | `note INDEX [TEXT]`<br> e.g., `note 1 Based in London, prefers email`
 **Set status** | `status INDEX STATUS`<br> e.g., `status 1 active`

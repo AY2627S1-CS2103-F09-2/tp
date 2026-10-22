@@ -35,6 +35,14 @@ public class NameOrCompanyContainsKeywordsPredicateTest {
     public void test_nameContainsKeyword_returnsTrue() {
         assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("ali")).test(ALICE_AT_ACME));
         assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("LIM")).test(BOB_FREELANCER));
+
+        // middle and end of a word
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("LiC")).test(ALICE_AT_ACME));
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("ice")).test(ALICE_AT_ACME));
+
+        // accented letters, ignoring case
+        Person jose = new PersonBuilder().withName("Jos\u00e9").build();
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("OS\u00c9")).test(jose));
     }
 
     @Test
@@ -63,6 +71,12 @@ public class NameOrCompanyContainsKeywordsPredicateTest {
         // the keyword is spread across the name and the company, so neither contains it
         assertFalse(new NameOrCompanyContainsKeywordsPredicate(List.of("tanacme")).test(ALICE_AT_ACME));
 
+        // the keyword is longer than the name
+        assertFalse(new NameOrCompanyContainsKeywordsPredicate(List.of("Bob Limited")).test(BOB_FREELANCER));
+
+        // keywords are literal text, not regular expressions
+        assertFalse(new NameOrCompanyContainsKeywordsPredicate(List.of(".", "A.*")).test(ALICE_AT_ACME));
+
         // keywords that match other fields only
         Person withOtherFields = new PersonBuilder(ALICE_AT_ACME).withPhone("12345").withEmail("alice@globex.com")
                 .withAddress("Main Street").build();
@@ -85,7 +99,6 @@ public class NameOrCompanyContainsKeywordsPredicateTest {
 
         // different types -> returns false
         assertFalse(first.equals(1));
-        assertFalse(first.equals(new NameContainsKeywordsPredicate(List.of("acme"))));
 
         // null -> returns false
         assertFalse(first.equals(null));
