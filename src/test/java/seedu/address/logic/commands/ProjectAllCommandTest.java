@@ -16,8 +16,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
 import seedu.address.model.project.ClientProject;
@@ -38,6 +42,28 @@ public class ProjectAllCommandTest {
     @Test
     public void execute_nullModel_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ProjectAllCommand().execute(null));
+    }
+
+    @Test
+    public void execute_clientCountExceedsTotalContacts_throwsAssertionError() {
+        model.addProject(PROJECT);
+        model.addClientProject(new ClientProject(ALICE, PROJECT));
+        // Simulate a broken model that retains a membership but reports no contacts.
+        ReadOnlyClientBook inconsistentBook = new ClientBook(model.getClientBook()) {
+            @Override
+            public ObservableList<Person> getPersonList() {
+                return FXCollections.emptyObservableList();
+            }
+        };
+        Model inconsistentModel = new ModelManager() {
+            @Override
+            public ReadOnlyClientBook getClientBook() {
+                return inconsistentBook;
+            }
+        };
+
+        String expectedMessage = "A project's client count must not exceed the total number of contacts";
+        assertThrows(AssertionError.class, expectedMessage, () -> new ProjectAllCommand().execute(inconsistentModel));
     }
 
     @Test
