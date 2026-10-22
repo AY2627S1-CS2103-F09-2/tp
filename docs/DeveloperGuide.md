@@ -117,12 +117,12 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
-<img src="images/ModelClassDiagram.png" width="650" />
+<img src="images/ModelClassDiagram.png" width="760" />
 
 
 The `Model` component,
 
-* stores the client book data i.e., all `Person` objects (in a `UniquePersonList`), all `Project` objects (in a `UniqueProjectList`), and which clients are on which project, as `ClientProject` links (in a `UniqueClientProjectList`).
+* stores the client book data i.e., all `Person` objects (in a `UniquePersonList`), all `Project` objects (in a `UniqueProjectList`), and which clients are on which project, as `ClientProject` objects (in a `UniqueClientProjectList`). A client can be on many projects and a project can have many clients, so the diagram shows `ClientProject` as an association class on the `Person`–`Project` association: each `ClientProject` links one client to one project.
 * gives each `Person` an optional `Company`, a `Status` (one of none, lead, active, on hold, done) and an optional `Note`. A missing company, address or note is stored as an empty value (e.g. `Company.EMPTY`) rather than `null`, so other code never has to check for `null`.
 * stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.

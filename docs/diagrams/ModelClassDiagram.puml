@@ -52,8 +52,8 @@ UniqueClientProjectList -[hidden]right-> UniqueProjectList
 UniquePersonList --> "~* all" Person
 UniqueClientProjectList --> "~* all" ClientProject
 UniqueProjectList --> "~* all" Project
-ClientProject -left-> "1" Person
-ClientProject -right-> "1" Project
+Person "*" -right- "*" Project
+(Person, Project) .. ClientProject
 
 Person *--> Name
 Person *--> Phone
