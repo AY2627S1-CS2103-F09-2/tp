@@ -146,6 +146,24 @@ public class ProjectRemoveCommandTest {
     }
 
     @Test
+    public void execute_multipleClients_success() {
+        model.addClientProject(new ClientProject(BENSON, PROJECT));
+        Model expectedModel = expectedModelWithMemberships();
+
+        assertCommandSuccess(new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients removed from project Client Portal: Alice Pauline, Benson Meier", expectedModel);
+    }
+
+    @Test
+    public void execute_multipleClients_skipsMissingMemberships() {
+        Model expectedModel = expectedModelWithMemberships();
+
+        assertCommandSuccess(new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                "Clients removed from project Client Portal: Alice Pauline\n"
+                        + "Skipped clients not in project: Benson Meier", expectedModel);
+    }
+
+    @Test
     public void equals() {
         ProjectRemoveCommand command = new ProjectRemoveCommand(INDEX_FIRST_PERSON, PROJECT);
 
