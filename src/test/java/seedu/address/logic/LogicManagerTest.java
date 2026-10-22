@@ -23,6 +23,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ProjectAddCommand;
 import seedu.address.logic.commands.ProjectCreateCommand;
@@ -36,6 +37,7 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Status;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.storage.JsonClientBookStorage;
@@ -79,6 +81,46 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_EMPTY, model);
+    }
+
+    @Test
+    public void execute_editRemoveAddress_savesContactWithoutChangingOtherFields() throws Exception {
+        Person person = new PersonBuilder(AMY).withCompany("Acme Pte Ltd").withStatus(Status.ACTIVE)
+                .withNote("Prefers email").build();
+        model.addPerson(person);
+        model.addPerson(ALICE);
+        Person editedPerson = new PersonBuilder(person).withoutAddress().build();
+        Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
+        expectedModel.setPerson(person, editedPerson);
+
+        assertCommandSuccess("edit 1 a/",
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+
+        JsonClientBookStorage storage = new JsonClientBookStorage(temporaryFolder.resolve("clientBook.json"));
+        assertEquals(expectedModel.getClientBook(), storage.readClientBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_editRemoveMissingAddress_success() throws Exception {
+        Person person = new PersonBuilder(AMY).withoutAddress().build();
+        model.addPerson(person);
+        Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
+
+        assertCommandSuccess("edit 1 a/",
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(person)), expectedModel);
+    }
+
+    @Test
+    public void execute_editRemoveAddressAfterFind_usesDisplayedIndex() throws Exception {
+        model.addPerson(AMY);
+        model.addPerson(ALICE);
+        logic.execute("find Alice");
+        Person editedPerson = new PersonBuilder(ALICE).withoutAddress().build();
+        Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
+        expectedModel.setPerson(ALICE, editedPerson);
+
+        assertCommandSuccess("edit 1 a/",
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
     }
 
     @Test

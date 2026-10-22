@@ -288,11 +288,13 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
+* To remove a person's address, enter `a/` without an address after it. Other details remain unchanged unless specified.
 * To remove all of a person's tags, enter `t/` without a tag after it.
 * To remove a person's company, enter `c/` without a company after it.
 
 Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
+*  `edit 1 a/` Removes the address of the 1st person.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 *  `edit 3 c/Globex Corp` Changes the company of the 3rd person to `Globex Corp`.
 *  `edit 3 c/` Removes the company of the 3rd person.
