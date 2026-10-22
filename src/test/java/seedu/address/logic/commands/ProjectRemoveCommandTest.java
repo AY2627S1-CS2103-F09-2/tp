@@ -179,6 +179,9 @@ public class ProjectRemoveCommandTest {
         assertCommandSuccess(new ProjectRemoveCommand(
                         List.of(INDEX_SECOND_PERSON, Index.fromOneBased(3)), PROJECT), model,
                 expectedMessage, expectedModelWithMemberships(new ClientProject(ALICE, PROJECT)));
+    }
+
+    @Test
     public void execute_multipleClients_success() {
         model.addClientProject(new ClientProject(BENSON, PROJECT));
         Model expectedModel = expectedModelWithMemberships();

@@ -155,6 +155,10 @@ public class ProjectCommandParserTest {
         for (String args : List.of("role", "role 1 Client Portal", "role 0 Client Portal r/UI")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
     public void parse_viewSubcommand_returnsProjectViewCommand() {
         assertParseSuccess(parser, "view Portal", new ProjectViewCommand(new Project("Portal")));
         ProjectViewCommand expectedCommand = new ProjectViewCommand(new Project("Client Portal"));
