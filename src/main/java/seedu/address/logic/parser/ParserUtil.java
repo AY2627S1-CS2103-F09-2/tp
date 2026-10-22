@@ -17,6 +17,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Status;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.model.tag.Tag;
 
@@ -84,6 +85,15 @@ public class ParserUtil {
             throw new ParseException(Project.MESSAGE_CONSTRAINTS);
         }
         return new Project(name);
+    }
+
+    /** Parses a non-blank project role. */
+    public static String parseRole(String role) throws ParseException {
+        requireNonNull(role);
+        if (!ClientProject.isValidRole(role)) {
+            throw new ParseException(ClientProject.MESSAGE_ROLE_CONSTRAINTS);
+        }
+        return role.trim().replaceAll("\\s+", " ");
     }
 
     /**

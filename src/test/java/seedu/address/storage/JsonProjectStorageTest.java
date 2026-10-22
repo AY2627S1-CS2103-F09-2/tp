@@ -23,7 +23,7 @@ public class JsonProjectStorageTest {
         Project hackathon = new Project("Hackathon");
         original.addPerson(ALICE);
         original.addProject(hackathon);
-        original.addClientProject(new ClientProject(ALICE, hackathon));
+        original.addClientProject(new ClientProject(ALICE, hackathon, "developer"));
 
         Path filePath = testFolder.resolve("ClientBook.json");
         JsonClientBookStorage storage = new JsonClientBookStorage(filePath);

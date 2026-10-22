@@ -41,9 +41,16 @@ public interface ReadOnlyClientBook {
      */
     default List<Project> getProjectsForPerson(Person person) {
         requireNonNull(person);
+        return getClientProjectsForPerson(person).stream()
+                .map(ClientProject::getProject)
+                .toList();
+    }
+
+    /** Returns client-project memberships for a client in insertion order. */
+    default List<ClientProject> getClientProjectsForPerson(Person person) {
+        requireNonNull(person);
         return getClientProjectList().stream()
                 .filter(clientProject -> clientProject.getClient().isSamePerson(person))
-                .map(ClientProject::getProject)
                 .toList();
     }
 

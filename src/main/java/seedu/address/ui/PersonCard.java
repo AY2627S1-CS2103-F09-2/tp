@@ -10,6 +10,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import seedu.address.model.person.Person;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /**
@@ -56,7 +57,7 @@ public class PersonCard extends UiPart<Region> {
      * Creates a {@code PersonCard} with the given {@code Person}, index to display, and the projects the
      * client belongs to, in the order they joined them.
      */
-    public PersonCard(Person person, int displayedIndex, List<Project> clientProjects) {
+    public PersonCard(Person person, int displayedIndex, List<?> clientProjects) {
         super(FXML);
         this.person = person;
         id.setText(displayedIndex + ". ");
@@ -91,9 +92,18 @@ public class PersonCard extends UiPart<Region> {
     /**
      * Returns the projects line shown on a client's card, e.g. "Projects: Client Portal, Website Redesign".
      */
-    static String formatProjects(List<Project> clientProjects) {
+    static String formatProjects(List<?> clientProjects) {
         return clientProjects.stream()
-                .map(Project::getName)
+                .map(PersonCard::formatProject)
                 .collect(Collectors.joining(", ", "Projects: ", ""));
+    }
+
+    private static String formatProject(Object projectOrMembership) {
+        if (projectOrMembership instanceof ClientProject membership) {
+            String projectName = membership.getProject().getName();
+            return membership.getRole().isEmpty()
+                    ? projectName : projectName + " (" + membership.getRole() + ")";
+        }
+        return ((Project) projectOrMembership).getName();
     }
 }

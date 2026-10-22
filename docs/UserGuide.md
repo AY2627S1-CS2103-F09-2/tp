@@ -107,34 +107,39 @@ Example: `project create Client Portal`
 
 Attaches an existing client to an existing project.
 
-Format: `project add CLIENT_INDEX PROJECT`
+Format: `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`
 
 * The index refers to the number shown in the current client list and must be a positive integer.
 * The project must already exist. Use `project create NAME` to create it first.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* Adding a client who already belongs to the project is rejected.
+* Separate multiple client indexes with commas, without spaces. Existing memberships are skipped and reported.
+* Add optional project role with `r/ROLE`; role belongs to this client-project membership.
+* Trailing `r/ROLE` is treated as role syntax; use another project name when literal suffix is intended.
 * A client can belong to multiple projects, and a project can have multiple clients.
 
 Examples:
 
 * `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
+* `project add 1,2,4 Client Portal r/developer` attaches several clients with `developer` role.
 * `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
 
 ### Detaching a client from a project: `project remove`
 
 Detaches an existing client from an existing project.
 
-Format: `project remove CLIENT_INDEX PROJECT`
+Format: `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`
 
 * The index refers to the number shown in the current client list and must be a positive integer.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* The project must exist, and the client must belong to it. Otherwise, the command is rejected.
+* Separate multiple client indexes with commas, without spaces. Missing memberships are skipped and reported.
+* The project must exist. Otherwise, the command is rejected.
 * The client and project remain in the client book, even when the project has no members afterwards.
 * Other clients' memberships and the client's memberships in other projects are preserved.
 
 Examples:
 
 * `project remove 1 Client Portal` detaches the first displayed client from `Client Portal`.
+* `project remove 1,2,4 Client Portal` detaches several clients.
 * `find Betsy` followed by `project remove 1 Client Portal` detaches the first client in the search results.
 
 ### Listing a client's projects: `project list`
@@ -144,7 +149,7 @@ Shows the projects assigned to an existing client.
 Format: `project list CLIENT_INDEX`
 
 * The index refers to the number shown in the current client list and must be a positive integer.
-* Shows each project name on a separate line, in the order the client joined the projects.
+* Shows each project on a separate line, in join order. Role appears in parentheses when set.
 * Shows a message when the client has no projects.
 * Keeps the current client filter and project memberships unchanged.
 
@@ -153,6 +158,16 @@ Examples:
 * `project list 1` shows the first displayed client's projects.
 * `find Betsy` followed by `project list 1` shows the projects of the first client in the search results.
 
+### Changing a client's project role: `project role`
+
+Changes role for an existing client-project membership.
+
+Format: `project role CLIENT_INDEX PROJECT r/ROLE`
+
+* The project and membership must exist.
+* Role is stored per client-project membership, so one client can have different roles across projects.
+
+Example: `project role 1 Client Portal r/UI`
 ### Viewing a project's clients: `project view`
 
 Filters the contact list to show only the clients belonging to an existing project.
@@ -367,9 +382,10 @@ Action | Format, Examples
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 c/Acme Pte Ltd t/friend t/colleague`
 **Clear** | `clear`
 **Create project** | `project create NAME`<br> e.g., `project create Client Portal`
-**Attach client to project** | `project add CLIENT_INDEX PROJECT`<br> e.g., `project add 1 Client Portal`
-**Detach client from project** | `project remove CLIENT_INDEX PROJECT`<br> e.g., `project remove 1 Client Portal`
+**Attach client to project** | `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`<br> e.g., `project add 1 Client Portal r/developer`
+**Detach client from project** | `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`<br> e.g., `project remove 1,2 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
+**Change project role** | `project role CLIENT_INDEX PROJECT r/ROLE`<br> e.g., `project role 1 Client Portal r/UI`
 **View project clients** | `project view PROJECT`<br> e.g., `project view Client Portal`
 **List all projects** | `project all`
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`

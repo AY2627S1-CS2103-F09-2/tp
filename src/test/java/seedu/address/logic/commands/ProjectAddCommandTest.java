@@ -43,6 +43,12 @@ public class ProjectAddCommandTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ProjectAddCommand(null, PROJECT));
         assertThrows(NullPointerException.class, () -> new ProjectAddCommand(INDEX_FIRST_PERSON, null));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand((List<Index>) null, PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand(List.of((Index) null), PROJECT));
+        assertThrows(NullPointerException.class, () ->
+                new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, (String) null));
     }
 
     @Test
@@ -166,6 +172,54 @@ public class ProjectAddCommandTest {
     }
 
     @Test
+    public void execute_role_storesRoleOnMembership() {
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(ALICE, PROJECT, "developer"));
+
+        assertCommandSuccess(new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, "developer"), model,
+                String.format(ProjectAddCommand.MESSAGE_SUCCESS, ALICE.getName(), PROJECT), expectedModel);
+        assertEquals("developer", model.getClientBook().getClientProjectList().get(0).getRole());
+    }
+
+    @Test
+    public void execute_multipleClients_addsAllWithRole() {
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(ALICE, PROJECT, "senior developer"));
+        expectedModel.addClientProject(new ClientProject(BENSON, PROJECT, "senior developer"));
+
+        assertCommandSuccess(new ProjectAddCommand(
+                        List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT, " senior   developer "), model,
+                String.format(ProjectAddCommand.MESSAGE_SUCCESS_MULTIPLE, PROJECT, "Alice Pauline, Benson Meier"),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_multipleClients_skipsExistingAndAddsRemaining() {
+        model.addClientProject(new ClientProject(ALICE, PROJECT));
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addClientProject(new ClientProject(BENSON, PROJECT, "developer"));
+
+        String expectedMessage = String.format(ProjectAddCommand.MESSAGE_SUCCESS_MULTIPLE,
+                PROJECT, "Benson Meier") + "\n"
+                + String.format(ProjectAddCommand.MESSAGE_SKIPPED, "Alice Pauline");
+        assertCommandSuccess(new ProjectAddCommand(
+                        List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT, "developer"), model,
+                expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_multipleClients_allSkipped() {
+        model.addClientProject(new ClientProject(ALICE, PROJECT));
+        model.addClientProject(new ClientProject(BENSON, PROJECT));
+        String expectedMessage = String.format(ProjectAddCommand.MESSAGE_SKIPPED,
+                "Alice Pauline, Benson Meier");
+
+        assertCommandSuccess(new ProjectAddCommand(
+                        List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT), model,
+                expectedMessage, new ModelManager(model.getClientBook(), new UserPrefs()));
+    }
+
+    @Test
     public void equals() {
         ProjectAddCommand command = new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT);
 
@@ -174,6 +228,9 @@ public class ProjectAddCommandTest {
         assertTrue(command.equals(new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("  client   portal  "))));
         assertFalse(command.equals(new ProjectAddCommand(INDEX_SECOND_PERSON, PROJECT)));
         assertFalse(command.equals(new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Website Redesign"))));
+        assertFalse(command.equals(new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, "developer")));
+        assertFalse(command.equals(new ProjectAddCommand(
+                List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT)));
         assertFalse(command.equals(new ProjectCreateCommand(PROJECT)));
         assertFalse(command.equals(null));
     }
@@ -184,5 +241,9 @@ public class ProjectAddCommandTest {
         String expected = ProjectAddCommand.class.getCanonicalName() + "{targetIndex=" + INDEX_FIRST_PERSON
                 + ", project=" + PROJECT + "}";
         assertEquals(expected, command.toString());
+        assertTrue(new ProjectAddCommand(INDEX_FIRST_PERSON, PROJECT, "developer")
+                .toString().contains("role=developer"));
+        assertTrue(new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON), PROJECT)
+                .toString().contains("targetIndexes="));
     }
 }

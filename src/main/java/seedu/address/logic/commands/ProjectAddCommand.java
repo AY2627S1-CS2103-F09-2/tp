@@ -26,8 +26,8 @@ public class ProjectAddCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUBCOMMAND_WORD
             + ": Attaches a client to an existing project. "
-            + "Parameters: CLIENT_INDEX (must be a positive integer) PROJECT\n"
-            + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1 Client Portal";
+            + "Parameters: CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]\n"
+            + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1,2 Client Portal r/developer";
 
     public static final String MESSAGE_SUCCESS = "Client %1$s added to project: %2$s";
     public static final String MESSAGE_SUCCESS_MULTIPLE = "Clients added to project %1$s: %2$s";
@@ -37,22 +37,35 @@ public class ProjectAddCommand extends Command {
 
     private final List<Index> targetIndexes;
     private final Project project;
+    private final String role;
 
     /**
      * Creates a ProjectAddCommand to attach the client at {@code targetIndex} to {@code project}.
      */
-    public ProjectAddCommand(Index targetIndex, Project project) {
-        this(List.of(targetIndex), project);
+    public ProjectAddCommand(Index targetIndex, Project project, Index... unused) {
+        this(targetIndex, project, ClientProject.DEFAULT_ROLE);
+    }
+
+    /** Creates a ProjectAddCommand with a role for each new membership. */
+    public ProjectAddCommand(Index targetIndex, Project project, String role) {
+        this(List.of(targetIndex), project, role);
     }
 
     /**
      * Creates a ProjectAddCommand to attach clients at {@code targetIndexes} to {@code project}.
      */
-    public ProjectAddCommand(List<Index> targetIndexes, Project project, boolean... unused) {
+    public ProjectAddCommand(List<Index> targetIndexes, Project project) {
+        this(targetIndexes, project, ClientProject.DEFAULT_ROLE);
+    }
+
+    /** Creates a ProjectAddCommand with a role for each new membership. */
+    public ProjectAddCommand(List<Index> targetIndexes, Project project, String role) {
         requireAllNonNull(targetIndexes, project);
         requireAllNonNull(targetIndexes);
+        requireNonNull(role);
         this.targetIndexes = List.copyOf(targetIndexes);
         this.project = project;
+        this.role = role.trim().replaceAll("\\s+", " ");
     }
 
     @Override
@@ -77,7 +90,7 @@ public class ProjectAddCommand extends Command {
                 .toList();
         if (clients.size() == 1) {
             Person client = clients.get(0);
-            ClientProject membership = new ClientProject(client, existingProject);
+            ClientProject membership = new ClientProject(client, existingProject, role);
             if (model.hasClientProject(membership)) {
                 throw new CommandException(MESSAGE_DUPLICATE_CLIENT_PROJECT);
             }
@@ -88,7 +101,7 @@ public class ProjectAddCommand extends Command {
         List<Person> added = new ArrayList<>();
         List<Person> skipped = new ArrayList<>();
         for (Person client : clients) {
-            ClientProject membership = new ClientProject(client, existingProject);
+            ClientProject membership = new ClientProject(client, existingProject, role);
             if (model.hasClientProject(membership)) {
                 skipped.add(client);
             } else {
@@ -123,15 +136,19 @@ public class ProjectAddCommand extends Command {
         }
 
         return targetIndexes.equals(otherProjectAddCommand.targetIndexes)
-                && project.equals(otherProjectAddCommand.project);
+                && project.equals(otherProjectAddCommand.project)
+                && role.equals(otherProjectAddCommand.role);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        ToStringBuilder builder = new ToStringBuilder(this)
                 .add(targetIndexes.size() == 1 ? "targetIndex" : "targetIndexes",
                         targetIndexes.size() == 1 ? targetIndexes.get(0) : targetIndexes)
-                .add("project", project)
-                .toString();
+                .add("project", project);
+        if (!role.isEmpty()) {
+            builder.add("role", role);
+        }
+        return builder.toString();
     }
 }

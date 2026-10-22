@@ -12,6 +12,7 @@ import seedu.address.logic.commands.ProjectCreateCommand;
 import seedu.address.logic.commands.ProjectDeleteCommand;
 import seedu.address.logic.commands.ProjectListCommand;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.commands.ProjectRoleCommand;
 import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
@@ -22,7 +23,8 @@ public class ProjectCommandParser implements Parser<Command> {
 
     public static final String MESSAGE_USAGE = ProjectCreateCommand.MESSAGE_USAGE + "\n"
             + ProjectAddCommand.MESSAGE_USAGE + "\n" + ProjectRemoveCommand.MESSAGE_USAGE + "\n"
-            + ProjectListCommand.MESSAGE_USAGE + "\n" + ProjectViewCommand.MESSAGE_USAGE + "\n"
+            + ProjectListCommand.MESSAGE_USAGE + "\n" + ProjectRoleCommand.MESSAGE_USAGE + "\n"
+            + ProjectViewCommand.MESSAGE_USAGE + "\n"
             + ProjectAllCommand.MESSAGE_USAGE + "\n"
             + ProjectDeleteCommand.MESSAGE_USAGE;
 
@@ -69,6 +71,7 @@ public class ProjectCommandParser implements Parser<Command> {
             case ProjectAddCommand.SUBCOMMAND_WORD -> new ProjectAddCommandParser().parse(subcommandArgs);
             case ProjectRemoveCommand.SUBCOMMAND_WORD -> new ProjectRemoveCommandParser().parse(subcommandArgs);
             case ProjectListCommand.SUBCOMMAND_WORD -> new ProjectListCommandParser().parse(subcommandArgs);
+            case ProjectRoleCommand.SUBCOMMAND_WORD -> new ProjectRoleCommandParser().parse(subcommandArgs);
             default -> throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, MESSAGE_USAGE));
         };
     }

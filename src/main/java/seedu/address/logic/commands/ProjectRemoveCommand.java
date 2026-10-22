@@ -26,8 +26,8 @@ public class ProjectRemoveCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUBCOMMAND_WORD
             + ": Detaches a client from an existing project. "
-            + "Parameters: CLIENT_INDEX (must be a positive integer) PROJECT\n"
-            + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1 Client Portal";
+            + "Parameters: CLIENT_INDEX[,CLIENT_INDEX...] PROJECT\n"
+            + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1,2 Client Portal";
 
     public static final String MESSAGE_SUCCESS = "Client %1$s removed from project: %2$s";
     public static final String MESSAGE_SUCCESS_MULTIPLE = "Clients removed from project %1$s: %2$s";
@@ -41,14 +41,14 @@ public class ProjectRemoveCommand extends Command {
     /**
      * Creates a ProjectRemoveCommand to detach the client at {@code targetIndex} from {@code project}.
      */
-    public ProjectRemoveCommand(Index targetIndex, Project project) {
+    public ProjectRemoveCommand(Index targetIndex, Project project, Index... unused) {
         this(List.of(targetIndex), project);
     }
 
     /**
      * Creates a ProjectRemoveCommand to detach clients at {@code targetIndexes} from {@code project}.
      */
-    public ProjectRemoveCommand(List<Index> targetIndexes, Project project, boolean... unused) {
+    public ProjectRemoveCommand(List<Index> targetIndexes, Project project) {
         requireAllNonNull(targetIndexes, project);
         requireAllNonNull(targetIndexes);
         this.targetIndexes = List.copyOf(targetIndexes);

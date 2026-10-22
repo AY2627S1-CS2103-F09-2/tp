@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
+import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.model.tag.Tag;
 
@@ -54,6 +56,24 @@ public class ParserUtilTest {
 
         // Leading and trailing whitespaces
         assertEquals(INDEX_FIRST_PERSON, ParserUtil.parseIndex("  1  "));
+    }
+
+    @Test
+    public void parseIndexes_validInput_deduplicatesIndexes() throws Exception {
+        assertEquals(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON),
+                ParserUtil.parseIndexes(" 1, 2,1 "));
+    }
+
+    @Test
+    public void parseIndexes_invalidInput_throwsParseException() {
+        for (String indexes : List.of("", "1,", ",1", "1,,2")) {
+            assertThrows(ParseException.class, () -> ParserUtil.parseIndexes(indexes));
+        }
+    }
+
+    @Test
+    public void parseIndexes_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseIndexes(null));
     }
 
     @Test
@@ -110,6 +130,18 @@ public class ParserUtilTest {
     public void parseProject_extraWhitespace_returnsNormalizedProject() throws Exception {
         Project project = ParserUtil.parseProject(WHITESPACE + "Client   Portal" + WHITESPACE);
         assertEquals("Client Portal", project.getName());
+    }
+
+    @Test
+    public void parseRole_validInput_returnsNormalizedRole() throws Exception {
+        assertEquals("senior developer", ParserUtil.parseRole(" senior   developer "));
+    }
+
+    @Test
+    public void parseRole_nullOrBlank_throws() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseRole(null));
+        assertThrows(ParseException.class, ClientProject.MESSAGE_ROLE_CONSTRAINTS, () ->
+                ParserUtil.parseRole(" \t "));
     }
 
     @Test

@@ -104,4 +104,16 @@ public class JsonSerializableClientBookTest {
                 data::toModelType);
     }
 
+    @Test
+    public void toModelType_nullRole_usesDefaultRole() throws Exception {
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject("Alice Pauline", "Hackathon", null)));
+
+        ClientBook clientBook = data.toModelType();
+
+        assertEquals("", clientBook.getClientProjectList().get(0).getRole());
+    }
+
 }
