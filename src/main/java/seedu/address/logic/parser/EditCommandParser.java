@@ -80,6 +80,7 @@ public class EditCommandParser implements Parser<EditCommand> {
      * means the contact's address should be removed.
      */
     private Address parseAddressForEdit(String address) throws ParseException {
+        assert address != null : "Only a present address prefix should be parsed for editing";
         if (address.isBlank()) {
             return Address.EMPTY;
         }

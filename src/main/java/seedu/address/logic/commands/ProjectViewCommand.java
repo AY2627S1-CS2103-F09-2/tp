@@ -2,6 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -25,6 +28,8 @@ public class ProjectViewCommand extends Command {
     public static final String MESSAGE_EMPTY = "Project %1$s has no clients.";
     public static final String MESSAGE_PROJECT_NOT_FOUND = "Project does not exist: %1$s";
 
+    private static final Logger logger = LogsCenter.getLogger(ProjectViewCommand.class);
+
     private final Project project;
 
     /**
@@ -46,6 +51,7 @@ public class ProjectViewCommand extends Command {
 
         model.updateFilteredPersonList(person -> model.hasClientProject(new ClientProject(person, existingProject)));
         int count = model.getFilteredPersonList().size();
+        logger.fine("Project view found " + count + " clients for " + existingProject);
         if (count == 0) {
             return new CommandResult(String.format(MESSAGE_EMPTY, existingProject));
         }

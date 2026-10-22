@@ -25,7 +25,7 @@ public class FindCommand extends Command {
     private final NameOrCompanyContainsKeywordsPredicate predicate;
 
     public FindCommand(NameOrCompanyContainsKeywordsPredicate predicate) {
-        this.predicate = predicate;
+        this.predicate = requireNonNull(predicate);
     }
 
     @Override
