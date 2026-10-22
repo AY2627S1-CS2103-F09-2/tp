@@ -121,6 +121,9 @@ public class LogicManagerTest {
 
         assertCommandSuccess("edit 1 a/",
                 String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+    }
+
+    @Test
     public void execute_findPartialNameKeywords_listsMatchingPersons() throws Exception {
         model.addPerson(ALICE);
         model.addPerson(AMY);
