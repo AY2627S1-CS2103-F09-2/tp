@@ -44,28 +44,32 @@ public class LogicManager implements Logic {
 
     @Override
     public CommandResult execute(String commandText) throws CommandException, ParseException {
+        logger.info("----------------[USER COMMAND][" + commandText + "]");
         long startTime = System.nanoTime();
 
+        Command command;
         CommandResult commandResult;
         try {
-            Command command = clientBookParser.parseCommand(commandText);
+            command = clientBookParser.parseCommand(commandText);
             commandResult = command.execute(model);
-
-            try {
-                storage.saveClientBook(model.getClientBook());
-            } catch (AccessDeniedException e) {
-                throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
-            } catch (IOException ioe) {
-                throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
-            }
-
-            long durationMillis = (System.nanoTime() - startTime) / 1_000_000;
-            logger.info("Command succeeded: " + command.getClass().getSimpleName()
-                    + " in " + durationMillis + " ms");
         } catch (CommandException | ParseException e) {
-            logger.log(Level.WARNING, "Command failed: " + e.getMessage(), e);
+            logger.info("Command failed: " + e.getMessage());
             throw e;
         }
+
+        try {
+            storage.saveClientBook(model.getClientBook());
+        } catch (AccessDeniedException e) {
+            logger.log(Level.WARNING, "Failed to save client book: " + e.getMessage(), e);
+            throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
+        } catch (IOException ioe) {
+            logger.log(Level.WARNING, "Failed to save client book: " + ioe.getMessage(), ioe);
+            throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
+        }
+
+        long durationMillis = (System.nanoTime() - startTime) / 1_000_000;
+        logger.info("Command succeeded: " + command.getClass().getSimpleName()
+                + " in " + durationMillis + " ms");
 
         return commandResult;
     }

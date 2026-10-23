@@ -192,7 +192,6 @@ public class MainWindow extends UiPart<Stage> {
 
             return commandResult;
         } catch (CommandException | ParseException e) {
-            logger.warning("Command execution failed: " + e.getMessage());
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
         }
