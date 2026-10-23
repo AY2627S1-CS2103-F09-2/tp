@@ -240,6 +240,18 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 _{more aspects and alternatives to be added}_
 
+### Project view feature
+
+#### Implementation
+
+`project view PROJECT` uses `ProjectViewCommand` to find a project by name, ignoring case and extra spaces, and filter the client list to its members. The UI observes the filtered list and displays a client count or an empty-project message.
+
+The sequence diagram below shows the successful flow for `project view Client Portal`, including the save performed by `LogicManager` before returning a `CommandResult` to the UI.
+
+![Component interactions for the project view command](images/ProjectViewSequenceDiagram.png)
+
+Diagram source: [PlantUML](diagrams/ProjectViewSequenceDiagram.puml).
+
 ### \[Proposed\] Data archiving
 
 _{Explain here how the data archiving feature will be implemented}_
