@@ -24,6 +24,7 @@ package Storage as StoragePackage {
             projectName : String
             role : String
         }
+        show JsonAdaptedClientProject fields
         Class JsonAdaptedTag
     }
 }
