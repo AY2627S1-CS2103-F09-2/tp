@@ -2,6 +2,7 @@ package seedu.address.logic;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -44,18 +45,31 @@ public class LogicManager implements Logic {
     @Override
     public CommandResult execute(String commandText) throws CommandException, ParseException {
         logger.info("----------------[USER COMMAND][" + commandText + "]");
+        long startTime = System.nanoTime();
 
+        Command command;
         CommandResult commandResult;
-        Command command = clientBookParser.parseCommand(commandText);
-        commandResult = command.execute(model);
+        try {
+            command = clientBookParser.parseCommand(commandText);
+            commandResult = command.execute(model);
+        } catch (CommandException | ParseException e) {
+            logger.info("Command failed: " + e.getMessage());
+            throw e;
+        }
 
         try {
             storage.saveClientBook(model.getClientBook());
         } catch (AccessDeniedException e) {
+            logger.log(Level.WARNING, "Failed to save client book: " + e.getMessage(), e);
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            logger.log(Level.WARNING, "Failed to save client book: " + ioe.getMessage(), ioe);
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
+
+        long durationMillis = (System.nanoTime() - startTime) / 1_000_000;
+        logger.info("Command succeeded: " + command.getClass().getSimpleName()
+                + " in " + durationMillis + " ms");
 
         return commandResult;
     }
