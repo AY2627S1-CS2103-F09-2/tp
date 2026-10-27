@@ -10,6 +10,8 @@ import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
@@ -28,6 +30,9 @@ public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
+    /** A whole number, which may be too small (e.g. 0 or -1) or too large to be an index. */
+    private static final String WHOLE_NUMBER_REGEX = "-?\\d+";
+
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
      * trimmed.
@@ -35,10 +40,14 @@ public class ParserUtil {
      */
     public static Index parseIndex(String oneBasedIndex) throws ParseException {
         String trimmedIndex = oneBasedIndex.trim();
-        if (!StringUtil.isNonZeroUnsignedInteger(trimmedIndex)) {
-            throw new ParseException(MESSAGE_INVALID_INDEX);
+        if (StringUtil.isNonZeroUnsignedInteger(trimmedIndex)) {
+            return Index.fromOneBased(Integer.parseInt(trimmedIndex));
         }
-        return Index.fromOneBased(Integer.parseInt(trimmedIndex));
+        // A number that can't be an index is a mistake in the number, not in the command's format.
+        if (trimmedIndex.matches(WHOLE_NUMBER_REGEX)) {
+            throw new InvalidIndexException(Messages.MESSAGE_INDEX_NOT_IN_LIST);
+        }
+        throw new ParseException(MESSAGE_INVALID_INDEX);
     }
 
     /**

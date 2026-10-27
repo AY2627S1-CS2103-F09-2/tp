@@ -5,6 +5,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectListCommand;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -23,6 +24,8 @@ public class ProjectListCommandParser implements Parser<ProjectListCommand> {
         try {
             Index index = ParserUtil.parseIndex(args);
             return new ProjectListCommand(index);
+        } catch (InvalidIndexException iie) {
+            throw iie;
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE), pe);

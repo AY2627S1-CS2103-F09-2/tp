@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectAddCommand;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
@@ -44,6 +45,8 @@ public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
             }
             Project project = ParserUtil.parseProject(projectName);
             return new ProjectAddCommand(indexes, project, role);
+        } catch (InvalidIndexException iie) {
+            throw iie;
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE), pe);

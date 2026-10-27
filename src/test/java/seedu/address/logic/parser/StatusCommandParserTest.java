@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -35,9 +36,10 @@ public class StatusCommandParserTest {
 
     @Test
     public void parse_invalidIndex_throwsParseException() {
-        for (String args : List.of("0 active", "-1 active", "abc active")) {
-            assertParseFailure(parser, args,
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, StatusCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "abc active",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, StatusCommand.MESSAGE_USAGE));
+        for (String args : List.of("0 active", "-1 active")) {
+            assertParseFailure(parser, args, MESSAGE_INDEX_NOT_IN_LIST);
         }
     }
 
