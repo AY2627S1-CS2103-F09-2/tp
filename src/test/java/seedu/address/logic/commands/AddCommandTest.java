@@ -14,11 +14,13 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.ClientBook;
+import seedu.address.model.ContactView;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
@@ -231,6 +233,26 @@ public class AddCommandTest {
 
         @Override
         public void deleteProject(Project project) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void showAllContacts() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void showProjectClients(Project project) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ContactView getContactView() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyObjectProperty<ContactView> contactViewProperty() {
             throw new AssertionError("This method should not be called.");
         }
 

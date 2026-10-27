@@ -2,6 +2,7 @@ package seedu.address.ui;
 
 import java.util.logging.Logger;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.ContactView;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
 import seedu.address.model.project.ClientProject;
@@ -23,10 +25,8 @@ public class ProjectSidebar extends UiPart<Region> {
 
     private final Logger logger = LogsCenter.getLogger(getClass());
     private final ReadOnlyClientBook clientBook;
+    private final ReadOnlyObjectProperty<ContactView> contactView;
     private final CommandBox.CommandExecutor commandExecutor;
-
-    private boolean showingAllContacts = true;
-    private Project selectedProject;
 
     @FXML
     private Button contactsButton;
@@ -40,26 +40,27 @@ public class ProjectSidebar extends UiPart<Region> {
     /**
      * Creates a project navigation sidebar backed by the client book's live project list.
      */
-    public ProjectSidebar(ReadOnlyClientBook clientBook, CommandBox.CommandExecutor commandExecutor) {
+    public ProjectSidebar(ReadOnlyClientBook clientBook, ReadOnlyObjectProperty<ContactView> contactView,
+            CommandBox.CommandExecutor commandExecutor) {
         super(FXML);
         this.clientBook = clientBook;
+        this.contactView = contactView;
         this.commandExecutor = commandExecutor;
 
         refreshContactsLabel();
         refreshProjectButtons();
-        selectContacts();
+        refreshSelectionStyles();
 
         clientBook.getPersonList().addListener((ListChangeListener<Person>) change -> refreshContactsLabel());
         clientBook.getProjectList().addListener((ListChangeListener<Project>) change -> refreshProjectButtons());
         clientBook.getClientProjectList().addListener(
                 (ListChangeListener<ClientProject>) change -> refreshProjectButtons());
+        contactView.addListener((observable, oldView, newView) -> refreshSelectionStyles());
     }
 
     @FXML
     private void handleContactsSelected() {
-        if (executeNavigationCommand("list")) {
-            selectContacts();
-        }
+        executeNavigationCommand("list");
     }
 
     @FXML
@@ -67,32 +68,18 @@ public class ProjectSidebar extends UiPart<Region> {
         boolean showProjects = !projectList.isVisible();
         projectList.setVisible(showProjects);
         projectList.setManaged(showProjects);
-        showingAllContacts = false;
-        refreshSelectionStyles();
     }
 
     private void handleProjectSelected(Project project) {
-        if (executeNavigationCommand("project view " + project.getName())) {
-            showingAllContacts = false;
-            selectedProject = project;
-            refreshSelectionStyles();
-        }
+        executeNavigationCommand("project view " + project.getName());
     }
 
-    private boolean executeNavigationCommand(String command) {
+    private void executeNavigationCommand(String command) {
         try {
             commandExecutor.execute(command);
-            return true;
         } catch (CommandException | ParseException e) {
             logger.warning("Sidebar navigation failed: " + e.getMessage());
-            return false;
         }
-    }
-
-    private void selectContacts() {
-        showingAllContacts = true;
-        selectedProject = null;
-        refreshSelectionStyles();
     }
 
     private void refreshContactsLabel() {
@@ -100,11 +87,6 @@ public class ProjectSidebar extends UiPart<Region> {
     }
 
     private void refreshProjectButtons() {
-        if (selectedProject != null && clientBook.getProjectList().stream()
-                .noneMatch(selectedProject::isSameProject)) {
-            selectedProject = null;
-        }
-
         projectList.getChildren().clear();
         for (Project project : clientBook.getProjectList()) {
             Button projectButton = new Button(formatProjectLabel(project));
@@ -126,8 +108,9 @@ public class ProjectSidebar extends UiPart<Region> {
     }
 
     private void refreshSelectionStyles() {
-        setSelected(contactsButton, showingAllContacts);
-        setSelected(projectsButton, !showingAllContacts);
+        Project selectedProject = contactView.get().getProject().orElse(null);
+        setSelected(contactsButton, selectedProject == null);
+        setSelected(projectsButton, selectedProject != null);
         for (javafx.scene.Node node : projectList.getChildren()) {
             Button projectButton = (Button) node;
             Project project = (Project) projectButton.getProperties().get(Project.class);

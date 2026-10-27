@@ -118,7 +118,7 @@ public class MainWindow extends UiPart<Stage> {
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
-        projectSidebar = new ProjectSidebar(logic.getClientBook(), this::executeCommand);
+        projectSidebar = new ProjectSidebar(logic.getClientBook(), logic.contactViewProperty(), this::executeCommand);
         projectSidebarPlaceholder.getChildren().add(projectSidebar.getRoot());
 
         personListPanel = new PersonListPanel(logic.getFilteredPersonList(), logic.getClientBook());

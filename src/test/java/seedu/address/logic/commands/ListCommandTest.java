@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.model.ClientBook;
+import seedu.address.model.ContactView;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -43,6 +45,7 @@ public class ListCommandTest {
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+        assertEquals(ContactView.allContacts(), model.getContactView());
     }
 
     @Test
@@ -55,6 +58,7 @@ public class ListCommandTest {
 
         assertCommandSuccess(new ListCommand(Status.ACTIVE), model,
                 String.format(ListCommand.MESSAGE_FILTERED_SUCCESS, 2, "contacts", Status.ACTIVE), expectedModel);
+        assertEquals(ContactView.filtered(), model.getContactView());
     }
 
     @Test
