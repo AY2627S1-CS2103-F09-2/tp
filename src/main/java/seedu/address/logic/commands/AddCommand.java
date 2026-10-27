@@ -21,7 +21,7 @@ public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a person to the client book. "
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a contact to the client book. "
             + "Parameters: "
             + PREFIX_NAME + "NAME "
             + PREFIX_PHONE + "PHONE "
@@ -38,8 +38,8 @@ public class AddCommand extends Command {
             + PREFIX_TAG + "friends "
             + PREFIX_TAG + "owesMoney";
 
-    public static final String MESSAGE_SUCCESS = "New person added: %1$s";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the client book.";
+    public static final String MESSAGE_SUCCESS = "New contact added: %1$s";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This contact already exists in the client book.";
     public static final String MESSAGE_DUPLICATE_EMAIL_WARNING =
             "Warning: Email %1$s already belongs to another contact.";
     public static final String MESSAGE_DUPLICATE_PHONE_WARNING =
