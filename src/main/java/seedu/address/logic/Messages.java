@@ -20,6 +20,8 @@ public class Messages {
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
+    public static final String MESSAGE_STATUS_NOT_SET_HERE =
+            "%1$s does not set a status (s/). Use the status command instead, e.g. status 1 active.";
 
     /**
      * Returns an error message indicating the duplicate prefixes.
