@@ -18,14 +18,15 @@
       <padding>
         <Insets top="5" right="5" bottom="5" left="15" />
       </padding>
-      <HBox spacing="0.5" alignment="CENTER_LEFT">
+      <!-- TOP_LEFT keeps the index level with the first line of a name that wraps onto several lines -->
+      <HBox spacing="0.5" alignment="TOP_LEFT">
         <Label fx:id="id" styleClass="cell_big_label">
           <minWidth>
             <!-- Ensures that the label text is never truncated -->
             <Region fx:constant="USE_PREF_SIZE" />
           </minWidth>
         </Label>
-        <Label fx:id="name" text="\$first" styleClass="cell_big_label" />
+        <Label fx:id="name" text="\$first" styleClass="cell_big_label" wrapText="true" />
       </HBox>
       <Label fx:id="company" styleClass="cell_small_label" text="\$company" />
       <FlowPane fx:id="tags" />
