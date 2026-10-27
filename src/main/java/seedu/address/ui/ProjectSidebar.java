@@ -7,6 +7,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.commons.core.LogsCenter;
@@ -30,9 +31,6 @@ public class ProjectSidebar extends UiPart<Region> {
 
     @FXML
     private Button contactsButton;
-
-    @FXML
-    private Button projectsButton;
 
     @FXML
     private VBox projectList;
@@ -61,13 +59,6 @@ public class ProjectSidebar extends UiPart<Region> {
     @FXML
     private void handleContactsSelected() {
         executeNavigationCommand("list");
-    }
-
-    @FXML
-    private void handleProjectsSelected() {
-        boolean showProjects = !projectList.isVisible();
-        projectList.setVisible(showProjects);
-        projectList.setManaged(showProjects);
     }
 
     private void handleProjectSelected(Project project) {
@@ -110,7 +101,6 @@ public class ProjectSidebar extends UiPart<Region> {
     private void refreshSelectionStyles() {
         Project selectedProject = contactView.get().getProject().orElse(null);
         setSelected(contactsButton, selectedProject == null);
-        setSelected(projectsButton, selectedProject != null);
         for (javafx.scene.Node node : projectList.getChildren()) {
             Button projectButton = (Button) node;
             Project project = (Project) projectButton.getProperties().get(Project.class);
@@ -118,11 +108,11 @@ public class ProjectSidebar extends UiPart<Region> {
         }
     }
 
-    private static void setSelected(Button button, boolean selected) {
-        if (selected && !button.getStyleClass().contains(SELECTED_STYLE_CLASS)) {
-            button.getStyleClass().add(SELECTED_STYLE_CLASS);
+    private static void setSelected(Labeled control, boolean selected) {
+        if (selected && !control.getStyleClass().contains(SELECTED_STYLE_CLASS)) {
+            control.getStyleClass().add(SELECTED_STYLE_CLASS);
         } else if (!selected) {
-            button.getStyleClass().remove(SELECTED_STYLE_CLASS);
+            control.getStyleClass().remove(SELECTED_STYLE_CLASS);
         }
     }
 }
