@@ -51,8 +51,10 @@ public class Messages {
         if (!person.getCompany().isEmpty()) {
             builder.append("; Company: ").append(person.getCompany());
         }
-        builder.append("; Tags: ");
-        person.getTags().forEach(builder::append);
+        if (!person.getTags().isEmpty()) {
+            builder.append("; Tags: ");
+            person.getTags().forEach(builder::append);
+        }
         return builder.toString();
     }
 
