@@ -8,7 +8,6 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /**
@@ -49,7 +48,7 @@ public class ProjectViewCommand extends Command {
                 .findFirst()
                 .orElseThrow(() -> new CommandException(String.format(MESSAGE_PROJECT_NOT_FOUND, project)));
 
-        model.updateFilteredPersonList(person -> model.hasClientProject(new ClientProject(person, existingProject)));
+        model.showProjectClients(existingProject);
         int count = model.getFilteredPersonList().size();
         logger.fine("Project view found " + count + " clients for " + existingProject);
         if (count == 0) {

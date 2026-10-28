@@ -5,6 +5,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -13,6 +14,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.ClientBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.ContactView;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
@@ -77,6 +79,11 @@ public class LogicManager implements Logic {
     @Override
     public ObservableList<Person> getFilteredPersonList() {
         return model.getFilteredPersonList();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<ContactView> contactViewProperty() {
+        return model.contactViewProperty();
     }
 
     @Override

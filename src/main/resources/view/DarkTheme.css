@@ -142,6 +142,49 @@
      -fx-border-top-width: 1px;
 }
 
+.project-sidebar {
+    -fx-background-color: derive(#1d1d1d, 15%);
+    -fx-border-color: derive(#1d1d1d, 10%);
+    -fx-border-width: 1px 1px 0 0;
+}
+
+.button.sidebar-button, .label.sidebar-button, .button.sidebar-project-button {
+    -fx-alignment: center-left;
+    -fx-background-color: transparent;
+    -fx-background-radius: 2;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-family: "Segoe UI Light";
+    -fx-font-size: 12pt;
+    -fx-padding: 8 10 8 10;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+.button.sidebar-project-button {
+    -fx-font-size: 11pt;
+    -fx-padding: 7 10 7 10;
+}
+
+.scroll-pane.sidebar-scroll-pane,
+.scroll-pane.sidebar-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane.sidebar-scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.button.sidebar-button:hover, .button.sidebar-project-button:hover {
+    -fx-background-color: derive(#1d1d1d, 30%);
+}
+
+.button.sidebar-button.sidebar-selected, .button.sidebar-project-button.sidebar-selected {
+    -fx-background-color: #3e7b91;
+    -fx-text-fill: white;
+}
+
 .status-bar {
     -fx-background-color: derive(#1d1d1d, 30%);
 }
