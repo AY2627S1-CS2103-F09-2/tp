@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.ContactView;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -128,6 +129,7 @@ public class ProjectViewCommandTest {
         new ProjectViewCommand(PROJECT).execute(model);
         Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+        assertEquals(ContactView.allContacts(), model.getContactView());
     }
 
     @Test
@@ -135,6 +137,7 @@ public class ProjectViewCommandTest {
         new ProjectViewCommand(PROJECT).execute(model);
         model.addClientProject(new ClientProject(CARL, PROJECT));
         assertEquals(List.of(ALICE, BENSON, CARL), model.getFilteredPersonList());
+        assertEquals(ContactView.project(PROJECT), model.getContactView());
     }
 
     @Test
@@ -147,10 +150,11 @@ public class ProjectViewCommandTest {
     }
 
     @Test
-    public void execute_projectDeletedAfterView_clearsDisplayedListAndKeepsClients() throws Exception {
+    public void execute_projectDeletedAfterView_showsAllContactsAndKeepsClients() throws Exception {
         new ProjectViewCommand(PROJECT).execute(model);
         new ProjectDeleteCommand(PROJECT).execute(model);
-        assertTrue(model.getFilteredPersonList().isEmpty());
+        assertEquals(model.getClientBook().getPersonList(), model.getFilteredPersonList());
+        assertEquals(ContactView.allContacts(), model.getContactView());
         assertTrue(model.hasPerson(ALICE));
         assertTrue(model.hasPerson(BENSON));
     }
@@ -169,6 +173,7 @@ public class ProjectViewCommandTest {
         showPersonAtIndex(model, INDEX_SECOND_PERSON);
         model.removeClientProject(new ClientProject(BENSON, PROJECT));
         assertEquals(List.of(BENSON), model.getFilteredPersonList());
+        assertEquals(ContactView.filtered(), model.getContactView());
     }
 
     @Test
@@ -196,5 +201,6 @@ public class ProjectViewCommandTest {
         expectedModel.updateFilteredPersonList(expectedClients::contains);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(expectedClients, model.getFilteredPersonList());
+        assertEquals(ContactView.Type.PROJECT, model.getContactView().getType());
     }
 }

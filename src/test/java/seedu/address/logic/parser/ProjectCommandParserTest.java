@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -89,10 +90,11 @@ public class ProjectCommandParserTest {
 
     @Test
     public void parse_invalidAddArguments_throwsParseException() {
-        for (String args : List.of("add", "add 1", "add 1   ", "add 0 Client Portal", "add abc Client Portal")) {
+        for (String args : List.of("add", "add 1", "add 1   ", "add abc Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
         }
+        assertParseFailure(parser, "add 0 Client Portal", MESSAGE_INDEX_NOT_IN_LIST);
     }
 
     @Test
@@ -105,10 +107,11 @@ public class ProjectCommandParserTest {
 
     @Test
     public void parse_invalidRemoveArguments_throwsParseException() {
-        for (String args : List.of("remove", "remove 1", "remove 1   ", "remove 0 Portal", "remove abc Portal")) {
+        for (String args : List.of("remove", "remove 1", "remove 1   ", "remove abc Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
         }
+        assertParseFailure(parser, "remove 0 Portal", MESSAGE_INDEX_NOT_IN_LIST);
     }
 
     @Test
@@ -135,10 +138,11 @@ public class ProjectCommandParserTest {
 
     @Test
     public void parse_invalidListArguments_throwsParseException() {
-        for (String args : List.of("list", "list   ", "list 0", "list abc", "list 1 Client Portal")) {
+        for (String args : List.of("list", "list   ", "list abc", "list 1 Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE));
         }
+        assertParseFailure(parser, "list 0", MESSAGE_INDEX_NOT_IN_LIST);
     }
 
     @Test
@@ -152,10 +156,11 @@ public class ProjectCommandParserTest {
 
     @Test
     public void parse_invalidRoleArguments_throwsParseException() {
-        for (String args : List.of("role", "role 1 Client Portal", "role 0 Client Portal r/UI")) {
+        for (String args : List.of("role", "role 1 Client Portal")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));
         }
+        assertParseFailure(parser, "role 0 Client Portal r/UI", MESSAGE_INDEX_NOT_IN_LIST);
     }
 
     @Test

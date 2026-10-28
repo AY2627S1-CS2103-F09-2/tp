@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -57,9 +58,13 @@ public class ProjectAddCommandParserTest {
 
     @Test
     public void parse_invalidIndex_throwsParseException() {
-        for (String index : List.of("0", "-1", "+1", "1.5", "abc", "2147483648", "99999999999999999999")) {
+        for (String index : List.of("+1", "1.5", "abc")) {
             assertParseFailure(parser, index + " Client Portal",
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
+        }
+        // whole numbers that can't be a contact's position get a message about the index itself
+        for (String index : List.of("0", "-1", "2147483648", "99999999999999999999", "1,0")) {
+            assertParseFailure(parser, index + " Client Portal", MESSAGE_INDEX_NOT_IN_LIST);
         }
     }
 

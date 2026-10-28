@@ -6,6 +6,8 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -24,6 +26,8 @@ public class ModelManager implements Model {
     private final ClientBook clientBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private final ReadOnlyObjectWrapper<ContactView> contactView =
+            new ReadOnlyObjectWrapper<>(ContactView.allContacts());
     private Predicate<Person> personFilter = PREDICATE_SHOW_ALL_PERSONS;
 
     /**
@@ -39,7 +43,7 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.clientBook.getPersonList());
         // Project memberships can change without a corresponding change to the person list.
         this.clientBook.getClientProjectList().addListener((ListChangeListener<ClientProject>) change ->
-                updateFilteredPersonList(personFilter));
+                refreshPersonFilter());
     }
 
     public ModelManager() {
@@ -90,7 +94,7 @@ public class ModelManager implements Model {
     @Override
     public void addPerson(Person person) {
         clientBook.addPerson(person);
-        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        showAllContacts();
     }
 
     @Override
@@ -137,10 +141,35 @@ public class ModelManager implements Model {
     @Override
     public void deleteProject(Project project) {
         requireNonNull(project);
+        boolean deletingActiveProject = contactView.get().isProject(project);
         clientBook.removeProject(project);
+        if (deletingActiveProject) {
+            showAllContacts();
+        }
     }
 
     //=========== Filtered Person List Accessors =============================================================
+
+    @Override
+    public void showAllContacts() {
+        applyPersonFilter(PREDICATE_SHOW_ALL_PERSONS, ContactView.allContacts());
+    }
+
+    @Override
+    public void showProjectClients(Project project) {
+        requireNonNull(project);
+        applyPersonFilter(person -> hasClientProject(new ClientProject(person, project)), ContactView.project(project));
+    }
+
+    @Override
+    public ContactView getContactView() {
+        return contactView.get();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<ContactView> contactViewProperty() {
+        return contactView.getReadOnlyProperty();
+    }
 
     /**
      * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
@@ -153,10 +182,20 @@ public class ModelManager implements Model {
 
     @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
+        applyPersonFilter(predicate, ContactView.filtered());
+    }
+
+    private void applyPersonFilter(Predicate<Person> predicate, ContactView newContactView) {
         requireNonNull(predicate);
+        requireNonNull(newContactView);
         personFilter = predicate;
+        refreshPersonFilter();
+        contactView.set(newContactView);
+    }
+
+    private void refreshPersonFilter() {
         // A fresh predicate makes JavaFX re-evaluate the filter even when only memberships changed.
-        filteredPersons.setPredicate(predicate::test);
+        filteredPersons.setPredicate(personFilter::test);
     }
 
     @Override

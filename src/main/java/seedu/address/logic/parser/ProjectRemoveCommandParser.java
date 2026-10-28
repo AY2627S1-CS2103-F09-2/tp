@@ -7,6 +7,7 @@ import java.util.List;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRemoveCommand;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.project.Project;
 
@@ -32,6 +33,8 @@ public class ProjectRemoveCommandParser implements Parser<ProjectRemoveCommand> 
             List<Index> indexes = ParserUtil.parseIndexes(arguments[0]);
             Project project = ParserUtil.parseProject(arguments[1]);
             return new ProjectRemoveCommand(indexes, project);
+        } catch (InvalidIndexException iie) {
+            throw iie;
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE), pe);

@@ -81,9 +81,9 @@ Shows a message explaining how to access the help page.
 Format: `help`
 
 
-### Adding a person: `add`
+### Adding a contact: `add`
 
-Adds a person to the client book.
+Adds a contact to the client book.
 
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
@@ -92,7 +92,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * The company is shown under the contact's name.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A person can have any number of tags, including zero.
+A contact can have any number of tags, including zero.
 </div>
 
 Examples:
@@ -287,38 +287,38 @@ Examples:
 * `status 2 on hold` puts the second contact's engagement on hold.
 * `status 2 none` clears the second contact's status.
 
-### Editing a person: `edit`
+### Editing a contact: `edit`
 
-Edits an existing person in the client book.
+Edits an existing contact in the client book.
 
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
+* Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
-* When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
-* To remove a person's address, enter `a/` without an address after it. Other details remain unchanged unless specified.
-* To remove all of a person's tags, enter `t/` without a tag after it.
-* To remove a person's company, enter `c/` without a company after it.
+* When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
+* To remove a contact's address, enter `a/` without an address after it. Other details remain unchanged unless specified.
+* To remove all of a contact's tags, enter `t/` without a tag after it.
+* To remove a contact's company, enter `c/` without a company after it.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 1 a/` Removes the address of the 1st person.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
-*  `edit 3 c/Globex Corp` Changes the company of the 3rd person to `Globex Corp`.
-*  `edit 3 c/` Removes the company of the 3rd person.
+*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st contact to be `91234567` and `johndoe@example.com` respectively.
+*  `edit 1 a/` Removes the address of the 1st contact.
+*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd contact to be `Betsy Crower` and clears all existing tags.
+*  `edit 3 c/Globex Corp` Changes the company of the 3rd contact to `Globex Corp`.
+*  `edit 3 c/` Removes the company of the 3rd contact.
 
-### Locating persons by name or company: `find`
+### Locating contacts by name or company: `find`
 
-Finds persons whose names or companies contain any of the given keywords.
+Finds contacts whose names or companies contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search looks at names and companies only, not phone numbers, emails, addresses, tags or notes.
-* Partial words match anywhere in a name or company; for example, `ali` matches `Alice`, and `acme` matches a person at `Acme Pte Ltd`.
-* Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Partial words match anywhere in a name or company; for example, `ali` matches `Alice`, and `acme` matches a contact at `Acme Pte Ltd`.
+* Contacts matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
 * `find ali` returns `Alice` and `Alice Pauline`
@@ -327,19 +327,19 @@ Examples:
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
-### Deleting a person: `delete`
+### Deleting a contact: `delete`
 
-Deletes the specified person from the client book.
+Deletes the specified contact from the client book.
 
 Format: `delete INDEX`
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
+* Deletes the contact at the specified `INDEX`.
+* The index refers to the index number shown in the displayed contact list.
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the client book.
-* `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
+* `list` followed by `delete 2` deletes the 2nd contact in the client book.
+* `find Betsy` followed by `delete 1` deletes the 1st contact in the results of the `find` command.
 
 ### Clearing all entries: `clear`
 

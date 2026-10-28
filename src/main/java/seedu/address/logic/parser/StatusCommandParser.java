@@ -5,6 +5,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.StatusCommand;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Status;
 
@@ -29,6 +30,8 @@ public class StatusCommandParser implements Parser<StatusCommand> {
         Index index;
         try {
             index = ParserUtil.parseIndex(parts[0]);
+        } catch (InvalidIndexException iie) {
+            throw iie;
         } catch (ParseException pe) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, StatusCommand.MESSAGE_USAGE), pe);
         }
