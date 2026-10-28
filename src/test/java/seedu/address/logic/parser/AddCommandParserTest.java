@@ -173,9 +173,17 @@ public class AddCommandParserTest {
         // after the other fields, where it used to be read as part of the email
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + " s/active", expectedMessage);
 
-        // anywhere else, and even with no value
+        // anywhere else, in any accepted spelling of a status
         assertParseFailure(parser, " s/lead" + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB, expectedMessage);
-        assertParseFailure(parser, NAME_DESC_BOB + " s/" + PHONE_DESC_BOB + EMAIL_DESC_BOB, expectedMessage);
+        assertParseFailure(parser, NAME_DESC_BOB + " s/ON-HOLD" + PHONE_DESC_BOB + EMAIL_DESC_BOB, expectedMessage);
+    }
+
+    @Test
+    public void parse_slashInNameThatIsNotAStatus_success() {
+        // "s/o" (son of) is part of many names, and "o Kumar" is not a status, so it stays in the name
+        Person expectedPerson = new PersonBuilder(BOB).withName("Raj s/o Kumar").withTags().build();
+        assertParseSuccess(parser, " n/Raj s/o Kumar" + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB,
+                new AddCommand(expectedPerson));
     }
 
     @Test

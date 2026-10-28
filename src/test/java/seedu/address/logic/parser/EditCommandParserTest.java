@@ -277,6 +277,15 @@ public class EditCommandParserTest {
         String expectedMessage = String.format(MESSAGE_STATUS_NOT_SET_HERE, EditCommand.COMMAND_WORD);
         assertParseFailure(parser, "1 s/active", expectedMessage);
         assertParseFailure(parser, "1" + PHONE_DESC_AMY + " s/on hold", expectedMessage);
+
+        // a status anywhere is rejected, even after a name containing "s/o"
+        assertParseFailure(parser, "1 n/Raj s/o Kumar s/done", expectedMessage);
+    }
+
+    @Test
+    public void parse_slashInNameThatIsNotAStatus_success() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("Raj s/o Kumar").build();
+        assertParseSuccess(parser, "1 n/Raj s/o Kumar", new EditCommand(INDEX_FIRST_PERSON, descriptor));
     }
 
     @Test

@@ -1,13 +1,11 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.logic.Messages.MESSAGE_STATUS_NOT_SET_HERE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
@@ -36,14 +34,13 @@ public class AddCommandParser implements Parser<AddCommand> {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public AddCommand parse(String args) throws ParseException {
+        // s/ is only understood by list and status. A status given here would otherwise end up inside another
+        // value (e.g. the email) and give a misleading error about that value.
+        ParserUtil.requireNoStatus(args, AddCommand.COMMAND_WORD, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
+                PREFIX_ADDRESS, PREFIX_COMPANY, PREFIX_TAG);
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                        PREFIX_COMPANY, PREFIX_TAG, PREFIX_STATUS);
-        // s/ is only understood by list and status; without this check it would end up inside another
-        // value (e.g. the email) and give a misleading error about that value.
-        if (argMultimap.getValue(PREFIX_STATUS).isPresent()) {
-            throw new ParseException(String.format(MESSAGE_STATUS_NOT_SET_HERE, AddCommand.COMMAND_WORD));
-        }
+                        PREFIX_COMPANY, PREFIX_TAG);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL)
                 || !argMultimap.getPreamble().isEmpty()) {
