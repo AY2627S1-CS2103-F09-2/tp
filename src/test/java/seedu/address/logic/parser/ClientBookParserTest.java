@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -146,9 +147,11 @@ public class ClientBookParserTest {
     @Test
     public void parseCommand_invalidProjectAdd_throwsParseException() {
         String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE);
-        for (String input : List.of("project add", "project add 1", "project add 0 Portal", "project add abc Portal")) {
+        for (String input : List.of("project add", "project add 1", "project add abc Portal")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
+        assertThrows(ParseException.class, MESSAGE_INDEX_NOT_IN_LIST, () ->
+                parser.parseCommand("project add 0 Portal"));
     }
 
     @Test
@@ -162,11 +165,11 @@ public class ClientBookParserTest {
     @Test
     public void parseCommand_invalidProjectRemove_throwsParseException() {
         String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE);
-        List<String> inputs = List.of("project remove", "project remove 1", "project remove 0 Portal",
-                "project remove abc Portal");
-        for (String input : inputs) {
+        for (String input : List.of("project remove", "project remove 1", "project remove abc Portal")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
+        assertThrows(ParseException.class, MESSAGE_INDEX_NOT_IN_LIST, () ->
+                parser.parseCommand("project remove 0 Portal"));
     }
 
     @Test
@@ -213,9 +216,10 @@ public class ClientBookParserTest {
     @Test
     public void parseCommand_invalidProjectList_throwsParseException() {
         String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectListCommand.MESSAGE_USAGE);
-        for (String input : List.of("project list", "project list 0", "project list abc", "project list 1 Portal")) {
+        for (String input : List.of("project list", "project list abc", "project list 1 Portal")) {
             assertThrows(ParseException.class, expectedMessage, () -> parser.parseCommand(input));
         }
+        assertThrows(ParseException.class, MESSAGE_INDEX_NOT_IN_LIST, () -> parser.parseCommand("project list 0"));
     }
 
     @Test

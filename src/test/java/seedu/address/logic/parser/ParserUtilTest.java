@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
@@ -44,9 +46,20 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseIndex_outOfRangeInput_throwsParseException() {
-        assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, ()
-            -> ParserUtil.parseIndex(Long.toString(Integer.MAX_VALUE + 1)));
+    public void parseIndex_outOfRangeInput_throwsInvalidIndexException() {
+        // whole numbers that can't be a position in the list: the message is about the index, not the format
+        for (String index : List.of("0", "-1", " -12 ", Long.toString(Integer.MAX_VALUE + 1L),
+                "99999999999999999999")) {
+            assertThrows(InvalidIndexException.class, Messages.MESSAGE_INDEX_NOT_IN_LIST, ()
+                -> ParserUtil.parseIndex(index));
+        }
+    }
+
+    @Test
+    public void parseIndex_notAWholeNumber_throwsParseException() {
+        for (String index : List.of("+1", "1.5", "abc", "", "1 2")) {
+            assertThrows(ParseException.class, MESSAGE_INVALID_INDEX, () -> ParserUtil.parseIndex(index));
+        }
     }
 
     @Test

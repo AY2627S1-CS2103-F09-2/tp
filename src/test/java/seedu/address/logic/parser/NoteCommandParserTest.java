@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -38,9 +39,12 @@ public class NoteCommandParserTest {
 
     @Test
     public void parse_missingOrInvalidIndex_throwsParseException() {
-        for (String args : List.of("", "   ", "0 note", "abc", "-1 note")) {
+        for (String args : List.of("", "   ", "abc")) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, NoteCommand.MESSAGE_USAGE));
+        }
+        for (String args : List.of("0 note", "-1 note")) {
+            assertParseFailure(parser, args, MESSAGE_INDEX_NOT_IN_LIST);
         }
     }
 }

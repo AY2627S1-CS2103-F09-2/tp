@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRoleCommand;
+import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.project.Project;
 
@@ -33,6 +34,8 @@ public class ProjectRoleCommandParser implements Parser<ProjectRoleCommand> {
             Project project = ParserUtil.parseProject(roleMatcher.group(1));
             String role = ParserUtil.parseRole(roleMatcher.group(2));
             return new ProjectRoleCommand(index, project, role);
+        } catch (InvalidIndexException iie) {
+            throw iie;
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE), pe);
