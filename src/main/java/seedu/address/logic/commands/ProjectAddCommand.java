@@ -26,6 +26,7 @@ public class ProjectAddCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUBCOMMAND_WORD
             + ": Attaches a client to an existing project. "
+            + "Use one comma between client indexes; spaces around commas are allowed. "
             + "Parameters: CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]\n"
             + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1,2 Client Portal r/developer";
 

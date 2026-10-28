@@ -26,6 +26,7 @@ public class ProjectRemoveCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUBCOMMAND_WORD
             + ": Detaches a client from an existing project. "
+            + "Use one comma between client indexes; spaces around commas are allowed. "
             + "Parameters: CLIENT_INDEX[,CLIENT_INDEX...] PROJECT\n"
             + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1,2 Client Portal";
 
