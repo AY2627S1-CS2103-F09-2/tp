@@ -120,7 +120,7 @@ Format: `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`
 * The index refers to the number shown in the current client list and must be a positive integer.
 * The project must already exist. Use `project create NAME` to create it first.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* Separate multiple client indexes with commas, without spaces. Existing memberships are skipped and reported.
+* Separate multiple client indexes with commas. Spaces around commas are optional. Existing memberships are skipped and reported.
 * Add optional project role with `r/ROLE`; role belongs to this client-project membership.
 * Trailing `r/ROLE` is treated as role syntax; use another project name when literal suffix is intended.
 * A client can belong to multiple projects, and a project can have multiple clients.
@@ -128,7 +128,7 @@ Format: `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`
 Examples:
 
 * `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
-* `project add 1,2,4 Client Portal r/developer` attaches several clients with `developer` role.
+* `project add 1, 2, 4 Client Portal r/developer` attaches several clients with `developer` role.
 * `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
 
 ### Detaching a client from a project: `project remove`
@@ -139,7 +139,7 @@ Format: `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`
 
 * The index refers to the number shown in the current client list and must be a positive integer.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* Separate multiple client indexes with commas, without spaces. Missing memberships are skipped and reported.
+* Separate multiple client indexes with commas. Spaces around commas are optional. Missing memberships are skipped and reported.
 * The project must exist. Otherwise, the command is rejected.
 * The client and project remain in the client book, even when the project has no members afterwards.
 * Other clients' memberships and the client's memberships in other projects are preserved.
@@ -147,7 +147,7 @@ Format: `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`
 Examples:
 
 * `project remove 1 Client Portal` detaches the first displayed client from `Client Portal`.
-* `project remove 1,2,4 Client Portal` detaches several clients.
+* `project remove 1, 2, 4 Client Portal` detaches several clients.
 * `find Betsy` followed by `project remove 1 Client Portal` detaches the first client in the search results.
 
 ### Listing a client's projects: `project list`
