@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 import seedu.address.commons.exceptions.IllegalValueException;
@@ -16,7 +15,7 @@ import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /**
- * An Immutable ClientBook that is serializable to JSON format.
+ * A ClientBook that is serializable to JSON format.
  */
 @JsonRootName(value = "clientbook")
 class JsonSerializableClientBook {
@@ -28,17 +27,23 @@ class JsonSerializableClientBook {
     public static final String MESSAGE_INVALID_CLIENT_PROJECT =
             "Client-project list contains an unknown client or project.";
 
-    private final List<JsonAdaptedPerson> persons = new ArrayList<>();
-    private final List<JsonAdaptedProject> projects = new ArrayList<>();
-    private final List<JsonAdaptedClientProject> clientProjects = new ArrayList<>();
+    private List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private List<JsonAdaptedProject> projects = new ArrayList<>();
+    private List<JsonAdaptedClientProject> clientProjects = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonSerializableClientBook} with the given persons.
+     * Constructs an empty client book for Jackson. Omitted lists keep their empty defaults,
+     * while explicit null values are retained for validation in {@link #toModelType()}.
      */
     @JsonCreator
-    public JsonSerializableClientBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
-            @JsonProperty("projects") List<JsonAdaptedProject> projects,
-            @JsonProperty("clientProjects") List<JsonAdaptedClientProject> clientProjects) {
+    private JsonSerializableClientBook() {
+    }
+
+    /**
+     * Constructs a {@code JsonSerializableClientBook} with the given persons, projects and memberships.
+     */
+    public JsonSerializableClientBook(List<JsonAdaptedPerson> persons, List<JsonAdaptedProject> projects,
+            List<JsonAdaptedClientProject> clientProjects) {
         if (persons != null) {
             this.persons.addAll(persons);
         }
@@ -69,6 +74,10 @@ class JsonSerializableClientBook {
      * @throws IllegalValueException if there were any data constraints violated.
      */
     public ClientBook toModelType() throws IllegalValueException {
+        validateList(persons, "Persons");
+        validateList(projects, "Projects");
+        validateList(clientProjects, "Client-project");
+
         ClientBook clientBook = new ClientBook();
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
             Person person = jsonAdaptedPerson.toModelType();
@@ -102,6 +111,12 @@ class JsonSerializableClientBook {
             clientBook.addClientProject(clientProject);
         }
         return clientBook;
+    }
+
+    private static void validateList(List<?> entries, String name) throws IllegalValueException {
+        if (entries == null || entries.contains(null)) {
+            throw new IllegalValueException(name + " list must not be null or contain null entries.");
+        }
     }
 
     private static Person findPerson(ClientBook clientBook, String name) {

@@ -65,7 +65,7 @@ public class MainApp extends Application {
      * The data from the sample client book will be used instead if {@code storage}'s client book is not found,
      * or an empty client book will be used instead if errors occur when reading {@code storage}'s client book.
      */
-    private Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
+    Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
         logger.info("Using data file : " + storage.getClientBookFilePath());
 
         Optional<ReadOnlyClientBook> clientBookOptional;
