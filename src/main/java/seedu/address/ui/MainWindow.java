@@ -118,7 +118,11 @@ public class MainWindow extends UiPart<Stage> {
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
-        projectSidebar = new ProjectSidebar(logic.getClientBook(), logic.contactViewProperty(), this::executeCommand);
+        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+
+        projectSidebar = new ProjectSidebar(logic.getClientBook(), logic.contactViewProperty(), this::executeCommand,
+                commandBox::requestFocus);
         projectSidebarPlaceholder.getChildren().add(projectSidebar.getRoot());
 
         personListPanel = new PersonListPanel(logic.getFilteredPersonList(), logic.getClientBook());
@@ -130,8 +134,6 @@ public class MainWindow extends UiPart<Stage> {
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
-        commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
     }
 
     /**

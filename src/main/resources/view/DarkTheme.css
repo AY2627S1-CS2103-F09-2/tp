@@ -166,6 +166,16 @@
     -fx-padding: 7 10 7 10;
 }
 
+.scroll-pane.sidebar-scroll-pane,
+.scroll-pane.sidebar-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane.sidebar-scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
 .button.sidebar-button:hover, .button.sidebar-project-button:hover {
     -fx-background-color: derive(#1d1d1d, 30%);
 }

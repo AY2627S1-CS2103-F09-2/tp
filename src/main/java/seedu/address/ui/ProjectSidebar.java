@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.Region;
@@ -28,6 +29,7 @@ public class ProjectSidebar extends UiPart<Region> {
     private final ReadOnlyClientBook clientBook;
     private final ReadOnlyObjectProperty<ContactView> contactView;
     private final CommandBox.CommandExecutor commandExecutor;
+    private final Runnable returnFocusToCommandBox;
 
     @FXML
     private Button contactsButton;
@@ -39,11 +41,12 @@ public class ProjectSidebar extends UiPart<Region> {
      * Creates a project navigation sidebar backed by the client book's live project list.
      */
     public ProjectSidebar(ReadOnlyClientBook clientBook, ReadOnlyObjectProperty<ContactView> contactView,
-            CommandBox.CommandExecutor commandExecutor) {
+            CommandBox.CommandExecutor commandExecutor, Runnable returnFocusToCommandBox) {
         super(FXML);
         this.clientBook = clientBook;
         this.contactView = contactView;
         this.commandExecutor = commandExecutor;
+        this.returnFocusToCommandBox = returnFocusToCommandBox;
 
         refreshContactsLabel();
         refreshProjectButtons();
@@ -70,6 +73,8 @@ public class ProjectSidebar extends UiPart<Region> {
             commandExecutor.execute(command);
         } catch (CommandException | ParseException e) {
             logger.warning("Sidebar navigation failed: " + e.getMessage());
+        } finally {
+            returnFocusToCommandBox.run();
         }
     }
 
@@ -101,7 +106,7 @@ public class ProjectSidebar extends UiPart<Region> {
     private void refreshSelectionStyles() {
         Project selectedProject = contactView.get().getProject().orElse(null);
         setSelected(contactsButton, selectedProject == null);
-        for (javafx.scene.Node node : projectList.getChildren()) {
+        for (Node node : projectList.getChildren()) {
             Button projectButton = (Button) node;
             Project project = (Project) projectButton.getProperties().get(Project.class);
             setSelected(projectButton, selectedProject != null && selectedProject.isSameProject(project));
