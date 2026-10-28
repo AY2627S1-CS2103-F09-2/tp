@@ -32,6 +32,7 @@ public class ModelManagerTest {
         assertEquals(new UserPrefs(), modelManager.getUserPrefs());
         assertEquals(new GuiSettings(), modelManager.getGuiSettings());
         assertEquals(new ClientBook(), new ClientBook(modelManager.getClientBook()));
+        assertEquals(ContactView.allContacts(), modelManager.getContactView());
     }
 
     @Test
@@ -268,6 +269,46 @@ public class ModelManagerTest {
         assertEquals(List.of(otherProject), modelManager.getClientBook().getProjectList());
         assertEquals(List.of(otherMembership), modelManager.getClientBook().getClientProjectList());
         assertEquals(List.of(ALICE, BENSON), modelManager.getClientBook().getPersonList());
+    }
+
+    @Test
+    public void showProjectClients_membershipsChange_refreshesListAndPreservesView() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(BENSON);
+        modelManager.addProject(project);
+        modelManager.addClientProject(new ClientProject(ALICE, project));
+
+        modelManager.showProjectClients(project);
+        assertEquals(List.of(ALICE), modelManager.getFilteredPersonList());
+        assertEquals(ContactView.project(project), modelManager.getContactView());
+
+        modelManager.addClientProject(new ClientProject(BENSON, project));
+        assertEquals(List.of(ALICE, BENSON), modelManager.getFilteredPersonList());
+        assertEquals(ContactView.project(project), modelManager.getContactView());
+    }
+
+    @Test
+    public void updateFilteredPersonList_setsFilteredView() {
+        modelManager.addPerson(ALICE);
+        modelManager.updateFilteredPersonList(person -> person.isSamePerson(ALICE));
+
+        assertEquals(ContactView.filtered(), modelManager.getContactView());
+    }
+
+    @Test
+    public void deleteProject_activeProject_showsAllContacts() {
+        Project project = new Project("Client Portal");
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(BENSON);
+        modelManager.addProject(project);
+        modelManager.addClientProject(new ClientProject(ALICE, project));
+        modelManager.showProjectClients(project);
+
+        modelManager.deleteProject(project);
+
+        assertEquals(List.of(ALICE, BENSON), modelManager.getFilteredPersonList());
+        assertEquals(ContactView.allContacts(), modelManager.getContactView());
     }
 
     @Test

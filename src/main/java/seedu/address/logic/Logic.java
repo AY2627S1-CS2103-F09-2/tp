@@ -1,10 +1,12 @@
 package seedu.address.logic;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.ContactView;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
 
@@ -23,6 +25,9 @@ public interface Logic {
 
     /** Returns an unmodifiable view of the filtered list of persons */
     ObservableList<Person> getFilteredPersonList();
+
+    /** Returns an observable, read-only current contact-list view. */
+    ReadOnlyObjectProperty<ContactView> contactViewProperty();
 
     /**
      * Returns the client book, including the projects each client belongs to.
