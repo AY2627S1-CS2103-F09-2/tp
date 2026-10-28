@@ -19,7 +19,7 @@ public class Messages {
             + "starting from 1.";
     public static final String MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX =
             "The contact index provided is invalid. Pick a number from 1 to %1$d.";
-    public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
+    public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d contact(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
 
