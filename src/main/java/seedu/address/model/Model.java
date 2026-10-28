@@ -2,6 +2,7 @@ package seedu.address.model;
 
 import java.util.function.Predicate;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.Person;
@@ -100,6 +101,18 @@ public interface Model {
      * The project must exist in the client book.
      */
     void deleteProject(Project project);
+
+    /** Shows every contact and records that the all-contacts view is active. */
+    void showAllContacts();
+
+    /** Shows clients belonging to {@code project} and records that project view as active. */
+    void showProjectClients(Project project);
+
+    /** Returns the current contact-list view. */
+    ContactView getContactView();
+
+    /** Returns an observable, read-only current contact-list view. */
+    ReadOnlyObjectProperty<ContactView> contactViewProperty();
 
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();

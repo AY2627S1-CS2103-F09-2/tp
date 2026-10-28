@@ -32,6 +32,7 @@ import seedu.address.logic.commands.ProjectRemoveCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.ClientBook;
+import seedu.address.model.ContactView;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyClientBook;
@@ -81,6 +82,20 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_EMPTY, model);
+    }
+
+    @Test
+    public void execute_navigationCommands_updatesObservableContactView() throws Exception {
+        model.addPerson(ALICE);
+        Project project = new Project("Client Portal");
+        model.addProject(project);
+        model.addClientProject(new ClientProject(ALICE, project));
+
+        logic.execute("project view Client Portal");
+        assertEquals(ContactView.project(project), logic.contactViewProperty().get());
+
+        logic.execute("list");
+        assertEquals(ContactView.allContacts(), logic.contactViewProperty().get());
     }
 
     @Test
