@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -7,6 +8,9 @@ import static seedu.address.testutil.Assert.assertThrows;
 import org.junit.jupiter.api.Test;
 
 public class EmailTest {
+
+    private static final String MAX_LENGTH_EMAIL = "a".repeat(64) + "@" + "b".repeat(63) + "."
+            + "c".repeat(63) + "." + "d".repeat(61); // 254 characters
 
     @Test
     public void constructor_null_throwsNullPointerException() {
@@ -17,6 +21,19 @@ public class EmailTest {
     public void constructor_invalidEmail_throwsIllegalArgumentException() {
         String invalidEmail = "";
         assertThrows(IllegalArgumentException.class, () -> new Email(invalidEmail));
+    }
+
+    @Test
+    public void constructor_maxLengthEmail_success() {
+        assertEquals(MAX_LENGTH_EMAIL, new Email(MAX_LENGTH_EMAIL).value);
+    }
+
+    @Test
+    public void constructor_overlongEmail_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, Email.MESSAGE_CONSTRAINTS, ()
+                -> new Email(MAX_LENGTH_EMAIL + "a")); // 255 characters
+        assertThrows(IllegalArgumentException.class, Email.MESSAGE_CONSTRAINTS, ()
+                -> new Email("a+b_c.d-".repeat(10_000) + "a@example.com"));
     }
 
     @Test
@@ -64,6 +81,25 @@ public class EmailTest {
         assertTrue(Email.isValidEmail("peter_jack@very-very-very-long-example.com")); // long domain name
         assertTrue(Email.isValidEmail("if.you.dream.it_you.can.do.it@example.com")); // long local part
         assertTrue(Email.isValidEmail("e1234567@u.nus.edu")); // more than one period in domain
+    }
+
+    @Test
+    public void isValidEmail_withinLengthLimit_returnsTrue() {
+        assertTrue(Email.isValidEmail(MAX_LENGTH_EMAIL.substring(1))); // 253 characters
+        assertTrue(Email.isValidEmail(MAX_LENGTH_EMAIL)); // 254 characters
+    }
+
+    @Test
+    public void isValidEmail_overLengthLimit_returnsFalse() {
+        assertFalse(Email.isValidEmail(MAX_LENGTH_EMAIL + "a")); // 255 characters
+    }
+
+    @Test
+    public void isValidEmail_veryLongEmail_returnsFalse() {
+        // Repeated local-part separators, domain hyphens and domain labels must not overflow the regex stack.
+        assertFalse(Email.isValidEmail("a+b_c.d-".repeat(10_000) + "a@example.com"));
+        assertFalse(Email.isValidEmail("a@" + "b-".repeat(10_000) + "c.com"));
+        assertFalse(Email.isValidEmail("a@" + "b.".repeat(10_000) + "com"));
     }
 
     @Test

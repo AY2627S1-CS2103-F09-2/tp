@@ -229,6 +229,23 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseEmail_overlongValue_throwsParseException() {
+        String overlongEmail = "a".repeat(64) + "@" + "b".repeat(63) + "."
+                + "c".repeat(63) + "." + "d".repeat(62); // 255 characters
+        assertThrows(ParseException.class, Email.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseEmail(overlongEmail));
+        assertThrows(ParseException.class, Email.MESSAGE_CONSTRAINTS, ()
+                -> ParserUtil.parseEmail("a+b_c.d-".repeat(10_000) + "a@example.com"));
+    }
+
+    @Test
+    public void parseEmail_maxLengthValueWithWhitespace_returnsTrimmedEmail() throws Exception {
+        String email = "a".repeat(64) + "@" + "b".repeat(63) + "."
+                + "c".repeat(63) + "." + "d".repeat(61); // 254 characters
+        assertEquals(new Email(email), ParserUtil.parseEmail(WHITESPACE + email + WHITESPACE));
+    }
+
+    @Test
     public void parseEmail_validValueWithoutWhitespace_returnsEmail() throws Exception {
         Email expectedEmail = new Email(VALID_EMAIL);
         assertEquals(expectedEmail, ParserUtil.parseEmail(VALID_EMAIL));

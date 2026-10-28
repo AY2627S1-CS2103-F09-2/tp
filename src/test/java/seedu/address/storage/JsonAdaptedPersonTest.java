@@ -158,6 +158,20 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
+    public void toModelType_overlongEmail_throwsIllegalValueException() {
+        String overlongEmail = "a".repeat(64) + "@" + "b".repeat(63) + "."
+                + "c".repeat(63) + "." + "d".repeat(62); // 255 characters
+        JsonAdaptedPerson person =
+                new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, overlongEmail, VALID_ADDRESS, VALID_TAGS);
+        assertThrows(IllegalValueException.class, Email.MESSAGE_CONSTRAINTS, person::toModelType);
+
+        String veryLongEmail = "a+b_c.d-".repeat(10_000) + "a@example.com";
+        JsonAdaptedPerson personWithVeryLongEmail =
+                new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, veryLongEmail, VALID_ADDRESS, VALID_TAGS);
+        assertThrows(IllegalValueException.class, Email.MESSAGE_CONSTRAINTS, personWithVeryLongEmail::toModelType);
+    }
+
+    @Test
     public void toModelType_nullEmail_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, null, VALID_ADDRESS, VALID_TAGS);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName());
