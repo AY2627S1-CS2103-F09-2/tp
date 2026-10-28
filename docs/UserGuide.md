@@ -20,7 +20,7 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 1. Copy the file to the folder you want to use as the _home folder_ for ClientBookThree. Your data is saved in a `data` folder inside it.
 
 1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar clientbook.jar`.<br>
-   A window similar to the one below should appear in a few seconds. It starts with some sample contacts for you to try commands on.<br>
+   A window similar to the one below should appear in a few seconds. It starts with some sample contacts for you to try commands on. The sidebar on the left lists your projects once you create some.<br>
    <img src="images/quickStart.png" width="600" alt="ClientBookThree on first launch, showing sample contacts" />
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -204,6 +204,16 @@ Examples:
 
 * `project view Client Portal` shows only the clients in `Client Portal`.
 * `project view client   portal` does the same, since matching ignores case and extra spaces.
+
+### Switching between contacts and projects with the sidebar
+
+The sidebar on the left of the window shows **Contacts** and every project, each with its number of clients, e.g. *Client Portal (3)*.
+
+* Click a project to show its clients. This is the same as `project view PROJECT`.
+* Click **Contacts** to show every contact again. This is the same as `list`.
+* The current view is highlighted. After `find` or `list s/STATUS`, nothing is highlighted, since the list shows neither all contacts nor one project.
+* The sidebar updates straight away when projects or their clients change. If there are many projects, scroll the project list.
+* After clicking, you can keep typing commands: the command box is ready for input.
 
 ### Listing all projects: `project all`
 
