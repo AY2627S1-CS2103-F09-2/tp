@@ -85,6 +85,17 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_addWithoutTags_omitsTagsFromFeedback() throws Exception {
+        Person person = new PersonBuilder().withName("Alex").withPhone("12345678")
+                .withEmail("alex@example.com").withoutAddress().withTags().build();
+        Model expectedModel = new ModelManager();
+        expectedModel.addPerson(person);
+
+        assertCommandSuccess("add n/Alex p/12345678 e/alex@example.com",
+                "New contact added: Alex; Phone: 12345678; Email: alex@example.com", expectedModel);
+    }
+
+    @Test
     public void execute_navigationCommands_updatesObservableContactView() throws Exception {
         model.addPerson(ALICE);
         Project project = new Project("Client Portal");
