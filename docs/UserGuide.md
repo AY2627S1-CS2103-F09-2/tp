@@ -211,7 +211,7 @@ The sidebar on the left of the window shows **Contacts** and every project, each
 
 * Click a project to show its clients. This is the same as `project view PROJECT`.
 * Click **Contacts** to show every contact again. This is the same as `list`.
-* The current view is highlighted. After `find` or `list s/STATUS`, nothing is highlighted, since the list shows neither all contacts nor one project.
+* The current view is highlighted: the project you are viewing, or **Contacts** otherwise (including after `find` or `list s/STATUS`, which filter the contact list).
 * The sidebar updates straight away when projects or their clients change. If there are many projects, scroll the project list.
 * After clicking, you can keep typing commands: the command box is ready for input.
 
