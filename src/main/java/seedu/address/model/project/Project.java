@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Represents a project in the client book.
@@ -11,7 +12,10 @@ import java.util.Locale;
  */
 public class Project {
 
-    public static final String MESSAGE_CONSTRAINTS = "Project names must not be blank.";
+    public static final String MESSAGE_CONSTRAINTS =
+            "Project names must not be blank or contain the role prefix r/.";
+
+    private static final Pattern ROLE_PREFIX = Pattern.compile("\\s+r/");
 
     public final String projectName;
 
@@ -30,7 +34,7 @@ public class Project {
      * Returns true if a given string is a valid project name.
      */
     public static boolean isValidProjectName(String test) {
-        return test != null && !test.trim().isEmpty();
+        return test != null && !test.trim().isEmpty() && !ROLE_PREFIX.matcher(test).find();
     }
 
     public String getName() {
