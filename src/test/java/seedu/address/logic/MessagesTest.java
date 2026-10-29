@@ -10,6 +10,18 @@ import seedu.address.testutil.PersonBuilder;
 public class MessagesTest {
 
     @Test
+    public void getInvalidContactDisplayedIndexMessage_emptyList_returnsNoContactsMessage() {
+        assertEquals("The displayed contact list contains no contacts.",
+                Messages.getInvalidContactDisplayedIndexMessage(0));
+    }
+
+    @Test
+    public void getInvalidContactDisplayedIndexMessage_nonEmptyList_returnsValidRange() {
+        assertEquals("The contact index provided is invalid. Pick a number from 1 to 3.",
+                Messages.getInvalidContactDisplayedIndexMessage(3));
+    }
+
+    @Test
     public void format_noTags_omitsTags() {
         Person person = new PersonBuilder().withName("Alex").withPhone("12345678")
                 .withEmail("alex@example.com").withAddress("123 Main Street").withCompany("Acme")

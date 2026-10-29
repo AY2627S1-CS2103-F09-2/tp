@@ -104,7 +104,7 @@ public class ProjectListCommandTest {
     public void execute_emptyDisplayedList_throwsCommandException() {
         model.updateFilteredPersonList(person -> false);
         assertCommandFailure(new ProjectListCommand(INDEX_FIRST_PERSON), model,
-                String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 0));
+                Messages.MESSAGE_NO_CONTACTS_DISPLAYED);
     }
 
     @Test

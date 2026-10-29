@@ -74,8 +74,18 @@ public class LogicManagerTest {
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteCommand = "delete 9";
-        assertCommandException(deleteCommand, String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX,
-                model.getFilteredPersonList().size()));
+        assertCommandException(deleteCommand, Messages.MESSAGE_NO_CONTACTS_DISPLAYED);
+    }
+
+    @Test
+    public void execute_indexCommandOnEmptySearchResult_reportsNoDisplayedContacts() throws Exception {
+        model.addPerson(ALICE);
+        logic.execute("find zzzzzzzzzz");
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> false);
+
+        assertCommandFailure("delete 1", CommandException.class,
+                "The displayed contact list contains no contacts.", expectedModel);
     }
 
     @Test
