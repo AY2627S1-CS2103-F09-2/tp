@@ -9,15 +9,22 @@ import static seedu.address.testutil.TypicalPersons.IDA;
 import static seedu.address.testutil.TypicalPersons.getTypicalClientBook;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import seedu.address.commons.exceptions.DataLoadingException;
+import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.ClientBook;
 import seedu.address.model.ReadOnlyClientBook;
+import seedu.address.model.project.ClientProject;
+import seedu.address.model.project.Project;
 
 public class JsonClientBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonClientBookStorageTest");
@@ -58,6 +65,64 @@ public class JsonClientBookStorageTest {
     @Test
     public void readClientBook_invalidAndValidPersonClientBook_throwDataLoadingException() {
         assertThrows(DataLoadingException.class, () -> readClientBook("invalidAndValidPersonClientBook.json"));
+    }
+
+    @Test
+    public void readClientBook_emptyOrNullFile_throwsDataLoadingException() throws Exception {
+        for (String json : new String[]{"", "   ", "null"}) {
+            assertInvalidClientBook(json);
+        }
+    }
+
+    @Test
+    public void readClientBook_nullLists_throwsDataLoadingException() throws Exception {
+        for (String field : new String[]{"persons", "projects", "clientProjects"}) {
+            ObjectNode json = getValidClientBookJson();
+            json.putNull(field);
+            assertInvalidClientBook(json.toString());
+        }
+    }
+
+    @Test
+    public void readClientBook_nullEntries_throwsDataLoadingException() throws Exception {
+        for (String field : new String[]{"persons", "projects", "clientProjects"}) {
+            ObjectNode json = getValidClientBookJson();
+            ArrayNode entries = (ArrayNode) json.get(field);
+            entries.addNull();
+            assertInvalidClientBook(json.toString());
+        }
+    }
+
+    @Test
+    public void readClientBook_nullTag_throwsDataLoadingException() throws Exception {
+        ObjectNode json = getValidClientBookJson();
+        ArrayNode tags = (ArrayNode) json.get("persons").get(0).get("tags");
+        tags.addNull();
+        assertInvalidClientBook(json.toString());
+    }
+
+    @Test
+    public void readClientBook_omittedLists_returnsEmptyClientBook() throws Exception {
+        Path filePath = testFolder.resolve("ClientBook.json");
+        Files.writeString(filePath, "{}");
+        assertEquals(new ClientBook(), new JsonClientBookStorage(filePath).readClientBook().get());
+    }
+
+    private ObjectNode getValidClientBookJson() throws Exception {
+        ClientBook clientBook = new ClientBook();
+        Project project = new Project("Hackathon");
+        clientBook.addPerson(ALICE);
+        clientBook.addProject(project);
+        clientBook.addClientProject(new ClientProject(ALICE, project));
+        return JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonSerializableClientBook(clientBook)),
+                ObjectNode.class);
+    }
+
+    private void assertInvalidClientBook(String json) throws Exception {
+        Path filePath = testFolder.resolve("InvalidClientBook.json");
+        Files.writeString(filePath, json);
+        assertThrows(DataLoadingException.class, () -> new JsonClientBookStorage(filePath).readClientBook());
+        assertEquals(json, Files.readString(filePath));
     }
 
     @Test
