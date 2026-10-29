@@ -42,7 +42,7 @@ public class ProjectRemoveCommand extends Command {
     /**
      * Creates a ProjectRemoveCommand to detach the client at {@code targetIndex} from {@code project}.
      */
-    public ProjectRemoveCommand(Index targetIndex, Project project, Index... unused) {
+    public ProjectRemoveCommand(Index targetIndex, Project project) {
         this(List.of(targetIndex), project);
     }
 
@@ -75,16 +75,6 @@ public class ProjectRemoveCommand extends Command {
         List<Person> clients = targetIndexes.stream()
                 .map(index -> lastShownList.get(index.getZeroBased()))
                 .toList();
-        if (clients.size() == 1) {
-            Person client = clients.get(0);
-            ClientProject membership = new ClientProject(client, existingProject);
-            if (!model.hasClientProject(membership)) {
-                throw new CommandException(MESSAGE_CLIENT_NOT_IN_PROJECT);
-            }
-            model.removeClientProject(membership);
-            return new CommandResult(String.format(MESSAGE_SUCCESS, client.getName(), existingProject));
-        }
-
         List<Person> removed = new ArrayList<>();
         List<Person> skipped = new ArrayList<>();
         for (Person client : clients) {
@@ -97,9 +87,20 @@ public class ProjectRemoveCommand extends Command {
             }
         }
 
+        if (clients.size() == 1) {
+            if (!skipped.isEmpty()) {
+                throw new CommandException(MESSAGE_CLIENT_NOT_IN_PROJECT);
+            }
+            return new CommandResult(String.format(MESSAGE_SUCCESS, clients.get(0).getName(), existingProject));
+        }
+
+        return new CommandResult(formatBulkFeedback(existingProject, removed, skipped));
+    }
+
+    private static String formatBulkFeedback(Project project, List<Person> removed, List<Person> skipped) {
         StringBuilder feedback = new StringBuilder();
         if (!removed.isEmpty()) {
-            feedback.append(String.format(MESSAGE_SUCCESS_MULTIPLE, existingProject,
+            feedback.append(String.format(MESSAGE_SUCCESS_MULTIPLE, project,
                     removed.stream().map(person -> person.getName().fullName).collect(Collectors.joining(", "))));
         }
         if (!skipped.isEmpty()) {
@@ -109,7 +110,7 @@ public class ProjectRemoveCommand extends Command {
             feedback.append(String.format(MESSAGE_SKIPPED,
                     skipped.stream().map(person -> person.getName().fullName).collect(Collectors.joining(", "))));
         }
-        return new CommandResult(feedback.toString());
+        return feedback.toString();
     }
 
     @Override

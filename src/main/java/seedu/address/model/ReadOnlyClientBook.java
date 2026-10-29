@@ -23,18 +23,12 @@ public interface ReadOnlyClientBook {
     /**
      * Returns an unmodifiable view of the projects list.
      */
-    default ObservableList<Project> getProjectList() {
-        return javafx.collections.FXCollections.unmodifiableObservableList(
-                javafx.collections.FXCollections.observableArrayList());
-    }
+    ObservableList<Project> getProjectList();
 
     /**
      * Returns an unmodifiable view of the client-project membership list.
      */
-    default ObservableList<ClientProject> getClientProjectList() {
-        return javafx.collections.FXCollections.unmodifiableObservableList(
-                javafx.collections.FXCollections.observableArrayList());
-    }
+    ObservableList<ClientProject> getClientProjectList();
 
     /**
      * Returns projects assigned to a client in insertion order.

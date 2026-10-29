@@ -18,8 +18,23 @@ import seedu.address.model.project.Project;
 public class ReadOnlyClientBookTest {
 
     @Test
-    public void defaultProjectViews_empty() {
-        ReadOnlyClientBook view = () -> FXCollections.observableArrayList();
+    public void projectViews_empty() {
+        ReadOnlyClientBook view = new ReadOnlyClientBook() {
+            @Override
+            public ObservableList<Person> getPersonList() {
+                return FXCollections.observableArrayList();
+            }
+
+            @Override
+            public ObservableList<Project> getProjectList() {
+                return FXCollections.observableArrayList();
+            }
+
+            @Override
+            public ObservableList<ClientProject> getClientProjectList() {
+                return FXCollections.observableArrayList();
+            }
+        };
 
         assertTrue(view.getProjectList().isEmpty());
         assertTrue(view.getClientProjectList().isEmpty());
@@ -35,6 +50,11 @@ public class ReadOnlyClientBookTest {
             @Override
             public ObservableList<Person> getPersonList() {
                 return FXCollections.observableArrayList(ALICE);
+            }
+
+            @Override
+            public ObservableList<Project> getProjectList() {
+                return FXCollections.observableArrayList(hackathon);
             }
 
             @Override

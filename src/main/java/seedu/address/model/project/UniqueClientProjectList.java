@@ -106,6 +106,9 @@ public class UniqueClientProjectList implements Iterable<ClientProject> {
         internalList.setAll(clientProjects);
     }
 
+    /**
+     * Returns an unmodifiable observable view backed by the internal membership list.
+     */
     public ObservableList<ClientProject> asUnmodifiableObservableList() {
         return internalUnmodifiableList;
     }

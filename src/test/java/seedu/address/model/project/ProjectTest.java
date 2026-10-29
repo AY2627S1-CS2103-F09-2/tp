@@ -40,7 +40,7 @@ public class ProjectTest {
     public void accessorsAndObjectMethods_success() {
         Project project = new Project("Hackathon");
 
-        assertEquals("Hackathon", project.getProjectName());
+        assertEquals("Hackathon", project.getName());
         assertFalse(project.isSameProject(null));
         assertEquals(project, project);
         assertFalse(project.equals("Hackathon"));

@@ -60,6 +60,9 @@ public class UniqueProjectList implements Iterable<Project> {
         internalList.setAll(projects);
     }
 
+    /**
+     * Returns an unmodifiable observable view backed by the internal project list.
+     */
     public ObservableList<Project> asUnmodifiableObservableList() {
         return internalUnmodifiableList;
     }
