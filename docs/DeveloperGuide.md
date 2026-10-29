@@ -650,6 +650,9 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `project role 1 Client Portal r/Lead developer`, then `project list 1`<br>
       Expected: The first contact's role on `Client Portal` is now `Lead developer`.
 
+   1. Test case: `project role 1 Client Portal r/`<br>
+      Expected: The first contact's role on `Client Portal` is removed, and their card shows just `Client Portal`. They stay in the project.
+
    1. Test case: `project all`<br>
       Expected: Every project is listed with its number of clients.
 

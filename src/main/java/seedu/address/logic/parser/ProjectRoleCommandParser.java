@@ -10,6 +10,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRoleCommand;
 import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /** Parses arguments for changing a client's project role. */
@@ -32,7 +33,10 @@ public class ProjectRoleCommandParser implements Parser<ProjectRoleCommand> {
                 throw new ParseException(ProjectRoleCommand.MESSAGE_USAGE);
             }
             Project project = ParserUtil.parseProject(roleMatcher.group(1));
-            String role = ParserUtil.parseRole(roleMatcher.group(2));
+            // An empty r/ removes the role, leaving the client in the project without one.
+            String role = roleMatcher.group(2).isBlank()
+                    ? ClientProject.DEFAULT_ROLE
+                    : ParserUtil.parseRole(roleMatcher.group(2));
             return new ProjectRoleCommand(index, project, role);
         } catch (InvalidIndexException iie) {
             throw iie;

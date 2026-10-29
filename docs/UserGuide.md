@@ -177,16 +177,18 @@ Examples:
 
 Changes a client's role on a project they are already in.
 
-Format: `project role CLIENT_INDEX PROJECT r/ROLE`
+Format: `project role CLIENT_INDEX PROJECT r/[ROLE]`
 
 * The project must exist, and the client must already be in it.
 * The role must come last: everything after ` r/` is the role, and it can contain spaces.
+* To remove the client's role, leave it empty: `r/` with nothing after it. The client stays in the project, without a role.
 * The role only applies to this project, so one client can have a different role on each project. Roles are shown on the contact card and in `project list`, e.g. *Client Portal (UI designer)*.
 
 Examples:
 
 * `project role 1 Client Portal r/UI` changes the first contact's role on `Client Portal` to `UI`.
 * `project role 2 Client Portal r/Lead developer` changes the second contact's role to `Lead developer`.
+* `project role 1 Client Portal r/` removes the first contact's role on `Client Portal`.
 
 ### Viewing a project's clients: `project view`
 
@@ -425,7 +427,7 @@ Action | Format, Examples
 **Attach client to project** | `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`<br> e.g., `project add 1 Client Portal r/developer`
 **Detach client from project** | `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`<br> e.g., `project remove 1,2 Client Portal`
 **List client projects** | `project list CLIENT_INDEX`<br> e.g., `project list 1`
-**Change project role** | `project role CLIENT_INDEX PROJECT r/ROLE`<br> e.g., `project role 1 Client Portal r/UI`
+**Change project role** | `project role CLIENT_INDEX PROJECT r/[ROLE]`<br> e.g., `project role 1 Client Portal r/UI`, `project role 1 Client Portal r/` (removes the role)
 **View project clients** | `project view PROJECT`<br> e.g., `project view Client Portal`
 **List all projects** | `project all`
 **Delete project** | `project delete PROJECT`<br> e.g., `project delete Client Portal`
