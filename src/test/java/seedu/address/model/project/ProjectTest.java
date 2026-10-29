@@ -20,6 +20,11 @@ public class ProjectTest {
     }
 
     @Test
+    public void constructor_nameContainingRolePrefix_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Project("A/B r/x"));
+    }
+
+    @Test
     public void constructor_trimsAndCollapsesSpaces() {
         assertEquals("Hackathon 2026", new Project("  Hackathon   2026  ").getName());
     }
