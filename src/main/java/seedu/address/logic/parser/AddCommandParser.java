@@ -34,6 +34,10 @@ public class AddCommandParser implements Parser<AddCommand> {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public AddCommand parse(String args) throws ParseException {
+        // s/ is only understood by list and status. A status given here would otherwise end up inside another
+        // value (e.g. the email) and give a misleading error about that value.
+        ParserUtil.requireNoStatus(args, AddCommand.COMMAND_WORD, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
+                PREFIX_ADDRESS, PREFIX_COMPANY, PREFIX_TAG);
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
                         PREFIX_COMPANY, PREFIX_TAG);

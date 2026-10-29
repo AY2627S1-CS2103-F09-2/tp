@@ -92,6 +92,7 @@ Adds a contact to the client book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
 * The address and the company are optional, e.g. for a remote client or a freelancer.
+* A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**

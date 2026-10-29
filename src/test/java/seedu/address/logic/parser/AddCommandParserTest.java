@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_STATUS_NOT_SET_HERE;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.COMPANY_DESC_AMY;
@@ -163,6 +164,26 @@ public class AddCommandParserTest {
         // more than one company
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + COMPANY_DESC_AMY
                 + COMPANY_DESC_BOB, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_COMPANY));
+    }
+
+    @Test
+    public void parse_statusPrefix_failure() {
+        String expectedMessage = String.format(MESSAGE_STATUS_NOT_SET_HERE, AddCommand.COMMAND_WORD);
+
+        // after the other fields, where it used to be read as part of the email
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + " s/active", expectedMessage);
+
+        // anywhere else, in any accepted spelling of a status
+        assertParseFailure(parser, " s/lead" + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB, expectedMessage);
+        assertParseFailure(parser, NAME_DESC_BOB + " s/ON-HOLD" + PHONE_DESC_BOB + EMAIL_DESC_BOB, expectedMessage);
+    }
+
+    @Test
+    public void parse_slashInNameThatIsNotAStatus_success() {
+        // "s/o" (son of) is part of many names, and "o Kumar" is not a status, so it stays in the name
+        Person expectedPerson = new PersonBuilder(BOB).withName("Raj s/o Kumar").withTags().build();
+        assertParseSuccess(parser, " n/Raj s/o Kumar" + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB,
+                new AddCommand(expectedPerson));
     }
 
     @Test
