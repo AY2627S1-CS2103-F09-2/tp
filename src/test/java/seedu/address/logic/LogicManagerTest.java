@@ -144,9 +144,11 @@ public class LogicManagerTest {
         Person editedPerson = new PersonBuilder(ALICE).withoutAddress().build();
         Model expectedModel = new ModelManager(new ClientBook(model.getClientBook()), new UserPrefs());
         expectedModel.setPerson(ALICE, editedPerson);
+        expectedModel.updateFilteredPersonList(person -> person.isSamePerson(ALICE));
 
         assertCommandSuccess("edit 1 a/",
                 String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+        assertEquals(ContactView.filtered(), model.getContactView());
     }
 
     @Test
