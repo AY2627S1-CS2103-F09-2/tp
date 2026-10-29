@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -62,5 +63,19 @@ public class PhoneTest {
 
         // different values -> returns false
         assertFalse(phone.equals(new Phone("995")));
+    }
+
+    @Test
+    public void equals_numbersDifferOnlyInSpacing_returnsTrueWithSameHashCode() {
+        Phone phone = new Phone("91234567");
+        for (String value : new String[]{"9123 4567", "91 23 45 67", "9123   4567"}) {
+            Phone spacedPhone = new Phone(value);
+            assertEquals(phone, spacedPhone);
+            assertEquals(spacedPhone, phone);
+            assertEquals(phone.hashCode(), spacedPhone.hashCode());
+            assertEquals(value, spacedPhone.value);
+            assertEquals(value, spacedPhone.toString());
+        }
+        assertFalse(phone.equals(new Phone("9123 4568")));
     }
 }

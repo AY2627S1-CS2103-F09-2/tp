@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.ClientBook;
+import seedu.address.model.person.Person;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 import seedu.address.testutil.PersonBuilder;
@@ -53,12 +54,40 @@ public class JsonSerializableClientBookTest {
         String json = """
                 {"persons": [
                   {"name": "John Doe", "phone": "91234567", "email": "john@example.com", "tags": []},
-                  {"name": "  jOhN   dOe  ", "phone": "98765432", "email": "other@example.com", "tags": []}
+                  {"name": "  jOhN   dOe  ", "phone": "91234567", "email": "john@example.com", "tags": []}
                 ]}
                 """;
         JsonSerializableClientBook data = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class);
         assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PERSON,
                 data::toModelType);
+    }
+
+    @Test
+    public void toModelType_duplicatePersonsWithDifferentPhoneSpacing_throwsIllegalValueException() throws Exception {
+        String json = """
+                {"persons": [
+                  {"name": "John Tan", "phone": "91234567", "email": "john@test1.com", "tags": []},
+                  {"name": "John Tan", "phone": "9123 4567", "email": "john@test1.com", "tags": []}
+                ]}
+                """;
+        JsonSerializableClientBook data = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class);
+
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PERSON,
+                data::toModelType);
+    }
+
+    @Test
+    public void toModelType_membershipPhoneWithDifferentSpacing_resolvesClient() throws Exception {
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject("Alice Pauline", "9435 1253", "alice@example.com",
+                        "Hackathon", "developer")));
+
+        ClientBook clientBook = data.toModelType();
+
+        assertEquals(ALICE, clientBook.getClientProjectList().get(0).getClient());
+        assertEquals("developer", clientBook.getClientProjectList().get(0).getRole());
     }
 
     @Test
@@ -87,7 +116,7 @@ public class JsonSerializableClientBookTest {
                 java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
                 java.util.List.of(new JsonAdaptedClientProject(new ClientProject(ALICE, new Project("Hackathon"))),
                         new JsonAdaptedClientProject(new ClientProject(
-                                new PersonBuilder(ALICE).withPhone("91234567").build(),
+                                new PersonBuilder(ALICE).withCompany("Acme").build(),
                                 new Project("hackathon")))));
         assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_CLIENT_PROJECT,
                 duplicateData::toModelType);
@@ -114,6 +143,50 @@ public class JsonSerializableClientBookTest {
         ClientBook clientBook = data.toModelType();
 
         assertEquals("", clientBook.getClientProjectList().get(0).getRole());
+    }
+
+    @Test
+    public void toModelType_legacyNameOnlyMembership_resolvesUniqueClient() throws Exception {
+        String json = """
+                {"persons": [
+                  {"name": "Alice Pauline", "phone": "94351253", "email": "alice@example.com", "tags": []}
+                ], "projects": [{"name": "Hackathon"}], "clientProjects": [
+                  {"clientName": "  aLiCe   pAuLiNe  ", "projectName": "Hackathon", "role": "developer"}
+                ]}
+                """;
+        ClientBook clientBook = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class).toModelType();
+
+        assertEquals(clientBook.getPersonList().get(0), clientBook.getClientProjectList().get(0).getClient());
+        assertEquals("developer", clientBook.getClientProjectList().get(0).getRole());
+    }
+
+    @Test
+    public void toModelType_ambiguousLegacyClientName_throwsIllegalValueException() {
+        Person otherAlice = new PersonBuilder(ALICE).withPhone("91234567").build();
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE), new JsonAdaptedPerson(otherAlice)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject("Alice Pauline", "Hackathon")));
+
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_AMBIGUOUS_CLIENT_PROJECT,
+                data::toModelType);
+    }
+
+    @Test
+    public void toModelType_incompleteOrUnknownClientIdentity_throwsIllegalValueException() {
+        for (JsonAdaptedClientProject membership : java.util.List.of(
+                new JsonAdaptedClientProject("Alice Pauline", null, "alice@example.com", "Hackathon", ""),
+                new JsonAdaptedClientProject("Alice Pauline", "94351253", null, "Hackathon", ""),
+                new JsonAdaptedClientProject("Alice Pauline", "91234567", "alice@example.com", "Hackathon", ""),
+                new JsonAdaptedClientProject("Alice Pauline", "94351253", "other@example.com", "Hackathon", ""))) {
+            JsonSerializableClientBook data = new JsonSerializableClientBook(
+                    java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                    java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                    java.util.List.of(membership));
+
+            assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_INVALID_CLIENT_PROJECT,
+                    data::toModelType);
+        }
     }
 
 }

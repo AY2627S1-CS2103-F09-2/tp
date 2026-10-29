@@ -80,8 +80,7 @@ public class EditCommand extends Command {
         List<Person> lastShownList = model.getFilteredPersonList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX,
-                    lastShownList.size()));
+            throw new CommandException(Messages.getInvalidContactDisplayedIndexMessage(lastShownList.size()));
         }
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
