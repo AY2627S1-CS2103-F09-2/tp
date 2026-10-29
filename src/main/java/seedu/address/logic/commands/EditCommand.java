@@ -54,6 +54,10 @@ public class EditCommand extends Command {
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited contact: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This contact already exists in the client book.";
+    public static final String MESSAGE_DUPLICATE_EMAIL_WARNING =
+            "Warning: Email %1$s already belongs to another contact.";
+    public static final String MESSAGE_DUPLICATE_PHONE_WARNING =
+            "Warning: Phone %1$s already belongs to another contact.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -87,8 +91,34 @@ public class EditCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
+        String warning = getContactDetailsWarning(model, personToEdit, editedPerson);
         model.setPerson(personToEdit, editedPerson);
-        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)) + warning);
+    }
+
+    /**
+     * Returns warnings for email and phone values shared with other contacts across the entire client book.
+     * Must be called before updating {@code personToEdit} so the original contact can be excluded.
+     */
+    private String getContactDetailsWarning(Model model, Person personToEdit, Person editedPerson) {
+        boolean hasDuplicateEmail = false;
+        boolean hasDuplicatePhone = false;
+        for (Person person : model.getClientBook().getPersonList()) {
+            if (person.isSamePerson(personToEdit)) {
+                continue;
+            }
+            hasDuplicateEmail |= person.getEmail().equals(editedPerson.getEmail());
+            hasDuplicatePhone |= person.getPhone().equals(editedPerson.getPhone());
+        }
+
+        StringBuilder warning = new StringBuilder();
+        if (hasDuplicateEmail) {
+            warning.append("\n").append(String.format(MESSAGE_DUPLICATE_EMAIL_WARNING, editedPerson.getEmail()));
+        }
+        if (hasDuplicatePhone) {
+            warning.append("\n").append(String.format(MESSAGE_DUPLICATE_PHONE_WARNING, editedPerson.getPhone()));
+        }
+        return warning.toString();
     }
 
     /**
