@@ -1,6 +1,8 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -30,6 +32,16 @@ public class ProjectRoleCommandParserTest {
                 new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "UI"));
         assertParseSuccess(parser, "1 Client Portal r/Lead   developer",
                 new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "Lead developer"));
+        assertParseSuccess(parser, "1 Client Portal r/developer/lead",
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "developer/lead"));
+    }
+
+    @Test
+    public void parse_extraWhitespace_returnsProjectRoleCommand() {
+        assertParseSuccess(parser, " \t 1 \t Client   Portal\tr/Lead\n developer \t ",
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "Lead developer"));
+        assertParseSuccess(parser, "1 Client\tPortal r/developer",
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client\tPortal"), "developer"));
     }
 
     @Test
@@ -39,6 +51,15 @@ public class ProjectRoleCommandParserTest {
         for (String args : invalidArgs) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));
+        }
+    }
+
+    @Test
+    public void parse_repeatedRole_throwsParseException() {
+        for (String roles : List.of("r/dev r/lead", "r/dev r/dev", "r/ r/lead", "r/dev r/", "r/ r/",
+                "r/dev r/lead r/tester", "r/dev\tr/lead", "r/dev\nr/lead")) {
+            assertParseFailure(parser, "1 Client Portal " + roles,
+                    getErrorMessageForDuplicatePrefixes(PREFIX_ROLE));
         }
     }
 }

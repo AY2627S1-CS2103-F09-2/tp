@@ -2,6 +2,8 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -33,6 +35,8 @@ public class ProjectAddCommandParserTest {
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "developer"));
         assertParseSuccess(parser, "1 Client Portal r/UI designer",
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "UI designer"));
+        assertParseSuccess(parser, "1 Client Portal r/developer/lead",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "developer/lead"));
         assertParseSuccess(parser, "1,2 Client Portal",
                 new ProjectAddCommand(List.of(INDEX_FIRST_PERSON, Index.fromOneBased(2)),
                         new Project("Client Portal")));
@@ -49,6 +53,12 @@ public class ProjectAddCommandParserTest {
     public void parse_extraWhitespace_returnsProjectAddCommand() {
         assertParseSuccess(parser, " \t 1 \t Client   Portal \t ",
                 new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal")));
+        assertParseSuccess(parser, " \t 1 \t Client   Portal\tr/Lead\n developer \t ",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), "Lead developer"));
+        assertParseSuccess(parser, "1 Client\tPortal",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client\tPortal")));
+        assertParseSuccess(parser, "1 Client\tPortal r/developer",
+                new ProjectAddCommand(INDEX_FIRST_PERSON, new Project("Client\tPortal"), "developer"));
     }
 
     @Test
@@ -81,5 +91,16 @@ public class ProjectAddCommandParserTest {
     public void parse_blankRole_throwsParseException() {
         assertParseFailure(parser, "1 Client Portal r/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_repeatedRole_throwsParseException() {
+        for (String roles : List.of("r/dev r/lead", "r/dev r/dev", "r/ r/lead", "r/dev r/", "r/ r/",
+                "r/dev r/lead r/tester", "r/dev\tr/lead", "r/dev\nr/lead")) {
+            assertParseFailure(parser, "1 Client Portal " + roles,
+                    getErrorMessageForDuplicatePrefixes(PREFIX_ROLE));
+        }
+        assertParseFailure(parser, "1,2 Client Portal r/dev r/lead",
+                getErrorMessageForDuplicatePrefixes(PREFIX_ROLE));
     }
 }
