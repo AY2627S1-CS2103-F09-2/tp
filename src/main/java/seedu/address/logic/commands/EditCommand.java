@@ -86,8 +86,10 @@ public class EditCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
+        String warning = ContactDetailsWarnings.forEdit(model.getClientBook().getPersonList(),
+                personToEdit, editedPerson);
         model.setPerson(personToEdit, editedPerson);
-        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)) + warning);
     }
 
     /**
