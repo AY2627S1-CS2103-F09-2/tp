@@ -48,7 +48,7 @@ public class UniquePersonListTest {
     @Test
     public void contains_nameDiffersInCaseAndSpacing_returnsTrue() {
         uniquePersonList.add(ALICE);
-        Person duplicateAlice = new PersonBuilder(BOB).withName("  aLiCe   pAuLiNe  ").build();
+        Person duplicateAlice = new PersonBuilder(ALICE).withName("  aLiCe   pAuLiNe  ").build();
         assertTrue(uniquePersonList.contains(duplicateAlice));
     }
 
@@ -67,10 +67,21 @@ public class UniquePersonListTest {
     public void add_nameDiffersInCaseAndSpacing_throwsDuplicatePersonException() {
         uniquePersonList.add(ALICE);
         for (String name : List.of("alice pauline", "Alice   Pauline", "  aLiCe   pAuLiNe  ")) {
-            Person duplicateAlice = new PersonBuilder(BOB).withName(name).build();
+            Person duplicateAlice = new PersonBuilder(ALICE).withName(name).build();
             assertThrows(DuplicatePersonException.class, () -> uniquePersonList.add(duplicateAlice));
         }
         assertEquals(List.of(ALICE), uniquePersonList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void add_sameNameWithDifferentContactDetails_success() {
+        uniquePersonList.add(ALICE);
+        Person otherAlice = new PersonBuilder(BOB).withName(ALICE.getName().fullName).build();
+        assertFalse(uniquePersonList.contains(otherAlice));
+
+        uniquePersonList.add(otherAlice);
+
+        assertEquals(List.of(ALICE, otherAlice), uniquePersonList.asUnmodifiableObservableList());
     }
 
     @Test
@@ -128,9 +139,18 @@ public class UniquePersonListTest {
     public void setPerson_nameDiffersInCaseAndSpacing_throwsDuplicatePersonException() {
         uniquePersonList.add(ALICE);
         uniquePersonList.add(BOB);
-        Person duplicateAlice = new PersonBuilder(BOB).withName("  aLiCe   pAuLiNe  ").build();
+        Person duplicateAlice = new PersonBuilder(ALICE).withName("  aLiCe   pAuLiNe  ").build();
         assertThrows(DuplicatePersonException.class, () -> uniquePersonList.setPerson(BOB, duplicateAlice));
         assertEquals(List.of(ALICE, BOB), uniquePersonList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setPerson_sameNameEditedIntoExistingIdentity_throwsDuplicatePersonException() {
+        Person otherAlice = new PersonBuilder(BOB).withName(ALICE.getName().fullName).build();
+        uniquePersonList.setPersons(List.of(ALICE, otherAlice));
+
+        assertThrows(DuplicatePersonException.class, () -> uniquePersonList.setPerson(otherAlice, ALICE));
+        assertEquals(List.of(ALICE, otherAlice), uniquePersonList.asUnmodifiableObservableList());
     }
 
     @Test
@@ -198,7 +218,7 @@ public class UniquePersonListTest {
     @Test
     public void setPersons_namesDifferInCaseAndSpacing_throwsDuplicatePersonException() {
         uniquePersonList.add(BOB);
-        Person duplicateAlice = new PersonBuilder(BOB).withName("  aLiCe   pAuLiNe  ").build();
+        Person duplicateAlice = new PersonBuilder(ALICE).withName("  aLiCe   pAuLiNe  ").build();
         assertThrows(DuplicatePersonException.class, () -> uniquePersonList.setPersons(List.of(ALICE, duplicateAlice)));
         assertEquals(List.of(BOB), uniquePersonList.asUnmodifiableObservableList());
     }

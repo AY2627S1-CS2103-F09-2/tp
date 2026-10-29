@@ -95,6 +95,8 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
 * Email addresses can contain at most 254 characters.
+* Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone and email must match exactly.
+* Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. Changing only the company, address or tags does not make a contact unique.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A contact can have any number of tags, including zero.
@@ -320,6 +322,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]
 * Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* Contacts may share a name, but an edit is rejected if the resulting name, phone and email all match another contact, using the same matching rules as `add`.
 * Email addresses can contain at most 254 characters.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
 * To remove a contact's address, enter `a/` without an address after it. Other details remain unchanged unless specified.

@@ -308,9 +308,15 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Steps 1b1-1b2 are repeated until all details are valid.<br>
       Use case resumes from step 2.
 
-* 1c. A contact with the same name already exists.
+* 1c. A contact with the same name, phone and email already exists. Name matching ignores case and normalized spaces; phone and email must match exactly.
 
     * 1c1. ClientBookThree shows an error message saying the contact already exists, and does not add it.
+
+      Use case ends.
+
+* 1d. An existing contact shares the name, phone or email, but not all three.
+
+    * 1d1. ClientBookThree adds the contact and shows a warning for each shared field.
 
       Use case ends.
 
@@ -598,7 +604,13 @@ testers are expected to do more *exploratory* testing.
       Expected: Mei Ling is added at the end of the list, with `Acme Pte Ltd` under her name and no address line.
 
    1. Test case: `add n/mei   LING p/91111111 e/other@example.com`<br>
-      Expected: Rejected as a duplicate: names are compared ignoring case and extra spaces.
+      Expected: Added with a shared-name warning because the phone and email differ.
+
+   1. Test case: `add n/mei   LING p/+65 9123 4567 e/meiling@acme.com`<br>
+      Expected: Rejected as a duplicate: name, phone and email match the first Mei Ling. Name matching ignores case and extra spaces.
+
+   1. Test case: Add both `add n/John Tan p/91234567 e/john@test1.com c/test1` and `add n/John Tan p/98765432 e/john@test2.com c/test2`.<br>
+      Expected: Both contacts are added; the second addition warns about the shared name. Attach each contact to a project using its displayed index, close and reopen the app, and verify that each retains its own membership and role.
 
    1. Test case: `add n/Jane Tan p/12 e/jane@example.com`<br>
       Expected: Rejected. The message says a phone number needs at least 3 digits.

@@ -186,16 +186,45 @@ public class EditCommandTest {
 
     @Test
     public void execute_nameDiffersInCaseAndSpacing_failure() {
-        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("  aLiCe   pAuLiNe  ").build();
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(firstPerson)
+                .withName("  aLiCe   pAuLiNe  ").build();
         EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
         assertCommandFailure(editCommand, model, EditCommand.MESSAGE_DUPLICATE_PERSON);
     }
 
     @Test
     public void execute_duplicateNameDiffersInCaseAndSpacingFilteredList_failure() {
+        Person secondPerson = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("  bEnSoN   mEiEr  ").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(secondPerson)
+                .withName("  bEnSoN   mEiEr  ").build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+        assertCommandFailure(editCommand, model, EditCommand.MESSAGE_DUPLICATE_PERSON);
+    }
+
+    @Test
+    public void execute_sharedNameWithDifferentContactDetails_success() {
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person secondPerson = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(secondPerson).withName(firstPerson.getName().fullName).build();
+        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON,
+                new EditPersonDescriptorBuilder().withName(firstPerson.getName().fullName).build());
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.setPerson(secondPerson, editedPerson);
+
+        assertCommandSuccess(editCommand, model,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_sameNameEditedIntoExistingIdentity_failure() {
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person secondPerson = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
+        model.setPerson(secondPerson, new PersonBuilder(secondPerson).withName(firstPerson.getName().fullName).build());
+        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON,
+                new EditPersonDescriptorBuilder(firstPerson).build());
+
         assertCommandFailure(editCommand, model, EditCommand.MESSAGE_DUPLICATE_PERSON);
     }
 

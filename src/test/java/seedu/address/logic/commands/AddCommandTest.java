@@ -56,6 +56,29 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_sharedNameIgnoringCaseAndSpacing_addSuccessfulWithNameWarning() throws Exception {
+        Person person = new PersonBuilder().withName("  aLiCe   pAuLiNe  ").build();
+        assertAddWithWarning(List.of(ALICE), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, person.getName()));
+    }
+
+    @Test
+    public void execute_sharedNameAndEmail_addSuccessfulWithBothWarnings() throws Exception {
+        Person person = new PersonBuilder(ALICE).withPhone("11111111").build();
+        assertAddWithWarning(List.of(ALICE), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, person.getName())
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail()));
+    }
+
+    @Test
+    public void execute_multipleContactsShareName_warnsOnceForName() throws Exception {
+        Person otherAlice = new PersonBuilder(ALICE).withPhone("11111111").build();
+        Person person = new PersonBuilder().withName(ALICE.getName().fullName).build();
+        assertAddWithWarning(List.of(ALICE, otherAlice), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, person.getName()));
+    }
+
+    @Test
     public void execute_sharedEmail_addSuccessfulWithEmailWarning() throws Exception {
         Person person = new PersonBuilder().withEmail(ALICE.getEmail().value).build();
         assertAddWithWarning(List.of(ALICE), person,
@@ -126,7 +149,7 @@ public class AddCommandTest {
         Model model = new ModelManager(new ClientBook(), new UserPrefs());
         model.addPerson(ALICE);
         for (String name : List.of("alice pauline", "Alice   Pauline", "  aLiCe   pAuLiNe  ")) {
-            Person duplicateAlice = new PersonBuilder().withName(name).build();
+            Person duplicateAlice = new PersonBuilder(ALICE).withName(name).build();
             assertCommandFailure(new AddCommand(duplicateAlice), model, AddCommand.MESSAGE_DUPLICATE_PERSON);
         }
     }
