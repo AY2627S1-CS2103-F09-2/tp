@@ -94,6 +94,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * The address and the company are optional, e.g. for a remote client or a freelancer.
 * A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
+* Email addresses can contain at most 254 characters.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A contact can have any number of tags, including zero.
@@ -319,6 +320,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]
 * Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* Email addresses can contain at most 254 characters.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
 * To remove a contact's address, enter `a/` without an address after it. Other details remain unchanged unless specified.
 * To remove all of a contact's tags, enter `t/` without a tag after it.

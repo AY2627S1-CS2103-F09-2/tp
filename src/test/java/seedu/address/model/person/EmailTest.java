@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -7,6 +8,9 @@ import static seedu.address.testutil.Assert.assertThrows;
 import org.junit.jupiter.api.Test;
 
 public class EmailTest {
+
+    private static final String MAX_LENGTH_EMAIL = "a".repeat(64) + "@" + "b".repeat(63) + "."
+            + "c".repeat(63) + "." + "d".repeat(61); // 254 characters
 
     @Test
     public void constructor_null_throwsNullPointerException() {
@@ -16,7 +20,58 @@ public class EmailTest {
     @Test
     public void constructor_invalidEmail_throwsIllegalArgumentException() {
         String invalidEmail = "";
-        assertThrows(IllegalArgumentException.class, () -> new Email(invalidEmail));
+        assertThrows(IllegalArgumentException.class, Email.MESSAGE_CONSTRAINTS, () -> new Email(invalidEmail));
+    }
+
+    @Test
+    public void constructor_maxLengthEmail_success() {
+        assertEquals(MAX_LENGTH_EMAIL, new Email(MAX_LENGTH_EMAIL).value);
+    }
+
+    @Test
+    public void constructor_overlongEmail_throwsIllegalArgumentException() {
+        String[] overlongEmails = {
+            MAX_LENGTH_EMAIL + "a", // 255 characters
+            "a+b_c.d-".repeat(10_000) + "a@example.com",
+            "a@" + "b-".repeat(10_000) + "c.com",
+            "a@" + "b.".repeat(10_000) + "com",
+            "a@" + "b-".repeat(10_000) + "cd"
+        };
+        for (String email : overlongEmails) {
+            assertThrows(IllegalArgumentException.class, Email.MESSAGE_LENGTH_CONSTRAINTS, () -> new Email(email));
+        }
+    }
+
+    @Test
+    public void constructor_overlongInvalidFormat_throwsFullConstraintsMessage() {
+        String longLocalPart = "a".repeat(Email.MAX_LENGTH + 1);
+        String[] invalidEmails = {
+            " ".repeat(Email.MAX_LENGTH + 1), // whitespace only
+            longLocalPart, // missing '@' and domain
+            "@" + longLocalPart + ".com", // missing local part
+            longLocalPart + "@", // missing domain
+            longLocalPart + "@@example.com", // multiple '@' symbols
+            "-" + longLocalPart + "@example.com", // leading local-part separator
+            longLocalPart + "-@example.com", // trailing local-part separator
+            longLocalPart + "..a@example.com", // consecutive local-part separators
+            longLocalPart + " a@example.com", // invalid local-part character
+            longLocalPart + "@exam_ple.com", // invalid domain character
+            longLocalPart + "@.example.com", // leading domain period
+            longLocalPart + "@example.com.", // trailing domain period
+            longLocalPart + "@-example.com", // leading domain hyphen
+            longLocalPart + "@example-.com", // trailing domain hyphen
+            longLocalPart + "@exam--ple.com", // consecutive domain hyphens
+            longLocalPart + "@example..com", // consecutive domain periods
+            longLocalPart + "@example.c", // one-character final label
+            longLocalPart + "@example.a-b", // final label fails the existing domain-part rule
+            "a+b_c.d-".repeat(10_000) + "a..b@example.com", // invalid after many local-part separators
+            "a@" + "b-".repeat(10_000) + "c-.com", // invalid after many domain hyphens
+            "a@" + "b.".repeat(10_000) + "c", // invalid after many domain labels
+            "a@" + "b-".repeat(10_000) + "c" // final label has no adjacent alphanumeric characters
+        };
+        for (String email : invalidEmails) {
+            assertThrows(IllegalArgumentException.class, Email.MESSAGE_CONSTRAINTS, () -> new Email(email));
+        }
     }
 
     @Test
@@ -64,6 +119,25 @@ public class EmailTest {
         assertTrue(Email.isValidEmail("peter_jack@very-very-very-long-example.com")); // long domain name
         assertTrue(Email.isValidEmail("if.you.dream.it_you.can.do.it@example.com")); // long local part
         assertTrue(Email.isValidEmail("e1234567@u.nus.edu")); // more than one period in domain
+    }
+
+    @Test
+    public void isValidEmail_withinLengthLimit_returnsTrue() {
+        assertTrue(Email.isValidEmail(MAX_LENGTH_EMAIL.substring(1))); // 253 characters
+        assertTrue(Email.isValidEmail(MAX_LENGTH_EMAIL)); // 254 characters
+    }
+
+    @Test
+    public void isValidEmail_overLengthLimit_returnsFalse() {
+        assertFalse(Email.isValidEmail(MAX_LENGTH_EMAIL + "a")); // 255 characters
+    }
+
+    @Test
+    public void isValidEmail_veryLongEmail_returnsFalse() {
+        // Repeated local-part separators, domain hyphens and domain labels must not overflow the regex stack.
+        assertFalse(Email.isValidEmail("a+b_c.d-".repeat(10_000) + "a@example.com"));
+        assertFalse(Email.isValidEmail("a@" + "b-".repeat(10_000) + "c.com"));
+        assertFalse(Email.isValidEmail("a@" + "b.".repeat(10_000) + "com"));
     }
 
     @Test
