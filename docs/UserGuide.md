@@ -95,7 +95,13 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * The address and the company are optional, e.g. for a remote client or a freelancer.
 * A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
+* Names must start with a letter or digit. They may contain letters (including accented letters), digits, spaces,
+  apostrophes, hyphens, periods, commas and slashes. Leading and trailing spaces are removed, and repeated spaces are
+  collapsed.
+* Phone numbers must start with a digit, `+` or `(` and contain at least three digits. They may also contain spaces,
+  letters and the characters `+ - ( ) . /`, e.g. `+65 9123 4567` or `1234 5678 (HP)`.
 * Email addresses can contain at most 254 characters.
+* Tags must be alphanumeric and cannot contain spaces or punctuation.
 * Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone matching ignores spaces (e.g. `91234567` and `9123 4567` are the same number); email must match exactly.
 * Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. Changing only the company, address or tags does not make a contact unique.
 
@@ -323,6 +329,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]
 * Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* Name, phone, email and tag values follow the same constraints as [`add`](#adding-a-contact-add).
 * Contacts may share a name, but an edit is rejected if the resulting name, phone and email all match another contact, using the same matching rules as `add`.
 * Email addresses can contain at most 254 characters.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
