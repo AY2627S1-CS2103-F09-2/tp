@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.commons.core.LogsCenter;
@@ -86,6 +87,7 @@ public class ProjectSidebar extends UiPart<Region> {
         projectList.getChildren().clear();
         for (Project project : clientBook.getProjectList()) {
             Button projectButton = new Button(formatProjectLabel(project));
+            projectButton.setTooltip(new Tooltip(project.getName()));
             projectButton.setMaxWidth(Double.MAX_VALUE);
             projectButton.setAlignment(Pos.CENTER_LEFT);
             projectButton.getStyleClass().add("sidebar-project-button");
