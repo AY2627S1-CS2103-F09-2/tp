@@ -63,6 +63,34 @@ public class JsonSerializableClientBookTest {
     }
 
     @Test
+    public void toModelType_duplicatePersonsWithDifferentPhoneSpacing_throwsIllegalValueException() throws Exception {
+        String json = """
+                {"persons": [
+                  {"name": "John Tan", "phone": "91234567", "email": "john@test1.com", "tags": []},
+                  {"name": "John Tan", "phone": "9123 4567", "email": "john@test1.com", "tags": []}
+                ]}
+                """;
+        JsonSerializableClientBook data = JsonUtil.fromJsonString(json, JsonSerializableClientBook.class);
+
+        assertThrows(IllegalValueException.class, JsonSerializableClientBook.MESSAGE_DUPLICATE_PERSON,
+                data::toModelType);
+    }
+
+    @Test
+    public void toModelType_membershipPhoneWithDifferentSpacing_resolvesClient() throws Exception {
+        JsonSerializableClientBook data = new JsonSerializableClientBook(
+                java.util.List.of(new JsonAdaptedPerson(ALICE)),
+                java.util.List.of(new JsonAdaptedProject(new Project("Hackathon"))),
+                java.util.List.of(new JsonAdaptedClientProject("Alice Pauline", "9435 1253", "alice@example.com",
+                        "Hackathon", "developer")));
+
+        ClientBook clientBook = data.toModelType();
+
+        assertEquals(ALICE, clientBook.getClientProjectList().get(0).getClient());
+        assertEquals("developer", clientBook.getClientProjectList().get(0).getRole());
+    }
+
+    @Test
     public void toModelType_duplicateProjects_throwsIllegalValueException() throws Exception {
         JsonSerializableClientBook data = new JsonSerializableClientBook(
                 java.util.List.of(new JsonAdaptedPerson(ALICE)),

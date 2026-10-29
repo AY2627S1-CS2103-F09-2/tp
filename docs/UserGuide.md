@@ -95,7 +95,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
 * Email addresses can contain at most 254 characters.
-* Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone and email must match exactly.
+* Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone matching ignores spaces (e.g. `91234567` and `9123 4567` are the same number); email must match exactly.
 * Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. Changing only the company, address or tags does not make a contact unique.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**

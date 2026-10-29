@@ -6,6 +6,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 /**
  * Represents a Person's phone number in the client book.
  * Guarantees: immutable; is valid as declared in {@link #isValidPhone(String)}
+ * Preserves the entered formatting, but ignores spaces when comparing numbers.
  */
 public class Phone {
 
@@ -22,6 +23,7 @@ public class Phone {
      */
     public static final String VALIDATION_REGEX = "(?=(?:\\D*\\d){3})[\\d+(][\\p{L}\\d +()./-]*";
     public final String value;
+    private final String normalizedValue;
 
     /**
      * Constructs a {@code Phone}.
@@ -32,6 +34,7 @@ public class Phone {
         requireNonNull(phone);
         checkArgument(isValidPhone(phone), MESSAGE_CONSTRAINTS);
         value = phone;
+        normalizedValue = phone.replace(" ", "");
     }
 
     /**
@@ -57,12 +60,12 @@ public class Phone {
             return false;
         }
 
-        return value.equals(otherPhone.value);
+        return normalizedValue.equals(otherPhone.normalizedValue);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return normalizedValue.hashCode();
     }
 
 }

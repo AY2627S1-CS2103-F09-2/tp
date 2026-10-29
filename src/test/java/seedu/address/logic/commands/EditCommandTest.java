@@ -173,6 +173,15 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_duplicatePersonWithDifferentPhoneSpacing_failure() {
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(firstPerson).withPhone("9435 1253").build();
+
+        assertCommandFailure(new EditCommand(INDEX_SECOND_PERSON, descriptor), model,
+                EditCommand.MESSAGE_DUPLICATE_PERSON);
+    }
+
+    @Test
     public void execute_duplicatePersonFilteredList_failure() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 

@@ -308,7 +308,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Steps 1b1-1b2 are repeated until all details are valid.<br>
       Use case resumes from step 2.
 
-* 1c. A contact with the same name, phone and email already exists. Name matching ignores case and normalized spaces; phone and email must match exactly.
+* 1c. A contact with the same name, phone and email already exists. Name matching ignores case and normalized spaces; phone matching ignores spaces; email must match exactly.
 
     * 1c1. ClientBookThree shows an error message saying the contact already exists, and does not add it.
 
@@ -608,6 +608,9 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: `add n/mei   LING p/+65 9123 4567 e/meiling@acme.com`<br>
       Expected: Rejected as a duplicate: name, phone and email match the first Mei Ling. Name matching ignores case and extra spaces.
+
+   1. Test case: `add n/Mei Ling p/+6591234567 e/meiling@acme.com`<br>
+      Expected: Rejected as a duplicate of the first Mei Ling because phone matching ignores spaces.
 
    1. Test case: Add both `add n/John Tan p/91234567 e/john@test1.com c/test1` and `add n/John Tan p/98765432 e/john@test2.com c/test2`.<br>
       Expected: Both contacts are added; the second addition warns about the shared name. Attach each contact to a project using its displayed index, close and reopen the app, and verify that each retains its own membership and role.

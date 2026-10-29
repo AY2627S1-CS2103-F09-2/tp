@@ -60,6 +60,28 @@ public class AddCommandIntegrationTest {
     }
 
     @Test
+    public void execute_duplicatePhoneWithDifferentSpacing_failure() throws Exception {
+        AddCommandParser parser = new AddCommandParser();
+        for (String phone : new String[]{"91234567", "9123 4567", "91 23 45 67", "9123   4567"}) {
+            model = new ModelManager(new ClientBook(), new UserPrefs());
+            parser.parse(" n/John Tan p/" + phone + " e/john@test1.com c/test1").execute(model);
+            model.updateFilteredPersonList(person -> false);
+
+            assertCommandFailure(parser.parse(" n/John Tan p/9123 4567 e/john@test1.com c/test1"),
+                    model, AddCommand.MESSAGE_DUPLICATE_PERSON);
+            assertCommandFailure(parser.parse(" n/John Tan p/91234567 e/john@test1.com c/test1"),
+                    model, AddCommand.MESSAGE_DUPLICATE_PERSON);
+        }
+    }
+
+    @Test
+    public void execute_sharedPhoneWithDifferentSpacing_successWithPhoneWarning() {
+        Person person = new PersonBuilder().withPhone("9435 1253").build();
+        assertAddWithWarning(person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+    }
+
+    @Test
     public void execute_sameNameHiddenByFilter_successWithNameWarning() {
         model.updateFilteredPersonList(person -> false);
         assertTrue(model.getFilteredPersonList().isEmpty());

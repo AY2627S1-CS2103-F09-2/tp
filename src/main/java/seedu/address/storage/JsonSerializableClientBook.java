@@ -11,6 +11,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.ClientBook;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Phone;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
@@ -127,13 +128,15 @@ class JsonSerializableClientBook {
         String name = membership.getClientName();
         String phone = membership.getClientPhone();
         String email = membership.getClientEmail();
-        if (name == null || (phone == null) != (email == null)) {
+        if (name == null || (phone == null) != (email == null)
+                || (phone != null && !Phone.isValidPhone(phone))) {
             return null;
         }
+        Phone clientPhone = phone == null ? null : new Phone(phone);
         List<Person> matches = clientBook.getPersonList().stream()
                 .filter(person -> person.getName().fullName.equalsIgnoreCase(name.trim().replaceAll(" +", " ")))
-                .filter(person -> phone == null
-                        || person.getPhone().value.equals(phone) && person.getEmail().value.equals(email))
+                .filter(person -> clientPhone == null
+                        || person.getPhone().equals(clientPhone) && person.getEmail().value.equals(email))
                 .limit(2)
                 .toList();
         if (matches.size() > 1) {

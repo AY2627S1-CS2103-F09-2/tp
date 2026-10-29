@@ -113,6 +113,7 @@ public class Person {
     /**
      * Returns true if both persons have the same name (ignoring case), phone and email.
      * Names are already trimmed and have repeated spaces collapsed by {@link Name}.
+     * Phone comparisons ignore spaces; email comparisons are exact.
      * Other details do not affect a person's identity.
      * This defines a weaker notion of equality between two persons.
      */
