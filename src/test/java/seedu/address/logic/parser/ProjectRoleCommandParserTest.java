@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ProjectRoleCommand;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 public class ProjectRoleCommandParserTest {
@@ -45,9 +46,17 @@ public class ProjectRoleCommandParserTest {
     }
 
     @Test
+    public void parse_emptyRole_returnsCommandRemovingRole() {
+        ProjectRoleCommand expectedCommand =
+                new ProjectRoleCommand(INDEX_FIRST_PERSON, new Project("Client Portal"), ClientProject.DEFAULT_ROLE);
+        assertParseSuccess(parser, "1 Client Portal r/", expectedCommand);
+        assertParseSuccess(parser, "1 Client Portal r/   ", expectedCommand);
+    }
+
+    @Test
     public void parse_missingOrInvalidRole_throwsParseException() {
         List<String> invalidArgs = List.of("", "1", "1 Client Portal", "1 Client Portal role/developer",
-                "1 Client Portal r/");
+                "1 r/", "1 r/developer");
         for (String args : invalidArgs) {
             assertParseFailure(parser, args,
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRoleCommand.MESSAGE_USAGE));

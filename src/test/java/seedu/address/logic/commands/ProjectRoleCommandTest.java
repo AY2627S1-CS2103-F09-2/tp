@@ -54,6 +54,17 @@ public class ProjectRoleCommandTest {
     }
 
     @Test
+    public void execute_emptyRole_removesRole() {
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.setClientProjectRole(new ClientProject(ALICE, PROJECT, "developer"),
+                ClientProject.DEFAULT_ROLE);
+
+        assertCommandSuccess(new ProjectRoleCommand(INDEX_FIRST_PERSON, PROJECT, ClientProject.DEFAULT_ROLE), model,
+                "Role for client Alice Pauline on project Client Portal removed", expectedModel);
+        assertEquals("", model.getClientBook().getClientProjectList().get(0).getRole());
+    }
+
+    @Test
     public void execute_missingMembership_throwsCommandException() {
         Model emptyModel = new ModelManager(getTypicalClientBook(), new UserPrefs());
         emptyModel.addProject(PROJECT);

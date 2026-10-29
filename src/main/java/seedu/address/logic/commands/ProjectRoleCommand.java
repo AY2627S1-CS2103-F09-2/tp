@@ -22,10 +22,11 @@ public class ProjectRoleCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUBCOMMAND_WORD
             + ": Changes a client's role in a project. Parameters: CLIENT_INDEX (must be a positive integer) "
-            + "PROJECT r/ROLE\n"
+            + "PROJECT r/ROLE (leave ROLE empty to remove the role)\n"
             + "Example: " + COMMAND_WORD + " " + SUBCOMMAND_WORD + " 1 Client Portal r/developer";
 
     public static final String MESSAGE_SUCCESS = "Role for client %1$s on project %2$s changed to %3$s";
+    public static final String MESSAGE_ROLE_REMOVED = "Role for client %1$s on project %2$s removed";
     public static final String MESSAGE_PROJECT_NOT_FOUND = "Project does not exist: %1$s";
     public static final String MESSAGE_CLIENT_NOT_IN_PROJECT = "This client does not belong to the project.";
 
@@ -63,6 +64,9 @@ public class ProjectRoleCommand extends Command {
                 .orElseThrow(() -> new CommandException(MESSAGE_CLIENT_NOT_IN_PROJECT));
 
         model.setClientProjectRole(membership, role);
+        if (role.isEmpty()) {
+            return new CommandResult(String.format(MESSAGE_ROLE_REMOVED, client.getName(), existingProject));
+        }
         return new CommandResult(String.format(MESSAGE_SUCCESS, client.getName(), existingProject, role));
     }
 

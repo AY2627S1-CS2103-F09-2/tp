@@ -8,6 +8,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRoleCommand;
 import seedu.address.logic.parser.exceptions.InvalidIndexException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
 /** Parses arguments for changing a client's project role. */
@@ -32,7 +33,9 @@ public class ProjectRoleCommandParser implements Parser<ProjectRoleCommand> {
                 throw new ParseException(ProjectRoleCommand.MESSAGE_USAGE);
             }
             Project project = ParserUtil.parseProject(argMultimap.getPreamble());
-            String role = ParserUtil.parseRole(argMultimap.getValue(PREFIX_ROLE).get());
+            // An empty r/ removes the role, leaving the client in the project without one.
+            String roleText = argMultimap.getValue(PREFIX_ROLE).get();
+            String role = roleText.isBlank() ? ClientProject.DEFAULT_ROLE : ParserUtil.parseRole(roleText);
             return new ProjectRoleCommand(index, project, role);
         } catch (InvalidIndexException iie) {
             throw iie;
