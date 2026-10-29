@@ -20,7 +20,7 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 1. Copy the file to the folder you want to use as the _home folder_ for ClientBookThree. Your data is saved in a `data` folder inside it.
 
 1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar clientbook.jar`.<br>
-   A window similar to the one below should appear in a few seconds. It starts with some sample contacts for you to try commands on.<br>
+   A window similar to the one below should appear in a few seconds. It starts with some sample contacts for you to try commands on. The sidebar on the left lists your projects once you create some.<br>
    <img src="images/quickStart.png" width="600" alt="ClientBookThree on first launch, showing sample contacts" />
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -66,8 +66,12 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
+* Extra text after commands that take no parameters (`help`, `exit` and `clear`) is ignored.<br>
   For example, `help 123` is interpreted as `help`.
+
+* Command words ignore case. For example, `LIST` and `List` work like `list`.
+
+* `INDEX` and `CLIENT_INDEX` refer to the numbers shown in the contact list currently displayed, e.g. after a `find`, `list s/STATUS` or `project view`. They must be one of those numbers.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
@@ -88,6 +92,7 @@ Adds a contact to the client book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
 * The address and the company are optional, e.g. for a remote client or a freelancer.
+* A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
 * The company is shown under the contact's name.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
@@ -120,15 +125,16 @@ Format: `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`
 * The index refers to the number shown in the current client list and must be a positive integer.
 * The project must already exist. Use `project create NAME` to create it first.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* Separate multiple client indexes with commas, without spaces. Existing memberships are skipped and reported.
-* Add optional project role with `r/ROLE`; role belongs to this client-project membership.
-* Trailing `r/ROLE` is treated as role syntax; use another project name when literal suffix is intended.
+* Separate multiple client indexes with commas. Spaces around commas are optional, e.g. `1, 2, 4`.
+* When adding several clients, those already in the project are skipped and listed in the result. Adding a single client who is already in the project is rejected.
+* Give the clients a role on this project with `r/ROLE`, e.g. `r/UI designer`. The role must come last: everything after ` r/` is the role, and it can contain spaces.
+* A client's role belongs to one project, so a client can have a different role on each project. Use `project role` to change it later.
 * A client can belong to multiple projects, and a project can have multiple clients.
 
 Examples:
 
 * `project add 1 Client Portal` attaches the first displayed client to `Client Portal`.
-* `project add 1,2,4 Client Portal r/developer` attaches several clients with `developer` role.
+* `project add 1, 2, 4 Client Portal r/developer` attaches several clients with `developer` role.
 * `find Betsy` followed by `project add 1 Client Portal` attaches the first client in the search results.
 
 ### Detaching a client from a project: `project remove`
@@ -139,7 +145,8 @@ Format: `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`
 
 * The index refers to the number shown in the current client list and must be a positive integer.
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
-* Separate multiple client indexes with commas, without spaces. Missing memberships are skipped and reported.
+* Separate multiple client indexes with commas. Spaces around commas are optional, e.g. `1, 2, 4`.
+* When removing several clients, those not in the project are skipped and listed in the result. Removing a single client who is not in the project is rejected.
 * The project must exist. Otherwise, the command is rejected.
 * The client and project remain in the client book, even when the project has no members afterwards.
 * Other clients' memberships and the client's memberships in other projects are preserved.
@@ -147,7 +154,7 @@ Format: `project remove CLIENT_INDEX[,CLIENT_INDEX...] PROJECT`
 Examples:
 
 * `project remove 1 Client Portal` detaches the first displayed client from `Client Portal`.
-* `project remove 1,2,4 Client Portal` detaches several clients.
+* `project remove 1, 2, 4 Client Portal` detaches several clients.
 * `find Betsy` followed by `project remove 1 Client Portal` detaches the first client in the search results.
 
 ### Listing a client's projects: `project list`
@@ -168,14 +175,19 @@ Examples:
 
 ### Changing a client's project role: `project role`
 
-Changes role for an existing client-project membership.
+Changes a client's role on a project they are already in.
 
 Format: `project role CLIENT_INDEX PROJECT r/ROLE`
 
-* The project and membership must exist.
-* Role is stored per client-project membership, so one client can have different roles across projects.
+* The project must exist, and the client must already be in it.
+* The role must come last: everything after ` r/` is the role, and it can contain spaces.
+* The role only applies to this project, so one client can have a different role on each project. Roles are shown on the contact card and in `project list`, e.g. *Client Portal (UI designer)*.
 
-Example: `project role 1 Client Portal r/UI`
+Examples:
+
+* `project role 1 Client Portal r/UI` changes the first contact's role on `Client Portal` to `UI`.
+* `project role 2 Client Portal r/Lead developer` changes the second contact's role to `Lead developer`.
+
 ### Viewing a project's clients: `project view`
 
 Filters the contact list to show only the clients belonging to an existing project.
@@ -193,6 +205,16 @@ Examples:
 
 * `project view Client Portal` shows only the clients in `Client Portal`.
 * `project view client   portal` does the same, since matching ignores case and extra spaces.
+
+### Switching between contacts and projects with the sidebar
+
+The sidebar on the left of the window shows **Contacts** and every project, each with its number of clients, e.g. *Client Portal (3)*.
+
+* Click a project to show its clients. This is the same as `project view PROJECT`.
+* Click **Contacts** to show every contact again. This is the same as `list`.
+* The current view is highlighted: the project you are viewing, or **Contacts** otherwise (including after `find` or `list s/STATUS`, which filter the contact list).
+* The sidebar updates straight away when projects or their clients change. If there are many projects, scroll the project list.
+* After clicking, you can keep typing commands: the command box is ready for input.
 
 ### Listing all projects: `project all`
 
@@ -342,9 +364,13 @@ Examples:
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the client book.
+Deletes all contacts and all projects from the client book.
 
 Format: `clear`
+
+<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+`clear` cannot be undone. If you might need the data later, make a copy of `data/clientbook.json` first.
+</div>
 
 ### Exiting the program: `exit`
 
@@ -365,10 +391,6 @@ If your changes make the data file invalid, ClientBookThree starts with an empty
 Furthermore, certain edits can cause ClientBookThree to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
-
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
@@ -376,12 +398,20 @@ _Details coming soon ..._
 **Q**: How do I transfer my data to another computer?<br>
 **A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous ClientBookThree home folder.
 
+**Q**: Nothing happens when I double-click `clientbook.jar`. What should I do?<br>
+**A**: Double-clicking a JAR file does not work on some systems, or may start it with a different Java version. Open a terminal in the folder containing the file and run `java -jar clientbook.jar` instead. Run `java -version` first to check that you have Java 25.
+
+**Q**: Where is my data saved?<br>
+**A**: In `data/clientbook.json`, inside the folder you run the JAR file from. Your preferences (e.g. the window size) are saved in `preferences.json` in the same folder.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## Known issues
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **If the JAR file is in a write-protected folder** (e.g. some system or network folders), ClientBookThree cannot save your data: each command shows an error saying it could not save the data due to insufficient permissions. The remedy is to move the JAR file to a folder you can write to, such as one in your home folder, and run it from there.
+4. **On macOS, if the main window is in full-screen mode**, the Help Window may open as a separate full-screen space or behind the main window. The remedy is to exit full-screen mode before opening the Help Window, or to switch to it with Mission Control.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -406,3 +436,4 @@ Action | Format, Examples
 **Note** | `note INDEX [TEXT]`<br> e.g., `note 1 Based in London, prefers email`
 **Set status** | `status INDEX STATUS`<br> e.g., `status 1 active`
 **Help** | `help`
+**Exit** | `exit`

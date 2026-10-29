@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INDEX_NOT_IN_LIST;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_STATUS_NOT_SET_HERE;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.COMPANY_DESC_AMY;
@@ -269,6 +270,22 @@ public class EditCommandParserTest {
     public void parse_repeatedCompany_failure() {
         assertParseFailure(parser, INDEX_FIRST_PERSON.getOneBased() + COMPANY_DESC_AMY + COMPANY_DESC_BOB,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_COMPANY));
+    }
+
+    @Test
+    public void parse_statusPrefix_failure() {
+        String expectedMessage = String.format(MESSAGE_STATUS_NOT_SET_HERE, EditCommand.COMMAND_WORD);
+        assertParseFailure(parser, "1 s/active", expectedMessage);
+        assertParseFailure(parser, "1" + PHONE_DESC_AMY + " s/on hold", expectedMessage);
+
+        // a status anywhere is rejected, even after a name containing "s/o"
+        assertParseFailure(parser, "1 n/Raj s/o Kumar s/done", expectedMessage);
+    }
+
+    @Test
+    public void parse_slashInNameThatIsNotAStatus_success() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("Raj s/o Kumar").build();
+        assertParseSuccess(parser, "1 n/Raj s/o Kumar", new EditCommand(INDEX_FIRST_PERSON, descriptor));
     }
 
     @Test

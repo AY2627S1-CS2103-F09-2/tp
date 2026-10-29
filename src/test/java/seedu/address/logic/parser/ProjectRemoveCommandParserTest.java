@@ -32,6 +32,9 @@ public class ProjectRemoveCommandParserTest {
         assertParseSuccess(parser, "1,2 Client Portal",
                 new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, Index.fromOneBased(2)),
                         new Project("Client Portal")));
+        assertParseSuccess(parser, "1, 2 Client Portal",
+                new ProjectRemoveCommand(List.of(INDEX_FIRST_PERSON, Index.fromOneBased(2)),
+                        new Project("Client Portal")));
         assertParseSuccess(parser, "1 2026 Portal",
                 new ProjectRemoveCommand(INDEX_FIRST_PERSON, new Project("2026 Portal")));
         assertParseSuccess(parser, Integer.MAX_VALUE + " Client Portal",

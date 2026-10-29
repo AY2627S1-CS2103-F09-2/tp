@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ProjectRemoveCommand;
@@ -16,6 +18,9 @@ import seedu.address.model.project.Project;
  */
 public class ProjectRemoveCommandParser implements Parser<ProjectRemoveCommand> {
 
+    private static final Pattern INDEXES_AND_PROJECT =
+            Pattern.compile("^([^\\s,]+(?:\\s*,\\s*[^\\s,]+)*)\\s+(.+)$");
+
     /**
      * Parses the client index and treats the entire remainder as the project name.
      *
@@ -24,14 +29,14 @@ public class ProjectRemoveCommandParser implements Parser<ProjectRemoveCommand> 
     @Override
     public ProjectRemoveCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        String[] arguments = args.trim().split("\\s+", 2);
-        if (arguments.length != 2) {
+        Matcher argumentsMatcher = INDEXES_AND_PROJECT.matcher(args.trim());
+        if (!argumentsMatcher.matches()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectRemoveCommand.MESSAGE_USAGE));
         }
 
         try {
-            List<Index> indexes = ParserUtil.parseIndexes(arguments[0]);
-            Project project = ParserUtil.parseProject(arguments[1]);
+            List<Index> indexes = ParserUtil.parseIndexes(argumentsMatcher.group(1));
+            Project project = ParserUtil.parseProject(argumentsMatcher.group(2));
             return new ProjectRemoveCommand(indexes, project);
         } catch (InvalidIndexException iie) {
             throw iie;

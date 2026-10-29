@@ -18,6 +18,10 @@ import seedu.address.model.project.Project;
  */
 public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
 
+    private static final Pattern INDEXES_AND_PROJECT =
+            Pattern.compile("(?s)^([^\\s,]+(?:\\s*,\\s*[^\\s,]+)*)\\s+(.+)$");
+    private static final Pattern ROLE_SUFFIX = Pattern.compile("(?s)^(.+?)\\s+r/(.*)$");
+
     /**
      * Parses the client indexes, project name and optional role.
      *
@@ -26,8 +30,8 @@ public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
     @Override
     public ProjectAddCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        String[] arguments = args.trim().split("\\s+", 2);
-        if (arguments.length != 2) {
+        Matcher argumentsMatcher = INDEXES_AND_PROJECT.matcher(args.trim());
+        if (!argumentsMatcher.matches()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
         }
 
@@ -37,11 +41,15 @@ public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ROLE);
 
         try {
-            List<Index> indexes = ParserUtil.parseIndexes(arguments[0]);
-            Project project = ParserUtil.parseProject(argMultimap.getPreamble());
-            String role = argMultimap.getValue(PREFIX_ROLE).isPresent()
-                    ? ParserUtil.parseRole(argMultimap.getValue(PREFIX_ROLE).get())
-                    : ClientProject.DEFAULT_ROLE;
+            List<Index> indexes = ParserUtil.parseIndexes(argumentsMatcher.group(1));
+            String projectName = argumentsMatcher.group(2);
+            String role = ClientProject.DEFAULT_ROLE;
+            Matcher roleMatcher = ROLE_SUFFIX.matcher(projectName);
+            if (roleMatcher.matches()) {
+                projectName = roleMatcher.group(1);
+                role = ParserUtil.parseRole(roleMatcher.group(2));
+            }
+            Project project = ParserUtil.parseProject(projectName);
             return new ProjectAddCommand(indexes, project, role);
         } catch (InvalidIndexException iie) {
             throw iie;
