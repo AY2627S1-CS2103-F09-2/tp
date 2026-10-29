@@ -18,6 +18,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.project.ClientProject;
+import seedu.address.model.project.Project;
 import seedu.address.testutil.PersonBuilder;
 
 public class ClientBookTest {
@@ -100,6 +102,16 @@ public class ClientBookTest {
         @Override
         public ObservableList<Person> getPersonList() {
             return persons;
+        }
+
+        @Override
+        public ObservableList<Project> getProjectList() {
+            return FXCollections.emptyObservableList();
+        }
+
+        @Override
+        public ObservableList<ClientProject> getClientProjectList() {
+            return FXCollections.emptyObservableList();
         }
     }
 

@@ -41,7 +41,7 @@ public class ProjectAddCommandTest {
 
     @Test
     public void constructor_nullArguments_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new ProjectAddCommand(null, PROJECT));
+        assertThrows(NullPointerException.class, () -> new ProjectAddCommand((Index) null, PROJECT));
         assertThrows(NullPointerException.class, () -> new ProjectAddCommand(INDEX_FIRST_PERSON, null));
         assertThrows(NullPointerException.class, () ->
                 new ProjectAddCommand((List<Index>) null, PROJECT));

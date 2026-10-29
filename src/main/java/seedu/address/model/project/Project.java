@@ -17,7 +17,7 @@ public class Project {
 
     private static final Pattern ROLE_PREFIX = Pattern.compile("\\s+r/");
 
-    public final String projectName;
+    private final String projectName;
 
     /**
      * Constructs a {@code Project}.
@@ -38,10 +38,6 @@ public class Project {
     }
 
     public String getName() {
-        return projectName;
-    }
-
-    public String getProjectName() {
         return projectName;
     }
 

@@ -90,6 +90,12 @@ class JsonSerializableClientBook {
             clientBook.addPerson(person);
         }
 
+        addProjectsTo(clientBook);
+        addClientProjectsTo(clientBook);
+        return clientBook;
+    }
+
+    private void addProjectsTo(ClientBook clientBook) throws IllegalValueException {
         for (JsonAdaptedProject jsonAdaptedProject : projects) {
             Project project = jsonAdaptedProject.toModelType();
             if (clientBook.hasProject(project)) {
@@ -97,7 +103,9 @@ class JsonSerializableClientBook {
             }
             clientBook.addProject(project);
         }
+    }
 
+    private void addClientProjectsTo(ClientBook clientBook) throws IllegalValueException {
         for (JsonAdaptedClientProject jsonAdaptedClientProject : clientProjects) {
             Person client = findPerson(clientBook, jsonAdaptedClientProject);
             Project project = findProject(clientBook, jsonAdaptedClientProject.getProjectName());
@@ -113,7 +121,6 @@ class JsonSerializableClientBook {
             }
             clientBook.addClientProject(clientProject);
         }
-        return clientBook;
     }
 
     private static void validateList(List<?> entries, String name) throws IllegalValueException {

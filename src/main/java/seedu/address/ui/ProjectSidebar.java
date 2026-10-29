@@ -1,5 +1,6 @@
 package seedu.address.ui;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -13,6 +14,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ProjectViewCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.ContactView;
@@ -26,7 +29,8 @@ public class ProjectSidebar extends UiPart<Region> {
     private static final String FXML = "ProjectSidebar.fxml";
     private static final String SELECTED_STYLE_CLASS = "sidebar-selected";
 
-    private final Logger logger = LogsCenter.getLogger(getClass());
+    private static final Logger logger = LogsCenter.getLogger(ProjectSidebar.class);
+
     private final ReadOnlyClientBook clientBook;
     private final ReadOnlyObjectProperty<ContactView> contactView;
     private final CommandBox.CommandExecutor commandExecutor;
@@ -62,18 +66,19 @@ public class ProjectSidebar extends UiPart<Region> {
 
     @FXML
     private void handleContactsSelected() {
-        executeNavigationCommand("list");
+        executeNavigationCommand(ListCommand.COMMAND_WORD);
     }
 
     private void handleProjectSelected(Project project) {
-        executeNavigationCommand("project view " + project.getName());
+        executeNavigationCommand(ProjectViewCommand.COMMAND_WORD + " "
+                + ProjectViewCommand.SUBCOMMAND_WORD + " " + project.getName());
     }
 
     private void executeNavigationCommand(String command) {
         try {
             commandExecutor.execute(command);
         } catch (CommandException | ParseException e) {
-            logger.warning("Sidebar navigation failed: " + e.getMessage());
+            logger.log(Level.WARNING, "Sidebar navigation failed: " + e.getMessage(), e);
         } finally {
             returnFocusToCommandBox.run();
         }

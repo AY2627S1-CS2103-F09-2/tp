@@ -12,7 +12,7 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 
 ## Quick start
 
-1. Ensure that Java `25` or later is installed on your computer.<br>
+1. Ensure that Java `25` is installed on your computer. Other Java versions are not supported.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
 1. Download the latest `clientbook.jar` from [our releases page](https://github.com/AY2627S1-CS2103-F09-2/tp/releases).
@@ -40,7 +40,7 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 
    * `find acme` : Finds contacts whose name or company contains `acme`. Use `list` to show everyone again.
 
-   * `clear` : Deletes all contacts.
+   * `clear` : Deletes all contacts and projects.
 
    * `exit` : Exits the app.
 
@@ -63,8 +63,9 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 * Items followed by `…`​ can appear zero or more times.<br>
   For example, `[t/TAG]…​` may be omitted, or written as `t/friend` or `t/friend t/family`.
 
-* Parameters can be in any order.<br>
+* Prefixed parameters in `add` and `edit` can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+  Positional parameters in commands such as `status`, `note`, and `project add` must follow the documented order.
 
 * Extra text after commands that take no parameters (`help`, `exit` and `clear`) is ignored.<br>
   For example, `help 123` is interpreted as `help`.
