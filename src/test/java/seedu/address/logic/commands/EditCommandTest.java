@@ -126,18 +126,107 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_sharedDetailsHiddenByFilter_successWithBothWarnings() {
-        showPersonAtIndex(model, INDEX_SECOND_PERSON);
-        Person editedPerson = new PersonBuilder(BENSON).withEmail(ALICE.getEmail().value)
-                .withPhone(ALICE.getPhone().value).build();
+    public void execute_tagsOnlyWithSharedDetails_successWithoutWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        model.addPerson(new PersonBuilder(BENSON).withPhone("11111111").build());
+        Person editedPerson = new PersonBuilder(BENSON).withTags(VALID_TAG_HUSBAND).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withTags(VALID_TAG_HUSBAND).build();
+
+        assertEditWithWarning(descriptor, editedPerson, "");
+    }
+
+    @Test
+    public void execute_explicitUnchangedSharedDetails_successWithoutWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        model.addPerson(new PersonBuilder(BENSON).withPhone("11111111").build());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(BENSON).build();
+
+        assertEditWithWarning(descriptor, BENSON, "");
+    }
+
+    @Test
+    public void execute_sharedPhoneOnlySpacingChanged_successWithoutWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        Person editedPerson = new PersonBuilder(BENSON).withPhone("9876 5432").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone("9876 5432").build();
+
+        assertEditWithWarning(descriptor, editedPerson, "");
+    }
+
+    @Test
+    public void execute_sharedNameOnlyCaseAndSpacingChanged_successWithoutWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withPhone("11111111").build());
+        Person editedPerson = new PersonBuilder(BENSON).withName("  bEnSoN   mEiEr  ").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("  bEnSoN   mEiEr  ").build();
+
+        assertEditWithWarning(descriptor, editedPerson, "");
+    }
+
+    @Test
+    public void execute_changedPhoneWithUnchangedSharedEmail_successWithPhoneWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        Person editedPerson = new PersonBuilder(BENSON).withPhone(ALICE.getPhone().value).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(ALICE.getPhone().value)
+                .withEmail(BENSON.getEmail().value).build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, editedPerson.getPhone()));
+    }
+
+    @Test
+    public void execute_changedEmailWithUnchangedSharedPhone_successWithEmailWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        Person editedPerson = new PersonBuilder(BENSON).withEmail(ALICE.getEmail().value).build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withEmail(ALICE.getEmail().value)
-                .withPhone(ALICE.getPhone().value).build();
+                .withPhone(BENSON.getPhone().value).build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, editedPerson.getEmail()));
+    }
+
+    @Test
+    public void execute_changedNameWithUnchangedSharedDetails_successWithNameWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
+        Person editedPerson = new PersonBuilder(BENSON).withName(ALICE.getName().fullName).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(ALICE.getName().fullName).build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, editedPerson.getName()));
+    }
+
+    @Test
+    public void execute_sharedNameIgnoringCaseAndSpacing_successWithNameWarning() {
+        Person editedPerson = new PersonBuilder(BENSON).withName("  aLiCe   pAuLiNe  ").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("  aLiCe   pAuLiNe  ").build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, editedPerson.getName()));
+    }
+
+    @Test
+    public void execute_multipleContactsShareName_warnsOnceForName() {
+        model.addPerson(new PersonBuilder(ALICE).withPhone("11111111").build());
+        Person editedPerson = new PersonBuilder(BENSON).withName(ALICE.getName().fullName).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(ALICE.getName().fullName).build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, editedPerson.getName()));
+    }
+
+    @Test
+    public void execute_sharedDetailsHiddenByFilter_successWithAllWarnings() {
+        showPersonAtIndex(model, INDEX_SECOND_PERSON);
+        Person editedPerson = new PersonBuilder(BENSON).withName(CARL.getName().fullName)
+                .withEmail(ALICE.getEmail().value).withPhone(ALICE.getPhone().value).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(CARL.getName().fullName)
+                .withEmail(ALICE.getEmail().value).withPhone(ALICE.getPhone().value).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
         Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_SECOND_PERSON);
         expectedModel.setPerson(BENSON, editedPerson);
         String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, editedPerson.getName())
                 + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, editedPerson.getEmail())
                 + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, editedPerson.getPhone());
 
@@ -322,7 +411,7 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_sharedNameWithDifferentContactDetails_success() {
+    public void execute_sharedNameWithDifferentContactDetails_successWithNameWarning() {
         Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Person secondPerson = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
         Person editedPerson = new PersonBuilder(secondPerson).withName(firstPerson.getName().fullName).build();
@@ -332,7 +421,9 @@ public class EditCommandTest {
         expectedModel.setPerson(secondPerson, editedPerson);
 
         assertCommandSuccess(editCommand, model,
-                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)), expectedModel);
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_NAME_WARNING, editedPerson.getName()),
+                expectedModel);
     }
 
     @Test
