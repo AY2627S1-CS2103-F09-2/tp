@@ -65,6 +65,11 @@ public class ProjectCommandParserTest {
     }
 
     @Test
+    public void parse_nameContainingRolePrefix_throwsParseException() {
+        assertParseFailure(parser, "create A/B r/x", Project.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
     public void parse_extraWhitespace_returnsProjectCreateCommand() {
         assertParseSuccess(parser, " \t create \t Client   Portal \t ",
                 new ProjectCreateCommand(new Project("Client Portal")));
