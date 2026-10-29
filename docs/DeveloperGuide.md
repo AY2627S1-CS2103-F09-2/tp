@@ -9,7 +9,13 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+* ClientBookThree is based on [AddressBook-Level3](https://se-education.org/addressbook-level3/) by the
+  [SE-EDU initiative](https://se-education.org). Its architecture, documentation structure, and substantial portions
+  of its original code were adapted from that project.
+* The app uses [JavaFX](https://openjfx.io/) for its UI and [Jackson](https://github.com/FasterXML/jackson) for JSON
+  storage. Tests use [JUnit 5](https://junit.org/junit5/).
+* [Gradle](https://gradle.org/), [Checkstyle](https://checkstyle.org/), and [JaCoCo](https://www.jacoco.org/jacoco/)
+  support building, code-quality checks, and test-coverage reporting.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -146,7 +152,9 @@ The `Model` component,
 The `Storage` component,
 * can save both client book data (contacts, projects and which clients are on which project) and user preference data in JSON format, and read them back into corresponding objects.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonClientBookStorage` and `JsonUserPrefsStorage` (one class per data file).
-* saves each project membership as a `JsonAdaptedClientProject` holding the client's name, the project's name and the role, and links them back to the loaded `Person` and `Project` when reading the file.
+* saves each project membership as a `JsonAdaptedClientProject` holding the client's name, phone, email, the project's
+  name, and the role. The full client identity prevents ambiguity when two contacts have the same name. Older
+  name-only memberships remain readable when the name identifies exactly one contact.
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
 ### Common classes
@@ -170,6 +178,40 @@ The sequence diagram below shows the successful flow for `project view Client Po
 ![Component interactions for the project view command](images/ProjectViewSequenceDiagram.png)
 
 Diagram source: [PlantUML](diagrams/ProjectViewSequenceDiagram.puml).
+
+### Project membership and roles
+
+#### Implementation
+
+`ClientBook` owns projects in a `UniqueProjectList` and memberships in a `UniqueClientProjectList`. Each immutable
+`ClientProject` links one `Person` to one `Project` and stores the role that person has on that project. The role belongs
+to the membership rather than either endpoint, so one contact can hold different roles on different projects.
+
+Project commands resolve client indexes against the currently displayed contact list and resolve project names against
+the existing project list, ignoring case and normalized spaces. They then update memberships through `Model`:
+
+* `project add` and `project remove` validate all supplied indexes and the project before changing data. A single
+  duplicate or missing membership is rejected; a multi-client operation skips affected contacts and reports them.
+* `project role` replaces an existing membership with a copy containing the new role. An empty role removes only the
+  role, not the membership.
+* `ClientBook#setPerson` rewrites that person's memberships when contact details change. Deleting a contact removes
+  their memberships; deleting a project removes all memberships for that project. Neither operation deletes the other
+  endpoint.
+* Storage writes people and projects before memberships. On load, each membership is linked back to existing objects;
+  unknown, ambiguous, or duplicate references make the data file invalid instead of creating dangling links.
+
+#### Design considerations
+
+**Aspect: representing the many-to-many relationship between contacts and projects**
+
+* **Alternative 1 (current choice):** model each relationship as a `ClientProject` association object.
+  * Pros: A role naturally belongs to one contact-project pair; both endpoints stay immutable; membership validation,
+    cleanup, and storage have one owner.
+  * Cons: Editing or deleting an endpoint requires coordinated membership updates.
+* **Alternative 2:** store a set of projects and roles inside each `Person`.
+  * Pros: Looking up a contact's projects requires no separate membership list.
+  * Cons: Project deletion must scan and rebuild every contact; shared project identity is harder to enforce; the
+    relationship data becomes coupled to `Person`.
 
 ### Client status, company and notes
 
@@ -244,9 +286,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | freelance developer | list every contact I have recorded | I can see everything in one place | `* * *` |
 | freelance developer | edit a contact's details | their record stays correct when they change number, email or job | `* * *` |
 | freelance developer | delete a contact I no longer deal with | my list does not fill up with people who are no longer relevant | `* * *` |
-| forgetful user | undo my last command | I can recover from a mistake without retyping what I lost | `* * *` |
-| freelance developer | tag a contact with a project | I can see who is involved in which piece of work | `* * *` |
-| freelance developer | tag one contact with more than one project | a client I work with on several jobs is still recorded only once | `* * *` |
+| freelance developer | add a contact to a project | I can see who is involved in which piece of work | `* * *` |
+| freelance developer | add one contact to more than one project | a client I work with on several jobs is still recorded only once | `* * *` |
 | freelance developer | list only the contacts on a given project | I can see everyone involved in the job I am working on right now | `* * *` |
 | freelance developer | remove a tag from a contact | the record follows along when someone leaves a project | `* * *` |
 | freelance developer | search for a contact by part of their name | I can find them without remembering the exact spelling | `* * *` |
@@ -262,7 +303,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | freelance developer | record the role a contact plays on a project, such as product owner or designer | I know who to approach about what | `* *` |
 | long-time user | sort my contacts by name | the list is in a predictable order when I scan it | `* *` |
 | long-time user | sort clients by status | the work that needs attention appears first | `* *` |
-| user who made several mistakes in a row | undo more than one command | I can walk back a wrong sequence, not just the last step | `* *` |
 | cautious user | have my data kept in a plain readable file | I can back it up, inspect it, or repair it by hand | `* *` |
 | freelancer moving between machines | copy my data file to another computer | I can keep working on my laptop as well as my desktop | `* *` |
 | freelance developer | keep a short note against a contact | I remember context such as their timezone or how they prefer to be contacted | `*` |
@@ -275,8 +315,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | user with a long list | page through my contacts | the display stays readable when there are hundreds of them | `*` |
 | freelance developer | export one project's contacts | I can hand the list to a collaborator | `*` |
 
-*{More to be added}*
-
 ### Use cases
 
 (For all use cases below, the **System** is `ClientBookThree` and the **Actor** is the `user`, a freelance software developer, unless specified otherwise)
@@ -285,7 +323,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to add a contact, giving their name, phone number, email and address, and optionally some tags.
+1.  User requests to add a contact, giving their name, phone number and email, and optionally an address, company and
+    tags.
 2.  ClientBookThree adds the contact and shows the details of the added contact.
 
     Use case ends.
@@ -418,13 +457,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case ends.
 
-**Use case: UC06 - Tag a contact with a project**
+**Use case: UC06 - Add contacts to a project**
 
 **MSS**
 
 1.  User lists contacts (UC02) or finds contacts (UC05).
-2.  User requests to tag a specific contact in the shown list with one or more projects.
-3.  ClientBookThree adds the projects to the contact and shows its updated details.
+2.  User requests to add one or more contacts in the shown list to one existing project, optionally with a shared role.
+3.  ClientBookThree adds the contacts to the project and reports the contacts added.
 
     Use case ends.
 
@@ -436,25 +475,30 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 2.
 
-* 2b. A project name is invalid.
+* 2b. The project does not exist or its name is invalid.
 
-    * 2b1. ClientBookThree shows an error message stating what a project name may contain, and does not tag the contact.
+    * 2b1. ClientBookThree shows an error message and does not add any contact to the project.
 
       Use case resumes at step 2.
 
-* 2c. The contact is already tagged with every given project.
+* 2c. A requested contact already belongs to the project.
 
-    * 2c1. ClientBookThree tells the user that nothing has changed.
+    * 2c1. If only one contact was requested, ClientBookThree tells the user that nothing has changed.
 
       Use case ends.
 
-**Use case: UC07 - Remove a contact from a project**
+    * 2c2. If multiple contacts were requested, ClientBookThree skips existing members, adds the remaining contacts,
+      and reports both groups.
+
+      Use case ends.
+
+**Use case: UC07 - Remove contacts from a project**
 
 **MSS**
 
 1.  User lists contacts (UC02) or finds contacts (UC05).
-2.  User requests to remove a project from a specific contact in the shown list.
-3.  ClientBookThree removes the project from the contact and shows its updated details.
+2.  User requests to remove one or more contacts in the shown list from one project.
+3.  ClientBookThree removes the contacts from the project and reports the contacts removed.
 
     Use case ends.
 
@@ -466,11 +510,16 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 2.
 
-* 2b. The contact is not tagged with that project.
+* 2b. A requested contact does not belong to that project.
 
-    * 2b1. ClientBookThree shows an error message listing the projects the contact is tagged with.
+    * 2b1. If only one contact was requested, ClientBookThree shows an error message.
 
       Use case resumes at step 2.
+
+    * 2b2. If multiple contacts were requested, ClientBookThree skips non-members, removes the remaining contacts,
+      and reports both groups.
+
+      Use case ends.
 
 **Use case: UC08 - View the contacts on a project**
 
@@ -525,28 +574,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case ends.
 
-**Use case: UC10 - Undo a mistaken change**
-
-**MSS**
-
-1.  User makes a change to the contacts by mistake, e.g., deletes the wrong contact (UC03).
-2.  User requests to undo the last change.
-3.  ClientBookThree reverses the last change and says which change was undone.
-
-    Steps 2-3 are repeated for as many changes as the user wants to undo.<br>
-    Use case ends.
-
-**Extensions**
-
-* 2a. There is no change left to undo.
-
-    * 2a1. ClientBookThree shows an error message saying there is nothing to undo.
-
-      Use case ends.
-
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
+1.  Should work on any _mainstream OS_ with Java `25` installed. Other Java versions are not supported.
 2.  Should be able to hold up to 1000 persons and 100 projects without noticeable sluggishness (up to 1 second of load times) in performance for typical usage.
 3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks in their typical workflow faster using commands than using the mouse.
 4.  A new user should be able to add, delete and list contacts using the documented command syntax without assistance after reading the quick-start instructions.
@@ -564,8 +594,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Contact / Person**: A person recorded in the app, such as a client’s main contact, finance contact, or collaborator.
 * **Collaborator**: A person who works with the user on a project but is not the client.
 * **Project**: A piece of work or engagement associated with a client and one or more people.
-* **Status**: The project's stage, using the allowed values `lead`, `active`, `on hold`, and `done`.
-* **Project tag**: Represents a contact's involvement in a project.
+* **Status**: A contact's engagement stage, using `none`, `lead`, `active`, `on hold`, or `done`.
+* **Project membership**: Represents a contact's involvement and optional role in a project.
 * **Typical usage**: The dataset size and command mix used to evaluate the performance NFR.
 * **Quick-start instructions**: Brief summary of the user guide, contains important information to get started using CB3.
 
