@@ -36,7 +36,7 @@ The following provides a quick overview of the main components and their interac
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
 * At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
 * At shut down, it shuts down the other components and invokes cleanup methods where necessary.
 
@@ -68,13 +68,13 @@ The sections below give more details of each component.
 
 ### UI component
 
-The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
+The **API** of this component is specified in [`Ui.java`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/ui/Ui.java)
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `ProjectSidebar`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
 
-The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
+The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
 
@@ -83,9 +83,11 @@ The `UI` component,
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
 * depends on some classes in the `Model` component because it displays `Person` objects from the model.
 
+The `ProjectSidebar` lists **Contacts** and every project with its number of clients. Clicking an item runs the same command a user could type (`list` or `project view PROJECT`) through `MainWindow#executeCommand`, so a click behaves exactly like the command, including its result message, and focus then returns to the `CommandBox`. To highlight the current item, the sidebar observes the `Model`'s `ContactView` (all contacts, one project, or another filter such as a `find`), which every command that changes the displayed list updates.
+
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API** : [`Logic.java`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
@@ -100,7 +102,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 How the `Logic` component works:
 
-1. When `Logic` is called upon to execute a command, the command is passed to an `AddressBookParser` object, which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
+1. When `Logic` is called upon to execute a command, the command is passed to a `ClientBookParser` object, which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
 1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
    Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
@@ -111,11 +113,11 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 <img src="images/ParserClasses.png" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddCommand`). The `AddressBookParser` returns that object as a `Command` object.
+* When called upon to parse a user command, the `ClientBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddCommand`). The `ClientBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddCommandParser` and `DeleteCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/model/Model.java)
 
 <img src="images/ModelClassDiagram.png" width="760" />
 
@@ -128,7 +130,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `ClientBook`, and each `Person` references tags from that list. This lets `ClientBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
 
 <img src="images/BetterModelClassDiagram.png" width="450" />
 
@@ -137,13 +139,14 @@ The `Model` component,
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API** : [`Storage.java`](https://github.com/AY2627S1-CS2103-F09-2/tp/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
 <img src="images/StorageClassDiagram.png" width="550" />
 
 The `Storage` component,
-* can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
-* is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
+* can save both client book data (contacts, projects and which clients are on which project) and user preference data in JSON format, and read them back into corresponding objects.
+* is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonClientBookStorage` and `JsonUserPrefsStorage` (one class per data file).
+* saves each project membership as a `JsonAdaptedClientProject` holding the client's name, the project's name and the role, and links them back to the loaded `Person` and `Project` when reading the file.
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
 ### Common classes
@@ -155,90 +158,6 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 ## **Implementation**
 
 This section describes some noteworthy details on how certain features are implemented.
-
-### \[Proposed\] Undo/redo feature
-
-#### Proposed Implementation
-
-The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
-
-* `VersionedAddressBook#commit()` — Saves the current address book state in its history.
-* `VersionedAddressBook#undo()` — Restores the previous address book state from its history.
-* `VersionedAddressBook#redo()` — Restores a previously undone address book state from its history.
-
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
-
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
-
-Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
-
-![UndoRedoState0](images/UndoRedoState0.png)
-
-Step 2. The user executes `delete 5` command to delete the 5th person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
-
-![UndoRedoState1](images/UndoRedoState1.png)
-
-Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
-
-![UndoRedoState2](images/UndoRedoState2.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If a command fails its execution, it will not call `Model#commitAddressBook()`, so the address book state will not be saved into the `addressBookStateList`.
-
-</div>
-
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
-
-![UndoRedoState3](images/UndoRedoState3.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index 0, pointing to the initial AddressBook state, then there are no previous AddressBook states to restore. The `undo` command uses `Model#canUndoAddressBook()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
-
-</div>
-
-The following sequence diagram shows how an undo operation goes through the `Logic` component:
-
-![UndoSequenceDiagram](images/UndoSequenceDiagram-Logic.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `UndoCommand` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
-
-</div>
-
-Similarly, how an undo operation goes through the `Model` component is shown below:
-
-![UndoSequenceDiagram](images/UndoSequenceDiagram-Model.png)
-
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest address book state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
-
-</div>
-
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-![UndoRedoState4](images/UndoRedoState4.png)
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …​` command. This is the behavior that most modern desktop applications follow.
-
-![UndoRedoState5](images/UndoRedoState5.png)
-
-The following activity diagram summarizes what happens when a user executes a new command:
-
-<img src="images/CommitActivityDiagram.png" width="250" />
-
-#### Design considerations:
-
-**Aspect: How undo & redo execute:**
-
-* **Alternative 1 (current choice):** Saves the entire address book.
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
-
-* **Alternative 2:** Individual command knows how to undo/redo by
-  itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command is correct.
-
-_{more aspects and alternatives to be added}_
 
 ### Project view feature
 
@@ -252,9 +171,39 @@ The sequence diagram below shows the successful flow for `project view Client Po
 
 Diagram source: [PlantUML](diagrams/ProjectViewSequenceDiagram.puml).
 
-### \[Proposed\] Data archiving
+### Client status, company and notes
 
-_{Explain here how the data archiving feature will be implemented}_
+#### Implementation
+
+Each `Person` has three fields beyond AB3's: a `Status`, a `Company` and a `Note`.
+
+* `Status` is an enum with the values `NONE`, `LEAD`, `ACTIVE`, `ON_HOLD` and `DONE`. `Status#fromText` turns what the user typed into a status, ignoring case and treating `on-hold`, `onhold` and `on   hold` the same; it returns an empty `Optional` for anything else, which `ParserUtil#parseStatus` turns into a `ParseException`.
+* `Company` and `Note` are value classes like `Address`. A contact without one holds `Company.EMPTY` or `Note.EMPTY`, never `null`, so the card, storage and `find` can use the value directly without checking for `null`.
+* `Person` stays immutable. `status` and `note` each have a command of their own, which builds the updated contact with `Person#withStatus` or `Person#withNote` and replaces the old one with `Model#setPerson`. `edit` copies the status and note across unchanged, so editing a contact's phone number never clears them.
+* `list s/STATUS` gives `ListCommand` an optional status filter, which it passes to `Model#updateFilteredPersonList` as a predicate.
+* `JsonAdaptedPerson` saves the three fields as `"status"`, `"company"` and `"note"`. A missing or blank field is read as `NONE` or empty, so data files from older versions still load.
+
+The sequence diagram for `status 1 active` follows the same pattern as the [`delete 1` example](#logic-component): `ClientBookParser` creates a `StatusCommandParser`, which returns a `StatusCommand`; executing it calls `Model#setPerson` with the updated contact, and `LogicManager` then saves the client book.
+
+#### Design considerations
+
+**Aspect: how the status is set**
+
+* **Alternative 1 (current choice):** a separate `status INDEX STATUS` command.
+  * Pros: Changing a client's status is the most frequent update, and the command is short. `status 1 on hold` reads naturally without a prefix.
+  * Cons: One more command to learn.
+* **Alternative 2:** an `s/STATUS` field in `add` and `edit`.
+  * Pros: Fewer commands.
+  * Cons: `edit 1 s/on hold` is longer, and `add` would need to handle a status for contacts who are not clients (e.g. a finance officer). `add` and `edit` reject `s/` with a message pointing to `status`.
+
+**Aspect: how a missing company or note is represented**
+
+* **Alternative 1 (current choice):** a shared empty value (`Company.EMPTY`, `Note.EMPTY`, as already done for `Address.EMPTY`).
+  * Pros: No `null` checks anywhere; the card simply hides the line when the value is empty.
+  * Cons: Code must use `isEmpty()` rather than comparing with `null`.
+* **Alternative 2:** `Optional<Company>` and `Optional<Note>` fields.
+  * Pros: The type shows that the value may be missing.
+  * Cons: Every use has to unwrap the `Optional`, and Jackson needs extra handling to save it.
 
 
 --------------------------------------------------------------------------------------------------------------------
@@ -285,7 +234,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | User type | User story | Benefit | Priority |
 | --- | --- | --- | --- |
 | new user | create a new contact |  | `* * *` |
-| new user | delete a contact I no longer deal with | it keeps the address book clean | `* * *` |
+| new user | delete a contact I no longer deal with | it keeps the client book clean | `* * *` |
 | new user | View all contacts on the app | I can see my contacts | `* * *` |
 | user ready to start for real | clear all the sample data in one command | I can begin from a clean state without deleting entries one by one | `* * *` |
 | new user | see a list of the commands available | I can learn what the app does without leaving it to read a manual | `* * *` |
@@ -631,39 +580,97 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty folder.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+   1. Open a terminal in that folder and run `java -jar clientbook.jar`.<br>
+      Expected: The GUI opens with six sample contacts, some with a company. The window size may not be optimal.
 
 1. Saving window preferences
 
    1. Resize the window to an optimal size. Move the window to a different location. Close the window.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
+   1. Relaunch the app with `java -jar clientbook.jar`.<br>
        Expected: The most recent window size and location are retained.
 
-1. _{ more test cases …​ }_
+### Adding and deleting a contact
 
-### Deleting a person
+1. Adding a contact
 
-1. Deleting a person while all persons are being shown
+   1. Test case: `add n/Mei Ling p/+65 9123 4567 e/meiling@acme.com c/Acme Pte Ltd`<br>
+      Expected: Mei Ling is added at the end of the list, with `Acme Pte Ltd` under her name and no address line.
 
-   1. Prerequisites: List all persons using the `list` command, with multiple persons in the list.
+   1. Test case: `add n/mei   LING p/91111111 e/other@example.com`<br>
+      Expected: Rejected as a duplicate: names are compared ignoring case and extra spaces.
+
+   1. Test case: `add n/Jane Tan p/12 e/jane@example.com`<br>
+      Expected: Rejected. The message says a phone number needs at least 3 digits.
+
+1. Deleting a contact while all contacts are being shown
+
+   1. Prerequisites: List all contacts using the `list` command, with multiple contacts in the list.
 
    1. Test case: `delete 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+      Expected: The first contact is deleted from the list, and from every project they were in. The status message shows the deleted contact's details.
 
    1. Test case: `delete 0`<br>
-      Expected: No person is deleted. The status message shows error details.
+      Expected: No contact is deleted. An error message says the index is invalid.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+   1. Other incorrect delete commands to try: `delete`, `delete x`, `delete 999` (where 999 is larger than the list size)<br>
+      Expected: No contact is deleted, and an error message is shown.
 
-1. _{ more test cases …​ }_
+### Status and notes
+
+1. Setting and listing by status
+
+   1. Test case: `status 1 active`, then `list s/active`<br>
+      Expected: The first contact's card shows `Status: active`, and the list then shows only active contacts.
+
+   1. Test case: `status 1 ON-HOLD`<br>
+      Expected: The status becomes `on hold` (case and the hyphen are ignored).
+
+   1. Test case: `status 1 pending`<br>
+      Expected: Rejected. The message lists the valid statuses.
+
+1. Keeping a note
+
+   1. Test case: `note 1 Based in London, prefers email`<br>
+      Expected: The first contact's card shows the note.
+
+   1. Test case: `note 1`<br>
+      Expected: The note is removed.
+
+### Projects
+
+1. Creating a project and adding clients
+
+   1. Test case: `project create Client Portal`, then `project add 1,2 Client Portal r/developer`<br>
+      Expected: Both contacts' cards show `Projects: Client Portal (developer)`.
+
+   1. Test case: `project view client portal`<br>
+      Expected: Only the clients on `Client Portal` are listed (the name matches ignoring case and extra spaces). `list` shows everyone again.
+
+   1. Test case: `project role 1 Client Portal r/Lead developer`, then `project list 1`<br>
+      Expected: The first contact's role on `Client Portal` is now `Lead developer`.
+
+   1. Test case: `project all`<br>
+      Expected: Every project is listed with its number of clients.
+
+1. Deleting a project
+
+   1. Test case: `project delete Client Portal`<br>
+      Expected: The project is deleted and removed from every client's card. The clients themselves stay.
+
+### Finding contacts
+
+1. Test case: `find bakery`<br>
+   Expected: With the sample data, Alex Yeoh and Roy Balakrishnan (both at Geylang Bakery) are listed: `find` matches part of a name or a company, ignoring case.
 
 ### Saving data
 
-1. Dealing with missing/corrupted data files
+1. Dealing with a missing data file
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+   1. Close the app, delete `data/clientbook.json`, and relaunch.<br>
+      Expected: The app starts with the sample contacts again.
 
-1. _{ more test cases …​ }_
+1. Dealing with a corrupted data file
+
+   1. Close the app, open `data/clientbook.json` in a text editor, and change a contact's `"status"` to `"pending"` (not a valid status). Relaunch.<br>
+      Expected: The file can't be loaded, so the app starts with an empty client book. The app saves after every command, so the invalid file is overwritten by the next command you run; back it up first if you want to fix it by hand.
