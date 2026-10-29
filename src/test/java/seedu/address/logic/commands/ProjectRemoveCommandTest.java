@@ -107,7 +107,7 @@ public class ProjectRemoveCommandTest {
     public void execute_emptyDisplayedList_throwsCommandException() {
         model.updateFilteredPersonList(person -> false);
         assertCommandFailure(new ProjectRemoveCommand(INDEX_FIRST_PERSON, PROJECT), model,
-                String.format(Messages.MESSAGE_INVALID_CONTACT_DISPLAYED_INDEX, 0));
+                Messages.MESSAGE_NO_CONTACTS_DISPLAYED);
     }
 
     @Test
