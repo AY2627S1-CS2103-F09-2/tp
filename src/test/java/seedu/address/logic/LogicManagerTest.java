@@ -85,7 +85,7 @@ public class LogicManagerTest {
         expectedModel.updateFilteredPersonList(person -> false);
 
         assertCommandFailure("delete 1", CommandException.class,
-                "The displayed contact list contains no contacts.", expectedModel);
+                "The displayed contact list is empty. Use list to show all contacts.", expectedModel);
     }
 
     @Test

@@ -11,7 +11,7 @@ public class MessagesTest {
 
     @Test
     public void getInvalidContactDisplayedIndexMessage_emptyList_returnsNoContactsMessage() {
-        assertEquals("The displayed contact list contains no contacts.",
+        assertEquals("The displayed contact list is empty. Use list to show all contacts.",
                 Messages.getInvalidContactDisplayedIndexMessage(0));
     }
 
