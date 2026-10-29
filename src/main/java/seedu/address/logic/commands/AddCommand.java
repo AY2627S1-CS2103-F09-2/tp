@@ -77,7 +77,7 @@ public class AddCommand extends Command {
         boolean hasDuplicatePhone = false;
         for (Person person : model.getClientBook().getPersonList()) {
             hasDuplicateEmail |= person.getEmail().equals(toAdd.getEmail());
-            hasDuplicatePhone |= person.getPhone().equals(toAdd.getPhone());
+            hasDuplicatePhone |= person.getPhone().isSameNumber(toAdd.getPhone());
         }
 
         StringBuilder warning = new StringBuilder();

@@ -41,6 +41,15 @@ public class Phone {
         return test.matches(VALIDATION_REGEX);
     }
 
+    /**
+     * Returns true if both phone numbers match after removing spaces.
+     * Country codes, labels and all other characters remain significant.
+     */
+    public boolean isSameNumber(Phone otherPhone) {
+        return otherPhone != null
+                && value.replace(" ", "").equals(otherPhone.value.replace(" ", ""));
+    }
+
     @Override
     public String toString() {
         return value;

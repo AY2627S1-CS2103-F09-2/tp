@@ -45,6 +45,28 @@ public class PhoneTest {
     }
 
     @Test
+    public void isSameNumber_spacingDiffers_returnsTrue() {
+        Phone phone = new Phone("91234567");
+        assertTrue(phone.isSameNumber(new Phone("91234567")));
+        assertTrue(phone.isSameNumber(new Phone("9123 4567")));
+        assertTrue(phone.isSameNumber(new Phone("9 123  4567 ")));
+        assertTrue(new Phone("9123 4567").isSameNumber(phone));
+        assertTrue(new Phone("+6591234567").isSameNumber(new Phone("+65 9123 4567")));
+        assertTrue(new Phone("+886912345678").isSameNumber(new Phone("+ 886 912 345 678")));
+    }
+
+    @Test
+    public void isSameNumber_otherCharactersDiffer_returnsFalse() {
+        Phone phone = new Phone("91234567");
+        assertFalse(phone.isSameNumber(null));
+        assertFalse(phone.isSameNumber(new Phone("9123 4568")));
+        assertFalse(phone.isSameNumber(new Phone("+65 9123 4567")));
+        assertFalse(phone.isSameNumber(new Phone("9123-4567")));
+        assertFalse(phone.isSameNumber(new Phone("9123 4567 ext 89")));
+        assertFalse(new Phone("+65 9123 4567").isSameNumber(new Phone("+886 9123 4567")));
+    }
+
+    @Test
     public void equals() {
         Phone phone = new Phone("999");
 
@@ -62,5 +84,8 @@ public class PhoneTest {
 
         // different values -> returns false
         assertFalse(phone.equals(new Phone("995")));
+
+        // formatting remains significant for exact equality
+        assertFalse(new Phone("91234567").equals(new Phone("9123 4567")));
     }
 }

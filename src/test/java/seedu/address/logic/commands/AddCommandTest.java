@@ -70,6 +70,34 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_phoneDiffersOnlyInSpaces_addSuccessfulWithPhoneWarning() throws Exception {
+        List<List<String>> equivalentPhones = List.of(
+                List.of("91234567", "9123 4567", "9 123  4567"),
+                List.of("+6591234567", "+65 9123 4567", "+ 65 9123  4567"),
+                List.of("+886912345678", "+886 912 345 678", "+ 886 912345678"));
+        for (List<String> phoneFormats : equivalentPhones) {
+            for (String existingPhone : phoneFormats) {
+                Person existingPerson = new PersonBuilder(ALICE).withPhone(existingPhone).build();
+                for (String newPhone : phoneFormats) {
+                    Person person = new PersonBuilder().withPhone(newPhone).build();
+                    assertAddWithWarning(List.of(existingPerson), person,
+                            "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_PHONE_WARNING, person.getPhone()));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void execute_phoneCountryCodeDiffers_addSuccessfulWithoutWarning() throws Exception {
+        Person existingPerson = new PersonBuilder(ALICE).withPhone("+65 9123 4567").build();
+        for (String phone : List.of("91234567", "9123 4567", "+886 9123 4567")) {
+            Person person = new PersonBuilder().withPhone(phone).build();
+            assertAddWithWarning(List.of(existingPerson), person, "");
+            assertAddWithWarning(List.of(person), existingPerson, "");
+        }
+    }
+
+    @Test
     public void execute_sharedEmailAndPhone_addSuccessfulWithBothWarnings() throws Exception {
         Person person = new PersonBuilder(ALICE).withName("New Contact").build();
         assertAddWithWarning(List.of(ALICE), person,

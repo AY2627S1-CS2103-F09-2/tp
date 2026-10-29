@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.parser.ClientBookParser;
+import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -55,10 +58,25 @@ public class AddCommandIntegrationTest {
     }
 
     @Test
+    public void execute_addCommandsWithPhoneSpacingDifference_successWithWarning() throws Exception {
+        model = new ModelManager(new ClientBook(), new UserPrefs());
+        ClientBookParser parser = new ClientBookParser();
+        parser.parseCommand("add n/John Tan p/91234567 e/john@test.com").execute(model);
+
+        CommandResult result = parser.parseCommand("add n/Alice Tan p/9123 4567 e/alice@test.com").execute(model);
+
+        Person addedPerson = model.getClientBook().getPersonList().get(1);
+        assertEquals(2, model.getClientBook().getPersonList().size());
+        assertEquals("9123 4567", addedPerson.getPhone().value);
+        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(addedPerson))
+                + "\nWarning: Phone 9123 4567 already belongs to another contact.", result.getFeedbackToUser());
+    }
+
+    @Test
     public void execute_contactWithSharedDetailsHiddenByFilter_successWithBothWarnings() {
         model.updateFilteredPersonList(person -> false);
         assertTrue(model.getFilteredPersonList().isEmpty());
-        Person person = new PersonBuilder(ALICE).withName("New Contact").build();
+        Person person = new PersonBuilder(ALICE).withName("New Contact").withPhone("9435  1253").build();
 
         assertAddWithWarning(person,
                 "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail())
