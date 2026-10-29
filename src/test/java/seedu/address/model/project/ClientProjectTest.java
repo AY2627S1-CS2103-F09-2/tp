@@ -16,10 +16,13 @@ public class ClientProjectTest {
     public void equals_usesClientIdentityAndProjectName() {
         ClientProject membership = new ClientProject(ALICE, new Project("Hackathon"));
         ClientProject sameMembership = new ClientProject(
-                new PersonBuilder(ALICE).withPhone("91234567").build(), new Project("hackathon"));
+                new PersonBuilder(ALICE).withCompany("Acme").build(), new Project("hackathon"));
 
         assertEquals(membership, sameMembership);
         assertTrue(membership.isSameClientProject(sameMembership));
+        ClientProject sameNameMembership = new ClientProject(
+                new PersonBuilder(ALICE).withPhone("91234567").build(), new Project("hackathon"));
+        assertFalse(membership.isSameClientProject(sameNameMembership));
         assertFalse(membership.equals(new ClientProject(ALICE, new Project("Hackathon"), "developer")));
     }
 

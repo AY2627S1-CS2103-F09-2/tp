@@ -11,6 +11,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.ClientBook;
 import seedu.address.model.ReadOnlyClientBook;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Phone;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
 
@@ -26,6 +27,8 @@ class JsonSerializableClientBook {
             "Client-project list contains duplicate membership(s).";
     public static final String MESSAGE_INVALID_CLIENT_PROJECT =
             "Client-project list contains an unknown client or project.";
+    public static final String MESSAGE_AMBIGUOUS_CLIENT_PROJECT =
+            "Client-project list contains an ambiguous client name; client phone and email are required.";
 
     private List<JsonAdaptedPerson> persons = new ArrayList<>();
     private List<JsonAdaptedProject> projects = new ArrayList<>();
@@ -96,7 +99,7 @@ class JsonSerializableClientBook {
         }
 
         for (JsonAdaptedClientProject jsonAdaptedClientProject : clientProjects) {
-            Person client = findPerson(clientBook, jsonAdaptedClientProject.getClientName());
+            Person client = findPerson(clientBook, jsonAdaptedClientProject);
             Project project = findProject(clientBook, jsonAdaptedClientProject.getProjectName());
             if (client == null || project == null) {
                 throw new IllegalValueException(MESSAGE_INVALID_CLIENT_PROJECT);
@@ -119,14 +122,27 @@ class JsonSerializableClientBook {
         }
     }
 
-    private static Person findPerson(ClientBook clientBook, String name) {
-        if (name == null) {
+    /** Resolves a full client identity, or an unambiguous name-only reference from an older file. */
+    private static Person findPerson(ClientBook clientBook, JsonAdaptedClientProject membership)
+            throws IllegalValueException {
+        String name = membership.getClientName();
+        String phone = membership.getClientPhone();
+        String email = membership.getClientEmail();
+        if (name == null || (phone == null) != (email == null)
+                || (phone != null && !Phone.isValidPhone(phone))) {
             return null;
         }
-        return clientBook.getPersonList().stream()
+        Phone clientPhone = phone == null ? null : new Phone(phone);
+        List<Person> matches = clientBook.getPersonList().stream()
                 .filter(person -> person.getName().fullName.equalsIgnoreCase(name.trim().replaceAll(" +", " ")))
-                .findFirst()
-                .orElse(null);
+                .filter(person -> clientPhone == null
+                        || person.getPhone().equals(clientPhone) && person.getEmail().value.equals(email))
+                .limit(2)
+                .toList();
+        if (matches.size() > 1) {
+            throw new IllegalValueException(MESSAGE_AMBIGUOUS_CLIENT_PROJECT);
+        }
+        return matches.isEmpty() ? null : matches.get(0);
     }
 
     private static Project findProject(ClientBook clientBook, String name) {

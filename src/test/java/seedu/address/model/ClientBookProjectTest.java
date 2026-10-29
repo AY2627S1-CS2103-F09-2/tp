@@ -80,6 +80,29 @@ public class ClientBookProjectTest {
     }
 
     @Test
+    public void sameNameClients_editAndDeleteKeepMembershipsSeparate() {
+        ClientBook clientBook = new ClientBook();
+        Project project = new Project("Hackathon");
+        Person otherAlice = new PersonBuilder(ALICE).withPhone("91234567").withEmail("other@example.com").build();
+        clientBook.addPerson(ALICE);
+        clientBook.addPerson(otherAlice);
+        clientBook.addProject(project);
+        clientBook.addClientProject(new ClientProject(ALICE, project, "tester"));
+        clientBook.addClientProject(new ClientProject(otherAlice, project, "developer"));
+
+        Person editedAlice = new PersonBuilder(ALICE).withPhone("91111111").build();
+        clientBook.setPerson(ALICE, editedAlice);
+        assertEquals(List.of(new ClientProject(editedAlice, project, "tester")),
+                clientBook.getClientProjectsForPerson(editedAlice));
+        assertEquals(List.of(new ClientProject(otherAlice, project, "developer")),
+                clientBook.getClientProjectsForPerson(otherAlice));
+
+        clientBook.removePerson(editedAlice);
+        assertEquals(List.of(otherAlice), clientBook.getPersonList());
+        assertEquals(List.of(new ClientProject(otherAlice, project, "developer")), clientBook.getClientProjectList());
+    }
+
+    @Test
     public void removeProject_removesMemberships() {
         ClientBook clientBook = new ClientBook();
         Project hackathon = new Project("Hackathon");

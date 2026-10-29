@@ -23,14 +23,40 @@ import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.ClientBook;
 import seedu.address.model.ReadOnlyClientBook;
+import seedu.address.model.person.Person;
 import seedu.address.model.project.ClientProject;
 import seedu.address.model.project.Project;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonClientBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonClientBookStorageTest");
 
     @TempDir
     public Path testFolder;
+
+    @Test
+    public void saveAndRead_sameNameClients_preservesSeparateProjectMemberships() throws Exception {
+        Person firstJohn = new PersonBuilder().withName("John Tan").withPhone("91234567")
+                .withEmail("john@test1.com").withCompany("test1").build();
+        Person secondJohn = new PersonBuilder().withName("John Tan").withPhone("98765432")
+                .withEmail("john@test2.com").withCompany("test2").build();
+        Project project = new Project("Client Portal");
+        ClientBook clientBook = new ClientBook();
+        clientBook.addPerson(firstJohn);
+        clientBook.addPerson(secondJohn);
+        clientBook.addProject(project);
+        clientBook.addClientProject(new ClientProject(secondJohn, project, "developer"));
+        clientBook.addClientProject(new ClientProject(firstJohn, project, "tester"));
+        Path filePath = testFolder.resolve("sameNameClients.json");
+        JsonClientBookStorage storage = new JsonClientBookStorage(filePath);
+
+        storage.saveClientBook(clientBook);
+        ReadOnlyClientBook loaded = storage.readClientBook().orElseThrow();
+
+        assertEquals(clientBook, loaded);
+        assertEquals(secondJohn, loaded.getClientProjectList().get(0).getClient());
+        assertEquals(firstJohn, loaded.getClientProjectList().get(1).getClient());
+    }
 
     @Test
     public void readClientBook_nullFilePath_throwsNullPointerException() {
