@@ -11,17 +11,21 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Phone {
 
 
+    public static final int MAX_DIGITS = 20;
+
     public static final String MESSAGE_CONSTRAINTS = "Phone numbers should start with a digit, + or (, "
-            + "contain at least 3 digits, and may also contain spaces, letters (e.g. HP, ext) "
+            + "contain 3 to " + MAX_DIGITS + " digits, and may also contain spaces, letters (e.g. HP, ext) "
             + "and the characters + - ( ) . /";
 
     /*
      * Phone numbers are written in many ways, e.g. +65 9123 4567, (65) 9123-4567 or 1234 5678 (HP),
      * so spaces, letters for labels, and the usual separators are allowed alongside the digits.
-     * The lookahead requires at least 3 digits, and the first character must be a digit, + or (,
-     * so that blank or word-only input stays invalid.
+     * The lookaheads require 3 to MAX_DIGITS digits, enough for an international number with an extension
+     * or two labelled numbers, and the first character must be a digit, + or (, so that blank or word-only
+     * input stays invalid.
      */
-    public static final String VALIDATION_REGEX = "(?=(?:\\D*\\d){3})[\\d+(][\\p{L}\\d +()./-]*";
+    public static final String VALIDATION_REGEX = "(?=(?:\\D*\\d){3})(?!(?:\\D*\\d){" + (MAX_DIGITS + 1) + "})"
+            + "[\\d+(][\\p{L}\\d +()./-]*";
     public final String value;
     private final String normalizedValue;
 

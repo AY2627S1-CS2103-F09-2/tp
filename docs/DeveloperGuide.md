@@ -646,7 +646,7 @@ testers are expected to do more *exploratory* testing.
       Expected: Both contacts are added; the second addition warns about the shared name. Attach each contact to a project using its displayed index, close and reopen the app, and verify that each retains its own membership and role.
 
    1. Test case: `add n/Jane Tan p/12 e/jane@example.com`<br>
-      Expected: Rejected. The message says a phone number needs at least 3 digits.
+      Expected: Rejected. The message says a phone number needs 3 to 20 digits.
 
 1. Deleting a contact while all contacts are being shown
 
