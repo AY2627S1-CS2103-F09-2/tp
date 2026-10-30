@@ -221,6 +221,12 @@ public class AddCommandParserTest {
     }
 
     @Test
+    public void parse_unknownPrefixAfterEmail_failure() {
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + " x/what",
+                String.format(ParserUtil.MESSAGE_EMAIL_HAS_SPACE, VALID_EMAIL_BOB + " x/what"));
+    }
+
+    @Test
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
