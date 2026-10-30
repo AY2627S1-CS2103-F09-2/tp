@@ -72,6 +72,9 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 
 * Command words ignore case. For example, `LIST` and `List` work like `list`.
 
+* A prefix such as `a/` or `c/` starts a new parameter wherever it follows a space, even inside a value. For example, in `add n/Ahmad a/l Hassan …` the name is `Ahmad` and the address is `l Hassan`, and in `a/Blk 5 c/o John Tan` the company is `o John Tan`.<br>
+  Prefixes are case-sensitive, so write such text in upper case to keep it in one value: `n/Ahmad A/L Hassan`, `a/Blk 5 C/O John Tan`. Check the contact card after adding a contact whose details contain a `/`.
+
 * `INDEX` and `CLIENT_INDEX` refer to the numbers shown in the contact list currently displayed, e.g. after a `find`, `list s/STATUS` or `project view`. They must be one of those numbers.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -228,6 +231,8 @@ The sidebar on the left of the window shows **Contacts** and every project, each
 * The sidebar updates straight away when projects or their clients change. If there are many projects, scroll the project list.
 * After clicking, you can keep typing commands: the command box is ready for input.
 
+![The sidebar with Client Portal highlighted while its clients are shown](images/sidebarProjectView.png)
+
 ### Listing all projects: `project all`
 
 Shows every project with its number of clients.
@@ -320,6 +325,8 @@ Examples:
 * `status 2 on hold` puts the second contact's engagement on hold.
 * `status 2 none` clears the second contact's status.
 
+![list s/active showing the two active clients, with their status on the card](images/listByStatus.png)
+
 ### Editing a contact: `edit`
 
 Edits an existing contact in the client book.
@@ -361,7 +368,7 @@ Examples:
 * `find acme` returns everyone whose company contains `acme`, e.g. `Acme Pte Ltd`
 * `find John` returns `john` and `John Doe`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+  ![find alex david listing Alex Yeoh and David Li](images/findAlexDavidResult.png)
 
 ### Deleting a contact: `delete`
 
@@ -427,6 +434,7 @@ Furthermore, certain edits can cause ClientBookThree to behave in unexpected way
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 3. **If the JAR file is in a write-protected folder** (e.g. some system or network folders), ClientBookThree cannot save your data: each command shows an error saying it could not save the data due to insufficient permissions. The remedy is to move the JAR file to a folder you can write to, such as one in your home folder, and run it from there.
 4. **On macOS, if the main window is in full-screen mode**, the Help Window may open as a separate full-screen space or behind the main window. The remedy is to exit full-screen mode before opening the Help Window, or to switch to it with Mission Control.
+5. **If a name or address contains a space followed by a prefix**, such as `a/l` (in *Ahmad a/l Hassan*) or `c/o` (in *Blk 5 c/o John Tan*), the text after it is saved as a different detail. The remedy is to write it in upper case, e.g. `A/L` or `C/O`, since prefixes are case-sensitive. (`s/o`, as in *Raj s/o Kumar*, already works.)
 
 --------------------------------------------------------------------------------------------------------------------
 
