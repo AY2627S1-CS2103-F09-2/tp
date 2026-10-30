@@ -295,6 +295,7 @@ Format: `list [s/STATUS]`
 
 * `list` shows every contact.
 * `list s/STATUS` shows only the contacts with that status: `lead`, `active`, `on hold`, `done`, or `none` for contacts without a status.
+* `list` does not take any other parameters, so e.g. `list t/friends` is rejected rather than showing everyone. Use `find` to search by name or company.
 * The status ignores case, and `on-hold` or `onhold` also mean `on hold`.
 
 Examples:

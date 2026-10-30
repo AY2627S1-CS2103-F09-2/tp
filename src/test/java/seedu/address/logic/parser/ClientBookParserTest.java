@@ -103,7 +103,6 @@ public class ClientBookParserTest {
     @Test
     public void parseCommand_list() throws Exception {
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
-        assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
         assertEquals(new ListCommand(Status.ACTIVE), parser.parseCommand(ListCommand.COMMAND_WORD + " s/active"));
     }
 
