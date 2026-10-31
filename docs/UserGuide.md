@@ -350,7 +350,7 @@ Finds contacts whose names or companies contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive; for example, `hans` matches `Hans`.
+* The search ignores case and accents; for example, `hans` matches `Hans`, and `jose` matches `José`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search looks at names and companies only, not phone numbers, emails, addresses, tags or notes.
 * Partial words match anywhere in a name or company; for example, `ali` matches `Alice`, and `acme` matches a contact at `Acme Pte Ltd`.

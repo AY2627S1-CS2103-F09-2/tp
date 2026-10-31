@@ -41,8 +41,14 @@ public class NameOrCompanyContainsKeywordsPredicateTest {
         assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("ice")).test(ALICE_AT_ACME));
 
         // accented letters, ignoring case
-        Person jose = new PersonBuilder().withName("Jos\u00e9").build();
+        Person jose = new PersonBuilder().withName("Jos\u00e9 Mar\u00eda").withCompany("Caf\u00e9 \u00dcber").build();
         assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("OS\u00c9")).test(jose));
+
+        // accents ignored on either side
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("jose")).test(jose));
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("maria")).test(jose));
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("cafe uber")).test(jose));
+        assertTrue(new NameOrCompanyContainsKeywordsPredicate(List.of("\u00e1lice")).test(ALICE_AT_ACME));
     }
 
     @Test
