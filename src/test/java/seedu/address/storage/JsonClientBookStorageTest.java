@@ -1,3 +1,4 @@
+//@@author
 package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +35,7 @@ public class JsonClientBookStorageTest {
     @TempDir
     public Path testFolder;
 
+    //@@author ry-cy
     @Test
     public void saveAndRead_sameNameClients_preservesSeparateProjectMemberships() throws Exception {
         Person firstJohn = new PersonBuilder().withName("John Tan").withPhone("91234567")
@@ -58,6 +60,7 @@ public class JsonClientBookStorageTest {
         assertEquals(firstJohn, loaded.getClientProjectList().get(1).getClient());
     }
 
+    //@@author
     @Test
     public void readClientBook_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> readClientBook(null));
@@ -93,6 +96,7 @@ public class JsonClientBookStorageTest {
         assertThrows(DataLoadingException.class, () -> readClientBook("invalidAndValidPersonClientBook.json"));
     }
 
+    //@@author ry-cy
     @Test
     public void readClientBook_emptyOrNullFile_throwsDataLoadingException() throws Exception {
         for (String json : new String[]{"", "   ", "null"}) {
@@ -151,6 +155,7 @@ public class JsonClientBookStorageTest {
         assertEquals(json, Files.readString(filePath));
     }
 
+    //@@author
     @Test
     public void readAndSaveClientBook_allInOrder_success() throws Exception {
         Path filePath = testFolder.resolve("TempClientBook.json");
