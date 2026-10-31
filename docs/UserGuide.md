@@ -98,7 +98,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * Names must start with a letter or digit. They may contain letters (including accented letters), digits, spaces,
   apostrophes, hyphens, periods, commas and slashes. Leading and trailing spaces are removed, and repeated spaces are
   collapsed.
-* Phone numbers must start with a digit, `+` or `(` and contain at least three digits. They may also contain spaces,
+* Phone numbers must start with a digit, `+` or `(` and contain 3 to 20 digits. They may also contain spaces,
   letters and the characters `+ - ( ) . /`, e.g. `+65 9123 4567` or `1234 5678 (HP)`.
 * Email addresses can contain at most 254 characters.
 * Tags must be alphanumeric and cannot contain spaces or punctuation. Tags that differ only in case are the same tag, so `t/Friends t/friends` gives the contact one tag, `Friends`.

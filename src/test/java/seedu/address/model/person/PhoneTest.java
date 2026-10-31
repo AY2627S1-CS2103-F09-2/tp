@@ -33,6 +33,9 @@ public class PhoneTest {
         assertFalse(Phone.isValidPhone("phone")); // non-numeric
         assertFalse(Phone.isValidPhone("HP 91234567")); // starts with a letter
         assertFalse(Phone.isValidPhone("9312*1534")); // contains a character phone numbers do not use
+        assertFalse(Phone.isValidPhone("1".repeat(21))); // more than 20 digits
+        assertFalse(Phone.isValidPhone("1234 5678 9012 3456 7890 1")); // more than 20 digits, with spaces
+        assertFalse(Phone.isValidPhone("12345678901234567890123456789012345678901234567890"));
 
         // valid phone numbers
         assertTrue(Phone.isValidPhone("911")); // exactly 3 numbers
@@ -43,6 +46,9 @@ public class PhoneTest {
         assertTrue(Phone.isValidPhone("(65) 9123-4567")); // brackets and hyphen
         assertTrue(Phone.isValidPhone("1234 5678 (HP) 1111-3333 (Office)")); // labelled numbers
         assertTrue(Phone.isValidPhone("6123 4567 ext 89")); // extension
+        assertTrue(Phone.isValidPhone("1".repeat(20))); // exactly 20 digits
+        assertTrue(Phone.isValidPhone("1234 5678 9012 3456 7890")); // exactly 20 digits, with spaces
+        assertTrue(Phone.isValidPhone("+1 (650) 253-0000 ext. 12345")); // international number with extension
     }
 
     @Test
