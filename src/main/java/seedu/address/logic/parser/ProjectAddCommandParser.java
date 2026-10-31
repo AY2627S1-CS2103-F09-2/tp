@@ -40,6 +40,9 @@ public class ProjectAddCommandParser implements Parser<ProjectAddCommand> {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
                 argumentsMatcher.group(2).replaceAll("\\s+(?=" + PREFIX_ROLE + ")", " "), PREFIX_ROLE);
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ROLE);
+        if (argMultimap.getValue(PREFIX_ROLE).filter(String::isBlank).isPresent()) {
+            throw new ParseException(ProjectAddCommand.MESSAGE_ROLE_BLANK);
+        }
 
         try {
             List<Index> indexes = ParserUtil.parseIndexes(argumentsMatcher.group(1));

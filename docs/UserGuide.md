@@ -140,7 +140,7 @@ Format: `project add CLIENT_INDEX[,CLIENT_INDEX...] PROJECT [r/ROLE]`
 * Project names can contain spaces without quotes. Matching ignores case and normalized spaces.
 * Separate multiple client indexes with commas. Spaces around commas are optional, e.g. `1, 2, 4`.
 * When adding several clients, those already in the project are skipped and listed in the result. Adding a single client who is already in the project is rejected.
-* Give the clients a role on this project with `r/ROLE`, e.g. `r/UI designer`. The role must come last: everything after ` r/` is the role, and it can contain spaces.
+* Give the clients a role on this project with `r/ROLE`, e.g. `r/UI designer`. The role must come last: everything after ` r/` is the role, and it can contain spaces. Leave `r/ROLE` out entirely to add clients without a role; an empty `r/` is rejected.
 * A client's role belongs to one project, so a client can have a different role on each project. Use `project role` to change it later.
 * A client can belong to multiple projects, and a project can have multiple clients.
 

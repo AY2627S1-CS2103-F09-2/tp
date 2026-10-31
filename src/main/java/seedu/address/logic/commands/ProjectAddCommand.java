@@ -35,6 +35,8 @@ public class ProjectAddCommand extends Command {
     public static final String MESSAGE_SKIPPED = "Skipped clients already in project: %1$s";
     public static final String MESSAGE_PROJECT_NOT_FOUND = "Project does not exist: %1$s";
     public static final String MESSAGE_DUPLICATE_CLIENT_PROJECT = "This client already belongs to the project.";
+    public static final String MESSAGE_ROLE_BLANK =
+            "Role must not be blank. Leave r/ out to add the client without a role.";
 
     private final List<Index> targetIndexes;
     private final Project project;
