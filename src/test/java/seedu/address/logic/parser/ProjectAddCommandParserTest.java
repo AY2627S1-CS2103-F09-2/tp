@@ -89,8 +89,7 @@ public class ProjectAddCommandParserTest {
 
     @Test
     public void parse_blankRole_throwsParseException() {
-        assertParseFailure(parser, "1 Client Portal r/",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, ProjectAddCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "1 Client Portal r/", ProjectAddCommand.MESSAGE_ROLE_BLANK);
     }
 
     @Test
