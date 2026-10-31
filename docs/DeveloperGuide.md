@@ -577,6 +577,129 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case ends.
 
+**Use case: UC10 - Create a project**
+
+**MSS**
+
+1.  User requests to create a project with a given name.
+2.  ClientBookThree creates the project and shows it in the sidebar with no clients.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The name is blank or contains the role prefix ` r/`.
+
+    * 1a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 1.
+
+* 1b. A project with the same name, ignoring case and extra spaces, already exists.
+
+    * 1b1. ClientBookThree shows an error message saying the project already exists.
+
+      Use case ends.
+
+**Use case: UC11 - Change a client's role on a project**
+
+**MSS**
+
+1.  User finds the client (UC05).
+2.  User requests to change the client's role on a project they are in, giving the new role.
+3.  ClientBookThree updates the role and shows the client's name, the project and the new role.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. The project does not exist, or the client is not in it.
+
+    * 2b1. ClientBookThree shows an error message saying which.
+
+      Use case resumes at step 2.
+
+* 2c. The new role is empty.
+
+    * 2c1. ClientBookThree removes the client's role on that project. The client stays in the project.
+
+      Use case ends.
+
+**Use case: UC12 - Delete a project**
+
+**MSS**
+
+1.  User requests to delete a project.
+2.  ClientBookThree deletes the project, removes it from every client in it, and shows how many clients it was removed from.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The project does not exist.
+
+    * 1a1. ClientBookThree shows an error message.
+
+      Use case ends.
+
+* 2a. The user was viewing that project's clients.
+
+    * 2a1. ClientBookThree shows all contacts again.
+
+      Use case ends.
+
+**Use case: UC13 - Keep a note on a contact**
+
+**MSS**
+
+1.  User finds the contact (UC05).
+2.  User requests to keep a note against that contact, such as their timezone.
+3.  ClientBookThree saves the note, replacing any earlier note, and shows it on the contact card.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The given index is invalid.
+
+    * 2a1. ClientBookThree shows an error message.
+
+      Use case resumes at step 2.
+
+* 2b. The user gives no text.
+
+    * 2b1. ClientBookThree removes the contact's note.
+
+      Use case ends.
+
+**Use case: UC14 - List clients by engagement status**
+
+**MSS**
+
+1.  User requests to list the contacts with a given status, e.g. active.
+2.  ClientBookThree shows only the contacts with that status, and how many there are.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The given status is not one of the allowed statuses.
+
+    * 1a1. ClientBookThree shows an error message listing the allowed statuses.
+
+      Use case resumes at step 1.
+
+* 2a. No contact has that status.
+
+    * 2a1. ClientBookThree shows an empty list and says no contact has that status.
+
+      Use case ends.
+
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ with Java `25` installed. Other Java versions are not supported.
