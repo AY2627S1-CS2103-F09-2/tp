@@ -229,6 +229,16 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseEmail_valueWithSpace_throwsSpaceMessage() {
+        // text after an unknown prefix, or a typo in a prefix, ends up after the email
+        for (String email : new String[] {"x@example.com x/what", "x@example.com adr/Blk 5", "x@example.com extra",
+            "john doe@example.com", "x@example.com\tx/what"}) {
+            assertThrows(ParseException.class, String.format(ParserUtil.MESSAGE_EMAIL_HAS_SPACE, email), ()
+                    -> ParserUtil.parseEmail(WHITESPACE + email + WHITESPACE));
+        }
+    }
+
+    @Test
     public void parseEmail_overlongValue_throwsParseException() {
         String overlongEmail = "a".repeat(64) + "@" + "b".repeat(63) + "."
                 + "c".repeat(63) + "." + "d".repeat(62); // 255 characters

@@ -30,6 +30,9 @@ import seedu.address.model.tag.Tag;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+    public static final String MESSAGE_EMAIL_HAS_SPACE = "Emails cannot contain spaces, but the email given was "
+            + "\"%1$s\". If the text after the space is another detail, check its prefix: "
+            + "only n/, p/, e/, a/, c/ and t/ are accepted.";
 
     /** A whole number, which may be too small (e.g. 0 or -1) or too large to be an index. */
     private static final String WHOLE_NUMBER_REGEX = "-?\\d+";
@@ -179,6 +182,10 @@ public class ParserUtil {
         requireNonNull(email);
         String trimmedEmail = email.trim();
         if (!Email.isValidEmail(trimmedEmail)) {
+            // A space usually means text with an unknown prefix (e.g. x/) was read as part of the email.
+            if (trimmedEmail.chars().anyMatch(Character::isWhitespace)) {
+                throw new ParseException(String.format(MESSAGE_EMAIL_HAS_SPACE, trimmedEmail));
+            }
             throw new ParseException(Email.getValidationMessage(trimmedEmail));
         }
         return new Email(trimmedEmail);
