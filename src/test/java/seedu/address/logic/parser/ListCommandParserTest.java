@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -18,8 +19,15 @@ public class ListCommandParserTest {
     public void parse_noStatus_returnsListAllCommand() {
         assertParseSuccess(parser, "", new ListCommand());
         assertParseSuccess(parser, "   ", new ListCommand());
-        // other text after list is ignored, as before
-        assertParseSuccess(parser, " 3", new ListCommand());
+    }
+
+    @Test
+    public void parse_otherParameters_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListCommand.MESSAGE_USAGE);
+        // a filter list does not support, a status prefix in the wrong case, and stray text
+        for (String args : new String[] {" t/friends", " S/active", " 3", " abc", " extra s/active"}) {
+            assertParseFailure(parser, args, expectedMessage);
+        }
     }
 
     @Test
