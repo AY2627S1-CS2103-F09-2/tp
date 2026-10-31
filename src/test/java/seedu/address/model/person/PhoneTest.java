@@ -47,6 +47,7 @@ public class PhoneTest {
         assertTrue(Phone.isValidPhone("1234 5678 (HP) 1111-3333 (Office)")); // labelled numbers
         assertTrue(Phone.isValidPhone("6123 4567 ext 89")); // extension
         assertTrue(Phone.isValidPhone("1".repeat(20))); // exactly 20 digits
+        assertTrue(Phone.isValidPhone("1234 5678 9012 3456 7890")); // exactly 20 digits, with spaces
         assertTrue(Phone.isValidPhone("+1 (650) 253-0000 ext. 12345")); // international number with extension
     }
 
