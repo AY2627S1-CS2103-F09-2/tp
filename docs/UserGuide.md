@@ -101,7 +101,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * Phone numbers must start with a digit, `+` or `(` and contain at least three digits. They may also contain spaces,
   letters and the characters `+ - ( ) . /`, e.g. `+65 9123 4567` or `1234 5678 (HP)`.
 * Email addresses can contain at most 254 characters.
-* Tags must be alphanumeric and cannot contain spaces or punctuation.
+* Tags must be alphanumeric and cannot contain spaces or punctuation. Tags that differ only in case are the same tag, so `t/Friends t/friends` gives the contact one tag, `Friends`.
 * Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone matching ignores spaces (e.g. `91234567` and `9123 4567` are the same number); email must match exactly.
 * Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. Changing only the company, address or tags does not make a contact unique.
 

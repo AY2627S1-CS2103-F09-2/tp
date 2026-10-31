@@ -307,6 +307,13 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseTags_tagsDifferingOnlyInCase_returnsOneTag() throws Exception {
+        Set<Tag> actualTagSet = ParserUtil.parseTags(List.of("Friends", "friends", "FRIENDS"));
+        assertEquals(Set.of(new Tag("Friends")), actualTagSet);
+        assertEquals(1, actualTagSet.size());
+    }
+
+    @Test
     public void parseTags_collectionWithValidTags_returnsTagSet() throws Exception {
         Set<Tag> actualTagSet = ParserUtil.parseTags(List.of(VALID_TAG_1, VALID_TAG_2));
         Set<Tag> expectedTagSet = Set.of(new Tag(VALID_TAG_1), new Tag(VALID_TAG_2));
