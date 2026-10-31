@@ -16,6 +16,9 @@ title: Developer Guide
   storage. Tests use [JUnit 5](https://junit.org/junit5/).
 * [Gradle](https://gradle.org/), [Checkstyle](https://checkstyle.org/), and [JaCoCo](https://www.jacoco.org/jacoco/)
   support building, code-quality checks, and test-coverage reporting.
+* Notable uses of AI:
+  * Claude (Anthropic), Codex (OpenAI) and GitHub Copilot (Microsoft) were used to help write code, tests and documentation, including the User Guide and Developer Guide, and for preliminary reviews of pull requests. All output was checked with the project's tests and human-reviewed in pull requests before being merged.
+  
 
 --------------------------------------------------------------------------------------------------------------------
 
