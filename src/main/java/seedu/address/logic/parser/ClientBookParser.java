@@ -49,6 +49,11 @@ public class ClientBookParser {
 
         final String commandWord = matcher.group("commandWord").toLowerCase(Locale.ROOT);
         final String arguments = matcher.group("arguments");
+        if (!arguments.isBlank() && (commandWord.equals(ClearCommand.COMMAND_WORD)
+                || commandWord.equals(ExitCommand.COMMAND_WORD)
+                || commandWord.equals(HelpCommand.COMMAND_WORD))) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, "Format: " + commandWord));
+        }
 
         // Note to developers: Change LOG_LEVEL in LogsCenter to enable lower level (i.e., FINE, FINER and lower)
         // log messages such as the one below.
