@@ -703,7 +703,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ with Java `25` installed. Other Java versions are not supported.
-2.  Should be able to hold up to 1000 persons and 100 projects without noticeable sluggishness (up to 1 second of load times) in performance for typical usage.
+2.  Should be able to hold up to 1000 contacts and 100 projects without noticeable sluggishness (up to 1 second of load times) in performance for typical usage.
 3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks in their typical workflow faster using commands than using the mouse.
 4.  A new user should be able to add, delete and list contacts using the documented command syntax without assistance after reading the quick-start instructions.
 5.  After a successful change, the updated data should remain available after the application is closed and reopened.
@@ -715,7 +715,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 ### Glossary
 
 * **Mainstream OS**: Windows, Linux, Unix, or macOS.
-* **Private contact detail**: A contact detail that is not meant to be shared with others.
 * **Client**: A person or organization that engages the user to do work
 * **Contact / Person**: A person recorded in the app, such as a client’s main contact, finance contact, or collaborator.
 * **Collaborator**: A person who works with the user on a project but is not the client.
