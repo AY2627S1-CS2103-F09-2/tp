@@ -67,8 +67,8 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
   Positional parameters in commands such as `status`, `note`, and `project add` must follow the documented order.
 
-* Extra text after commands that take no parameters (`help`, `exit` and `clear`) is ignored.<br>
-  For example, `help 123` is interpreted as `help`.
+* Commands that take no parameters (`help`, `exit` and `clear`) reject extra text.<br>
+  For example, `help 123` is invalid; use `help` instead.
 
 * Command words ignore case. For example, `LIST` and `List` work like `list`.
 
