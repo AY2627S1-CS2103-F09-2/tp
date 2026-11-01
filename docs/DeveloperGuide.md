@@ -342,7 +342,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Steps 1a1-1a2 are repeated until all required details are given.<br>
       Use case resumes from step 2.
 
-* 1b. A detail is invalid, e.g., the phone number contains letters.
+* 1b. A detail is invalid, e.g., the phone number contains fewer than three digits. Letters in phone labels such as
+  `1234 5678 (HP)` are allowed.
 
     * 1b1. ClientBookThree shows an error message stating what is allowed for that detail.
     * 1b2. User enters the details again.
@@ -431,9 +432,16 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 2.
 
-* 2d. The new name is the same as that of another contact.
+* 2d. The edited contact has the same name, phone and email as another contact. Name matching ignores case and
+  normalized spaces; phone matching ignores spaces; email must match exactly.
 
     * 2d1. ClientBookThree shows an error message saying that contact already exists, and does not change anything.
+
+      Use case ends.
+
+* 2e. A changed name, phone or email is shared with another contact, but the edited contact does not match all three identity fields.
+
+    * 2e1. ClientBookThree updates the contact and shows a warning for each changed, shared field.
 
       Use case ends.
 
