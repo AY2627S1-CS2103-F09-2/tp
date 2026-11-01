@@ -67,6 +67,15 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_sharedEmailIgnoringCase_successWithEmailWarning() {
+        Person editedPerson = new PersonBuilder(BENSON).withEmail("Alice@EXAMPLE.com").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withEmail("Alice@EXAMPLE.com").build();
+
+        assertEditWithWarning(descriptor, editedPerson,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, editedPerson.getEmail()));
+    }
+
+    @Test
     public void execute_sharedPhone_successWithPhoneWarning() {
         Person editedPerson = new PersonBuilder(BENSON).withPhone(ALICE.getPhone().value).build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(ALICE.getPhone().value).build();
@@ -145,6 +154,15 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_sharedEmailOnlyCaseChanged_successWithoutWarning() {
+        model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").withEmail("JOHND@EXAMPLE.COM").build());
+        Person editedPerson = new PersonBuilder(BENSON).withEmail("JohnD@Example.com").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withEmail("JohnD@Example.com").build();
+
+        assertEditWithWarning(descriptor, editedPerson, "");
+    }
+
+    @Test
     public void execute_sharedPhoneOnlySpacingChanged_successWithoutWarning() {
         model.addPerson(new PersonBuilder(BENSON).withName("Other Owner").build());
         Person editedPerson = new PersonBuilder(BENSON).withPhone("9876 5432").build();
@@ -217,9 +235,9 @@ public class EditCommandTest {
     public void execute_sharedDetailsHiddenByFilter_successWithAllWarnings() {
         showPersonAtIndex(model, INDEX_SECOND_PERSON);
         Person editedPerson = new PersonBuilder(BENSON).withName(CARL.getName().fullName)
-                .withEmail(ALICE.getEmail().value).withPhone(ALICE.getPhone().value).build();
+                .withEmail("ALICE@EXAMPLE.COM").withPhone(ALICE.getPhone().value).build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(CARL.getName().fullName)
-                .withEmail(ALICE.getEmail().value).withPhone(ALICE.getPhone().value).build();
+                .withEmail("ALICE@EXAMPLE.COM").withPhone(ALICE.getPhone().value).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
         Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());

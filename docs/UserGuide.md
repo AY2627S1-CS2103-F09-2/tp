@@ -106,7 +106,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​
 * Email addresses can contain at most 254 characters.
 * Tags must be alphanumeric and cannot contain spaces or punctuation. Tags that differ only in case are the same tag, so `t/Friends t/friends` gives the contact one tag, `Friends`.
 * Contacts may share a name. An addition is rejected only when the name, phone and email all match an existing contact. Name matching ignores case and extra spaces; phone matching ignores spaces (e.g. `91234567` and `9123 4567` are the same number); email must match exactly.
-* Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. Changing only the company, address or tags does not make a contact unique.
+* Sharing a name, phone or email with another contact shows a warning, but the contact is still added unless all three match. For shared-email warnings, matching ignores case (e.g. `AlexYeoh@example.com` and `alexyeoh@example.com` trigger a warning); the entered capitalisation is preserved. Changing only the company, address or tags does not make a contact unique.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A contact can have any number of tags, including zero.
@@ -339,6 +339,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COMPANY] [t/TAG]
 * Existing values will be updated to the input values.
 * Name, phone, email and tag values follow the same constraints as [`add`](#adding-a-contact-add).
 * Contacts may share a name, but an edit is rejected if the resulting name, phone and email all match another contact, using the same matching rules as `add`.
+* Editing a name, phone or email to one shared with another contact shows the same warnings as `add`. Shared-email warnings ignore case; changing only an email's capitalisation does not trigger a new warning.
 * Email addresses can contain at most 254 characters.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
 * To remove a contact's address, enter `a/` without an address after it. Other details remain unchanged unless specified.

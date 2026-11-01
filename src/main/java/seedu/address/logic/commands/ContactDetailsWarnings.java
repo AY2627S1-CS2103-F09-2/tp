@@ -37,7 +37,8 @@ final class ContactDetailsWarnings {
 
     /**
      * Checks all contacts, excluding {@code originalPerson}. A null original person denotes an addition.
-     * Name comparisons ignore case and normalized spaces; phone comparisons ignore spaces.
+     * Name comparisons ignore case and normalized spaces; email comparisons ignore case;
+     * phone comparisons ignore spaces.
      */
     private static String getWarnings(List<Person> contacts, Person updatedPerson, Person originalPerson) {
         requireNonNull(contacts);
@@ -45,7 +46,8 @@ final class ContactDetailsWarnings {
 
         boolean checkName = originalPerson == null
                 || !originalPerson.getName().fullName.equalsIgnoreCase(updatedPerson.getName().fullName);
-        boolean checkEmail = originalPerson == null || !originalPerson.getEmail().equals(updatedPerson.getEmail());
+        boolean checkEmail = originalPerson == null
+                || !originalPerson.getEmail().value.equalsIgnoreCase(updatedPerson.getEmail().value);
         boolean checkPhone = originalPerson == null || !originalPerson.getPhone().equals(updatedPerson.getPhone());
         if (!checkName && !checkEmail && !checkPhone) {
             return "";
@@ -60,7 +62,8 @@ final class ContactDetailsWarnings {
             }
             hasDuplicateName |= checkName
                     && person.getName().fullName.equalsIgnoreCase(updatedPerson.getName().fullName);
-            hasDuplicateEmail |= checkEmail && person.getEmail().equals(updatedPerson.getEmail());
+            hasDuplicateEmail |= checkEmail
+                    && person.getEmail().value.equalsIgnoreCase(updatedPerson.getEmail().value);
             hasDuplicatePhone |= checkPhone && person.getPhone().equals(updatedPerson.getPhone());
         }
 
