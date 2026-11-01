@@ -86,6 +86,25 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_sharedEmailIgnoringCase_addSuccessfulWithEmailWarning() throws Exception {
+        for (String email : List.of("ALICE@example.com", "alice@EXAMPLE.COM", "Alice@Example.com")) {
+            Person person = new PersonBuilder().withEmail(email).build();
+            assertAddWithWarning(List.of(ALICE), person,
+                    "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail()));
+        }
+    }
+
+    @Test
+    public void execute_multipleContactsShareEmailIgnoringCase_warnsOnceForEmail() throws Exception {
+        Person otherOwner = new PersonBuilder(ALICE).withName("Other Owner")
+                .withEmail("ALICE@EXAMPLE.COM").build();
+        Person person = new PersonBuilder().withEmail("Alice@Example.com").build();
+
+        assertAddWithWarning(List.of(ALICE, otherOwner), person,
+                "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail()));
+    }
+
+    @Test
     public void execute_sharedPhone_addSuccessfulWithPhoneWarning() throws Exception {
         Person person = new PersonBuilder().withPhone(ALICE.getPhone().value).build();
         assertAddWithWarning(List.of(ALICE), person,

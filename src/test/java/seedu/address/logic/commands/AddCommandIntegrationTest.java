@@ -11,11 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
 import seedu.address.logic.parser.AddCommandParser;
+import seedu.address.logic.parser.ClientBookParser;
 import seedu.address.model.ClientBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.util.SampleDataUtil;
 import seedu.address.testutil.PersonBuilder;
 
 /**
@@ -99,6 +101,22 @@ public class AddCommandIntegrationTest {
     }
 
     @Test
+    public void execute_sampleDataEmailDiffersOnlyInCase_successWithAllWarnings() throws Exception {
+        model = new ModelManager(SampleDataUtil.getSampleClientBook(), new UserPrefs());
+        Person person = new PersonBuilder().withName("Alex Yeoh").withPhone("87438807")
+                .withEmail("AlexYeoh@example.com").withoutAddress().withTags().build();
+        Command command = new ClientBookParser().parseCommand("add n/Alex Yeoh p/87438807 e/AlexYeoh@example.com");
+        Model expectedModel = new ModelManager(model.getClientBook(), new UserPrefs());
+        expectedModel.addPerson(person);
+
+        assertCommandSuccess(command, model,
+                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(person))
+                + "\nWarning: Name Alex Yeoh already belongs to another contact."
+                + "\nWarning: Email AlexYeoh@example.com already belongs to another contact."
+                + "\nWarning: Phone 87438807 already belongs to another contact.", expectedModel);
+    }
+
+    @Test
     public void execute_sharedPhone_successWithWarning() {
         Person person = new PersonBuilder().withPhone(ALICE.getPhone().value).build();
         assertAddWithWarning(person,
@@ -109,7 +127,7 @@ public class AddCommandIntegrationTest {
     public void execute_contactWithSharedDetailsHiddenByFilter_successWithBothWarnings() {
         model.updateFilteredPersonList(person -> false);
         assertTrue(model.getFilteredPersonList().isEmpty());
-        Person person = new PersonBuilder(ALICE).withName("New Contact").build();
+        Person person = new PersonBuilder(ALICE).withName("New Contact").withEmail("ALICE@EXAMPLE.COM").build();
 
         assertAddWithWarning(person,
                 "\n" + String.format(AddCommand.MESSAGE_DUPLICATE_EMAIL_WARNING, person.getEmail())
