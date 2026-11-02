@@ -74,6 +74,7 @@ ClientBookThree is a **desktop app for freelance software developers to keep tra
 
 * A prefix such as `a/` or `c/` starts a new parameter wherever it follows a space, even inside a value. For example, in `add n/Ahmad a/l Hassan …` the name is `Ahmad` and the address is `l Hassan`, and in `a/Blk 5 c/o John Tan` the company is `o John Tan`.<br>
   Prefixes are case-sensitive, so write such text in upper case to keep it in one value: `n/Ahmad A/L Hassan`, `a/Blk 5 C/O John Tan`. Check the contact card after adding a contact whose details contain a `/`.
+  `add` and `edit` reject lower-case `s/` wherever it follows a space. Use the `status` command to set a status, or uppercase literal text such as `s/o` to `S/O`.
 
 * `INDEX` and `CLIENT_INDEX` refer to the numbers shown in the contact list currently displayed, e.g. after a `find`, `list s/STATUS` or `project view`. They must be one of those numbers.
 
@@ -96,7 +97,7 @@ Adds a contact to the client book.
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [c/COMPANY] [t/TAG]…​`
 
 * The address and the company are optional, e.g. for a remote client or a freelancer.
-* A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact.
+* A new contact has no status. To set one, use [`status`](#setting-a-clients-status-status) after adding the contact. `add` rejects the lower-case prefix `s/`; use uppercase `S/` when it is literal text in another field.
 * The company is shown under the contact's name.
 * Names must start with a letter or digit. They may contain letters (including accented letters), digits, spaces,
   apostrophes, hyphens, periods, commas and slashes. Leading and trailing spaces are removed, and repeated spaces are
@@ -318,7 +319,7 @@ Format: `status INDEX STATUS`
 * The index refers to the number shown in the current contact list and must be a positive integer.
 * The status ignores case, and `on-hold` or `onhold` also mean `on hold`.
 * The status is shown on the contact card. Contacts without a status, such as a client's finance officer, show no status line.
-* `edit` keeps a contact's status unchanged.
+* `edit` keeps a contact's status unchanged. It rejects the lower-case prefix `s/`; use the [`status`](#setting-a-clients-status-status) command to change a status, or uppercase `S/` when it is literal text in another field.
 
 Examples:
 
@@ -436,7 +437,7 @@ Furthermore, certain edits can cause ClientBookThree to behave in unexpected way
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 3. **If the JAR file is in a write-protected folder** (e.g. some system or network folders), ClientBookThree cannot save your data: each command shows an error saying it could not save the data due to insufficient permissions. The remedy is to move the JAR file to a folder you can write to, such as one in your home folder, and run it from there.
 4. **On macOS, if the main window is in full-screen mode**, the Help Window may open as a separate full-screen space or behind the main window. The remedy is to exit full-screen mode before opening the Help Window, or to switch to it with Mission Control.
-5. **If a name or address contains a space followed by a prefix**, such as `a/l` (in *Ahmad a/l Hassan*) or `c/o` (in *Blk 5 c/o John Tan*), the text after it is saved as a different detail. The remedy is to write it in upper case, e.g. `A/L` or `C/O`, since prefixes are case-sensitive. (`s/o`, as in *Raj s/o Kumar*, already works.)
+5. **If a name or address contains a space followed by a prefix**, such as `a/l` (in *Ahmad a/l Hassan*) or `c/o` (in *Blk 5 c/o John Tan*), the text after it is saved as a different detail. The remedy is to write it in upper case, e.g. `A/L` or `C/O`, since prefixes are case-sensitive. Lower-case `s/` is rejected by `add` and `edit`, so write literal text such as *Raj s/o Kumar* as `Raj S/O Kumar`.
 
 --------------------------------------------------------------------------------------------------------------------
 

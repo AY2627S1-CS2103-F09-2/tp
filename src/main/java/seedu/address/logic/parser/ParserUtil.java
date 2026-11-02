@@ -72,10 +72,10 @@ public class ParserUtil {
     }
 
     /**
-     * Throws a {@code ParseException} saying to use the status command if {@code args} gives a status with
-     * {@code s/}, e.g. "s/active", to a command that does not set one. {@code prefixes} are the command's own
-     * prefixes. Text after "s/" that is not a status, such as in the name "Raj s/o Kumar", is left alone, so it
-     * stays part of the value it is in.
+     * Throws a {@code ParseException} saying to use the status command if {@code args} contains the lower-case
+     * status prefix {@code s/}. Commands that do not set a status reserve this prefix even when its value is not a
+     * valid status, preventing invalid status input from being silently stored inside another field. Literal text
+     * such as "s/o" must use uppercase "S/O" because prefixes are case-sensitive.
      *
      * @param commandWord the command's word, used in the message.
      */
@@ -84,7 +84,7 @@ public class ParserUtil {
         Prefix[] prefixesWithStatus = Arrays.copyOf(prefixes, prefixes.length + 1);
         prefixesWithStatus[prefixes.length] = CliSyntax.PREFIX_STATUS;
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, prefixesWithStatus);
-        if (argMultimap.getAllValues(CliSyntax.PREFIX_STATUS).stream().anyMatch(Status::isValidStatus)) {
+        if (!argMultimap.getAllValues(CliSyntax.PREFIX_STATUS).isEmpty()) {
             throw new ParseException(String.format(Messages.MESSAGE_STATUS_NOT_SET_HERE, commandWord));
         }
     }
