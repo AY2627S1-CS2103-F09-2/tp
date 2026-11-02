@@ -536,7 +536,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to list the contacts tagged with a specific project.
+1.  User requests to list the contacts belonging to a specific project.
 2.  ClientBookThree shows those contacts and how many there are.
 
     Use case ends.
@@ -549,7 +549,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 1.
 
-* 2a. No contact is tagged with that project.
+* 2a. No contact belongs to that project.
 
     * 2a1. ClientBookThree shows an empty list and says no contact is on that project.
 
@@ -775,8 +775,11 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `add n/Mei Ling p/+6591234567 e/meiling@acme.com`<br>
       Expected: Rejected as a duplicate of the first Mei Ling because phone matching ignores spaces.
 
-   1. Test case: Add both `add n/John Tan p/91234567 e/john@test1.com c/test1` and `add n/John Tan p/98765432 e/john@test2.com c/test2`.<br>
-      Expected: Both contacts are added; the second addition warns about the shared name. Attach each contact to a project using its displayed index, close and reopen the app, and verify that each retains its own membership and role.
+   1. Test case: Add both `add n/John Tan p/91234567 e/john@test1.com c/test1` and
+      `add n/John Tan p/98765432 e/john@test2.com c/test2`. Then run `project create Identity Check`,
+      `find test1`, `project add 1 Identity Check r/tester`, `find test2`, and
+      `project add 1 Identity Check r/developer`. Close and reopen the app.<br>
+      Expected: Both contacts are added; the second addition warns about the shared name. After reopening, each John Tan retains the correct membership and role.
 
    1. Test case: `add n/Jane Tan p/12 e/jane@example.com`<br>
       Expected: Rejected. The message says a phone number needs 3 to 20 digits.
@@ -809,6 +812,8 @@ testers are expected to do more *exploratory* testing.
 
 1. Keeping a note
 
+   1. Prerequisites: List all contacts using the `list` command, with at least one contact in the list.
+
    1. Test case: `note 1 Based in London, prefers email`<br>
       Expected: The first contact's card shows the note.
 
@@ -819,10 +824,12 @@ testers are expected to do more *exploratory* testing.
 
 1. Creating a project and adding clients
 
+   1. Prerequisites: List all contacts using the `list` command, with at least two contacts in the list.
+
    1. Test case: `project create Client Portal`, then `project add 1,2 Client Portal r/developer`<br>
       Expected: Both contacts' cards show `Projects: Client Portal (developer)`.
 
-   1. Test case: `project view client portal`<br>
+   1. Test case: `project view client   portal`<br>
       Expected: Only the clients on `Client Portal` are listed (the name matches ignoring case and extra spaces). `list` shows everyone again.
 
    1. Test case: `project role 1 Client Portal r/Lead developer`, then `project list 1`<br>

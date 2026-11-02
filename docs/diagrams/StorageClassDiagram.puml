@@ -21,6 +21,8 @@ package Storage as StoragePackage {
         Class JsonAdaptedProject
         Class JsonAdaptedClientProject {
             clientName : String
+            clientPhone : String
+            clientEmail : String
             projectName : String
             role : String
         }
