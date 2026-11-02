@@ -49,7 +49,15 @@ deactivate ClientBookParser
 LogicManager -> DeleteCommand : execute(m)
 activate DeleteCommand
 
-DeleteCommand -> Model : deletePerson(1)
+DeleteCommand -> Model : getFilteredPersonList()
+activate Model
+
+Model --> DeleteCommand : lastShownList
+deactivate Model
+
+DeleteCommand -> DeleteCommand : contactToDelete =\nlastShownList.get(0)
+
+DeleteCommand -> Model : deletePerson(contactToDelete)
 activate Model
 
 Model --> DeleteCommand
