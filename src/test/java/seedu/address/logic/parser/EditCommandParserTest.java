@@ -278,14 +278,18 @@ public class EditCommandParserTest {
         assertParseFailure(parser, "1 s/active", expectedMessage);
         assertParseFailure(parser, "1" + PHONE_DESC_AMY + " s/on hold", expectedMessage);
 
-        // a status anywhere is rejected, even after a name containing "s/o"
+        // invalid statuses and literal lower-case s/ text are rejected instead of being stored in another field
+        assertParseFailure(parser, "1 n/Alice s/pending", expectedMessage);
+        assertParseFailure(parser, "1 n/Raj s/o Kumar", expectedMessage);
+
+        // multiple status prefixes are rejected with the same guidance
         assertParseFailure(parser, "1 n/Raj s/o Kumar s/done", expectedMessage);
     }
 
     @Test
-    public void parse_slashInNameThatIsNotAStatus_success() {
-        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("Raj s/o Kumar").build();
-        assertParseSuccess(parser, "1 n/Raj s/o Kumar", new EditCommand(INDEX_FIRST_PERSON, descriptor));
+    public void parse_uppercaseSlashInName_success() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("Raj S/O Kumar").build();
+        assertParseSuccess(parser, "1 n/Raj S/O Kumar", new EditCommand(INDEX_FIRST_PERSON, descriptor));
     }
 
     @Test
